@@ -34,6 +34,15 @@ public class ChessBoard {
         return squares[position.getRow()][position.getColumn()];
     }
 
+    public boolean pieceAtPosition(ChessPosition position){
+        if (squares[position.getRow()][position.getColumn()] != null){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
@@ -41,4 +50,5 @@ public class ChessBoard {
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
     }
+
 }

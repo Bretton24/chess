@@ -31,6 +31,11 @@ public class ChessMove {
         return endPosition;
     }
 
+    public String toString(){
+        String value = startPosition.toString() + "start and end" + endPosition.toString() + "\n";
+        return value;
+    }
+
     /**
      * Gets the type of piece to promote a pawn to if pawn promotion is part of this
      * chess move

@@ -52,12 +52,21 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if (type == PieceType.BISHOP){
-            return calcBishopMoves();
+            return bishopMoves(board,myPosition);
         }
         return new ArrayList<>();
     }
 
-    private Collection<ChessMove> calcBishopMoves(){
-        return new ArrayList<>();
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
+        for (int i = myPosition.getRow();i < 8;i++){
+            for (int j =myPosition.getColumn();j < 8;j++){
+                ChessPosition position = new ChessPosition(i,j);
+                if (board.pieceAtPosition(position)){
+                        
+                }
+            }
+        }
+
     }
+
 }

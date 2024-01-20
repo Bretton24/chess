@@ -29,4 +29,9 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    public String toString(){
+        String value = "[" + getRow() + "][" + getColumn() + "]";
+        return value;
+    }
 }
