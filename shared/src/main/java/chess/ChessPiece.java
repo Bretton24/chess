@@ -56,6 +56,9 @@ public class ChessPiece {
         else if (type == PieceType.KING){
             return kingMoves(board,myPosition);
         }
+        else if (type == PieceType.KNIGHT){
+            return knightMoves(board,myPosition);
+        }
         return new HashSet<>();
     }
 
@@ -147,10 +150,10 @@ public class ChessPiece {
 
     private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition){
         HashSet<ChessMove> kingMove = new HashSet<>();
-        for (int i = 0;i < 3;i++){
-            for (int j = 0; j < 3; j++){
-                if (i + myPosition.getRow() < 9 && j + myPosition.getColumn() < 9 && i + myPosition.getRow() > 0 && j + myPosition.getColumn() > 0){
-                    ChessPosition position = new ChessPosition(i + myPosition.getRow(),j+ myPosition.getColumn());
+        for (int i =myPosition.getRow() - 1;i < myPosition.getRow() + 2;i++){
+            for (int j =myPosition.getColumn() - 1; j < myPosition.getColumn() + 2; j++){
+                if (i < 9 && j  < 9 && i > 0 && j > 0){
+                    ChessPosition position = new ChessPosition(i,j);
                     if (position != myPosition){
                         if (board.pieceAtPosition(position)){
                             ChessPiece piece = board.getPiece(position);
@@ -161,13 +164,16 @@ public class ChessPiece {
                         }
                         else{
                             kingMove.add(new ChessMove(myPosition,position));
-                    }
+                        }
                     }
                 }
-
             }
         }
         return kingMove;
     }
 
+    private HashSet<ChessMove> knightMoves(ChessBoard board,ChessPosition myPosition){
+        HashSet<ChessMove> knightMove = new HashSet<>();
+
+    }
 }
