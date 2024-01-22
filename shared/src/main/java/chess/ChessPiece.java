@@ -59,7 +59,9 @@ public class ChessPiece {
         else if (type == PieceType.KNIGHT){
             return knightMoves(board,myPosition);
         }
-
+        else if (type == PieceType.QUEEN){
+            return queenMoves(board,myPosition);
+        }
         else if (type == PieceType.ROOK){
             return rookMoves(board,myPosition);
         }
@@ -223,6 +225,15 @@ public class ChessPiece {
         return knightMove;
     }
 
+    private HashSet<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition){
+        HashSet<ChessMove> queenMove = bishopMoves(board,myPosition);
+        HashSet<ChessMove> moves = rookMoves(board,myPosition);
+        Iterator<ChessMove> iterator = moves.iterator();
+        while(iterator.hasNext()){
+            queenMove.add(iterator.next());
+        }
+        return  queenMove;
+    }
     private HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition){
         HashSet<ChessMove> rookMove = new HashSet<>();
         int i = myPosition.getRow() + 1;
