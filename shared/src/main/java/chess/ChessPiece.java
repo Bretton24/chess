@@ -59,6 +59,9 @@ public class ChessPiece {
         else if (type == PieceType.KNIGHT){
             return knightMoves(board,myPosition);
         }
+        else if (type == PieceType.PAWN){
+            return pawnMoves(board,myPosition);
+        }
         return new HashSet<>();
     }
 
@@ -174,6 +177,53 @@ public class ChessPiece {
 
     private HashSet<ChessMove> knightMoves(ChessBoard board,ChessPosition myPosition){
         HashSet<ChessMove> knightMove = new HashSet<>();
+        int i =myPosition.getRow() - 2;
+        while (i < myPosition.getRow() + 3){
+            for (int j =myPosition.getColumn() - 1;j < myPosition.getColumn() + 2;j += 2){
+                if (i < 9 && j  < 9 && i > 0 && j > 0){
+                    ChessPosition position = new ChessPosition(i,j);
+                    if (position != myPosition){
+                        if (board.pieceAtPosition(position)){
+                            ChessPiece piece = board.getPiece(position);
+                            if(this.pieceColor != piece.pieceColor){
+                                board.removePiece(position);
+                                knightMove.add(new ChessMove(myPosition,position));
+                            }
+                        }
+                        else{
+                            knightMove.add(new ChessMove(myPosition,position));
+                        }
+                    }
+                }
+            }
+            i += 4;
+        }
+        int j =myPosition.getColumn() - 2;
+        while (j < myPosition.getColumn() + 3){
+            for (i =myPosition.getRow() - 1;i < myPosition.getRow() + 2;i += 2){
+                if (i < 9 && j  < 9 && i > 0 && j > 0){
+                    ChessPosition position = new ChessPosition(i,j);
+                    if (position != myPosition){
+                        if (board.pieceAtPosition(position)){
+                            ChessPiece piece = board.getPiece(position);
+                            if(this.pieceColor != piece.pieceColor){
+                                board.removePiece(position);
+                                knightMove.add(new ChessMove(myPosition,position));
+                            }
+                        }
+                        else{
+                            knightMove.add(new ChessMove(myPosition,position));
+                        }
+                    }
+                }
+            }
+            j += 4;
+        }
+        return knightMove;
+    }
 
+    private HashSet<ChessMove> pawnMoves(ChessBoard board,ChessPosition myPosition){
+        HashSet<ChessMove> pawnMove = new HashSet<>();
+        
     }
 }
