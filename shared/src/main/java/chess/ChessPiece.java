@@ -59,8 +59,9 @@ public class ChessPiece {
         else if (type == PieceType.KNIGHT){
             return knightMoves(board,myPosition);
         }
-        else if (type == PieceType.PAWN){
-            return pawnMoves(board,myPosition);
+
+        else if (type == PieceType.ROOK){
+            return rookMoves(board,myPosition);
         }
         return new HashSet<>();
     }
@@ -222,8 +223,72 @@ public class ChessPiece {
         return knightMove;
     }
 
-    private HashSet<ChessMove> pawnMoves(ChessBoard board,ChessPosition myPosition){
-        HashSet<ChessMove> pawnMove = new HashSet<>();
-        
+    private HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition){
+        HashSet<ChessMove> rookMove = new HashSet<>();
+        int i = myPosition.getRow() + 1;
+        int j = myPosition.getColumn();
+        while(i < 9) {
+            ChessPosition position=new ChessPosition(i,j);
+            i++;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    rookMove.add(new ChessMove(myPosition,position));
+                }
+                break;
+            } else {
+                rookMove.add(new ChessMove(myPosition, position));
+            }
+        }
+        i = myPosition.getRow();
+        j = myPosition.getColumn() + 1;
+        while(j < 9) {
+            ChessPosition position=new ChessPosition(i,j);
+            j++;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    rookMove.add(new ChessMove(myPosition,position));
+                }
+                break;
+            } else {
+                rookMove.add(new ChessMove(myPosition, position));
+            }
+        }
+        i = myPosition.getRow();
+        j = myPosition.getColumn() - 1;
+        while(j > 0) {
+            ChessPosition position=new ChessPosition(i,j);
+            j--;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    rookMove.add(new ChessMove(myPosition,position));
+                }
+                break;
+            } else {
+                rookMove.add(new ChessMove(myPosition, position));
+            }
+        }
+        i = myPosition.getRow() - 1;
+        j = myPosition.getColumn();
+        while(i > 0) {
+            ChessPosition position=new ChessPosition(i,j);
+            i--;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    rookMove.add(new ChessMove(myPosition,position));
+                }
+                break;
+            } else {
+                rookMove.add(new ChessMove(myPosition, position));
+            }
+        }
+        return rookMove;
     }
 }
