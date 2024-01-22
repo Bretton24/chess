@@ -53,6 +53,9 @@ public class ChessPiece {
         if (type == PieceType.BISHOP){
             return bishopMoves(board,myPosition);
         }
+        else if (type == PieceType.KING){
+            return kingMoves(board,myPosition);
+        }
         return new HashSet<>();
     }
 
@@ -139,9 +142,32 @@ public class ChessPiece {
                 bishopMove.add(new ChessMove(myPosition, position));
             }
         }
-
-
         return bishopMove;
+    }
+
+    private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition){
+        HashSet<ChessMove> kingMove = new HashSet<>();
+        for (int i = 0;i < 3;i++){
+            for (int j = 0; j < 3; j++){
+                if (i + myPosition.getRow() < 9 && j + myPosition.getColumn() < 9 && i + myPosition.getRow() > 0 && j + myPosition.getColumn() > 0){
+                    ChessPosition position = new ChessPosition(i + myPosition.getRow(),j+ myPosition.getColumn());
+                    if (position != myPosition){
+                        if (board.pieceAtPosition(position)){
+                            ChessPiece piece = board.getPiece(position);
+                            if(this.pieceColor != piece.pieceColor){
+                                board.removePiece(position);
+                                kingMove.add(new ChessMove(myPosition,position));
+                            }
+                        }
+                        else{
+                            kingMove.add(new ChessMove(myPosition,position));
+                    }
+                    }
+                }
+
+            }
+        }
+        return kingMove;
     }
 
 }
