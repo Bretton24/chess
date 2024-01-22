@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -33,7 +32,7 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
@@ -54,19 +53,95 @@ public class ChessPiece {
         if (type == PieceType.BISHOP){
             return bishopMoves(board,myPosition);
         }
-        return new ArrayList<>();
+        return new HashSet<>();
     }
 
-    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
-        for (int i = myPosition.getRow();i < 8;i++){
-            for (int j =myPosition.getColumn();j < 8;j++){
-                ChessPosition position = new ChessPosition(i,j);
-                if (board.pieceAtPosition(position)){
-                        
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that=(ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+
+    private HashSet<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
+        HashSet<ChessMove> bishopMove = new HashSet<>();
+        int i = myPosition.getRow() + 1;
+        int j = myPosition.getColumn() + 1;
+        while(i < 9 && j < 9) {
+            ChessPosition position=new ChessPosition(i,j);
+            i++;
+            j++;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    bishopMove.add(new ChessMove(myPosition,position));
                 }
+                break;
+            } else {
+                bishopMove.add(new ChessMove(myPosition, position));
+            }
+        }
+        i = myPosition.getRow() + 1;
+        j = myPosition.getColumn() - 1;
+        while(i < 9 && j > 0) {
+            ChessPosition position=new ChessPosition(i,j);
+            i++;
+            j--;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    bishopMove.add(new ChessMove(myPosition,position));
+                }
+                break;
+            } else {
+                bishopMove.add(new ChessMove(myPosition, position));
+            }
+        }
+        i = myPosition.getRow() - 1;
+        j = myPosition.getColumn() - 1;
+        while(i > 0 && j > 0) {
+            ChessPosition position=new ChessPosition(i,j);
+            i--;
+            j--;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    bishopMove.add(new ChessMove(myPosition,position));
+                }
+                break;
+            } else {
+                bishopMove.add(new ChessMove(myPosition, position));
+            }
+        }
+        i = myPosition.getRow() - 1;
+        j = myPosition.getColumn() + 1;
+        while(i > 0 && j < 9) {
+            ChessPosition position=new ChessPosition(i,j);
+            i--;
+            j++;
+            if (board.pieceAtPosition(position)) {
+                ChessPiece piece =board.getPiece(position);
+                if (this.pieceColor != piece.pieceColor){
+                    board.removePiece(position);
+                    bishopMove.add(new ChessMove(myPosition,position));
+                }
+                break;
+            } else {
+                bishopMove.add(new ChessMove(myPosition, position));
             }
         }
 
+
+        return bishopMove;
     }
 
 }
