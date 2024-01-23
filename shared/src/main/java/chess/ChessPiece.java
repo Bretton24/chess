@@ -58,12 +58,12 @@ public class ChessPiece {
         }
         else if (type == PieceType.KNIGHT){
             return knightMoves(board,myPosition);
-        }
-        else if (type == PieceType.QUEEN){
-            return queenMoves(board,myPosition);
-        }
-        else if (type == PieceType.ROOK){
-            return rookMoves(board,myPosition);
+        } else if (type == PieceType.PAWN) {
+            return pawnMoves(board,myPosition);
+        } else if (type == PieceType.QUEEN) {
+            return queenMoves(board, myPosition);
+        } else if (type == PieceType.ROOK) {
+            return rookMoves(board, myPosition);
         }
         return new HashSet<>();
     }
@@ -228,10 +228,20 @@ public class ChessPiece {
     private HashSet<ChessMove> pawnMoves(ChessBoard board,ChessPosition myPosition) {
         HashSet<ChessMove> pawnMove = new HashSet<>();
         if (this.getTeamColor() == ChessGame.TeamColor.WHITE){
-            
+            int i =myPosition.getRow() + 1;
+            int j =myPosition.getColumn();
+            ChessPosition position = new ChessPosition(i,j);
+            if (i < 9 && !board.pieceAtPosition(position)){
+                if ( i == 8){
+                    //pawn promotion
+                }
+                else{
+                    pawnMove.add(new ChessMove(myPosition,position));
+                }
+            }
         }
         else {
-
+            //logic for team black
         }
         return pawnMove;
     }
