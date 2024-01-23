@@ -227,6 +227,12 @@ public class ChessPiece {
 
     private HashSet<ChessMove> pawnMoves(ChessBoard board,ChessPosition myPosition) {
         HashSet<ChessMove> pawnMove = new HashSet<>();
+        if (this.getTeamColor() == ChessGame.TeamColor.WHITE){
+            
+        }
+        else {
+
+        }
         return pawnMove;
     }
 
