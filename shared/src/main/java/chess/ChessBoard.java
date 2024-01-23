@@ -67,7 +67,93 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        int i = 2;
+        int j = 1;
+        while (j < 9){
+            ChessPosition position = new ChessPosition(i,j);
+            ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            this.addPiece(position,piece);
+            j++;
+        }
+        i = 7;
+        j = 1;
+        while (j < 9){
+            ChessPosition position = new ChessPosition(i,j);
+            ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            this.addPiece(position,piece);
+            j++;
+        }
+        i = 1;
+        j = 1;
+        while (j < 9){
+            ChessPosition position = new ChessPosition(i,j);
+            if (j == 1 || j == 8){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+                this.addPiece(position,piece);
+            }
+            else if (j == 2 || j == 7){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+                this.addPiece(position,piece);
+            }
+            else if (j == 3 || j == 6){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+                this.addPiece(position,piece);
+            }
+            else if (j == 4){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+                this.addPiece(position,piece);
+            }
+            else if (j == 5){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+                this.addPiece(position,piece);
+            }
+            j++;
+        }
+        i = 8;
+        j = 1;
+        while (j < 9){
+            ChessPosition position = new ChessPosition(i,j);
+            if (j == 1 || j == 8){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+                this.addPiece(position,piece);
+            }
+            else if (j == 2 || j == 7){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+                this.addPiece(position,piece);
+            }
+            else if (j == 3 || j == 6){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+                this.addPiece(position,piece);
+            }
+            else if (j == 4){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+                this.addPiece(position,piece);
+            }
+            else if (j == 5){
+                ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+                this.addPiece(position,piece);
+            }
+            j++;
+        }
     }
 
+    @Override
+    public String toString() {
+        String value = "";
+        for(int i = 1;i < 9;i++){
+            for(int j = 1;j < 9;j++){
+                ChessPosition position = new ChessPosition(i,j);
+                if (this.pieceAtPosition(position)){
+                    ChessPiece piece = this.getPiece(position);
+
+                    value += "|" + piece.getTeamColor() + "|";
+                }
+                else{
+                    value += "| |";
+                }
+            }
+            value += "\n";
+        }
+        return value;
+    }
 }

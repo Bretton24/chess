@@ -225,6 +225,11 @@ public class ChessPiece {
         return knightMove;
     }
 
+    private HashSet<ChessMove> pawnMoves(ChessBoard board,ChessPosition myPosition) {
+        HashSet<ChessMove> pawnMove = new HashSet<>();
+        return pawnMove;
+    }
+
     private HashSet<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition){
         HashSet<ChessMove> queenMove = bishopMoves(board,myPosition);
         HashSet<ChessMove> moves = rookMoves(board,myPosition);
