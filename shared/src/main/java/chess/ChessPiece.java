@@ -232,12 +232,49 @@ public class ChessPiece {
             int j =myPosition.getColumn();
             ChessPosition position = new ChessPosition(i,j);
             if (i < 9 && !board.pieceAtPosition(position)){
-                if ( i == 8){
-                    //pawn promotion
+                pawnMove.add(new ChessMove(myPosition,position));
+                if (myPosition.getRow() == 2){
+                    ChessPosition nextPosition = new ChessPosition(i+1,j);
+                    if (!board.pieceAtPosition(nextPosition)){
+                        pawnMove.add(new ChessMove(myPosition,nextPosition));
+                    }
                 }
-                else{
-                    pawnMove.add(new ChessMove(myPosition,position));
-                }
+            }
+            if (i < 9 && j > 0 && j < 9){
+                   if (j == 1){
+                       ChessPosition attackPosition1 = new ChessPosition(i,j+1);
+                       if (board.pieceAtPosition(attackPosition1)){
+                           ChessPiece piece = board.getPiece(attackPosition1);
+                           if (piece.pieceColor == ChessGame.TeamColor.BLACK){
+                               pawnMove.add(new ChessMove(myPosition,attackPosition1));
+                           }
+                       }
+                   }
+                   else if(j == 8){
+                       ChessPosition attackPosition1 = new ChessPosition(i,j-1);
+                       if (board.pieceAtPosition(attackPosition1)){
+                           ChessPiece piece = board.getPiece(attackPosition1);
+                           if (piece.pieceColor == ChessGame.TeamColor.BLACK){
+                               pawnMove.add(new ChessMove(myPosition,attackPosition1));
+                           }
+                       }
+                   }
+                   else{
+                       ChessPosition attackPosition1 = new ChessPosition(i,j-1);
+                       ChessPosition attackPosition2 = new ChessPosition(i,j+1);
+                       if (board.pieceAtPosition(attackPosition1)){
+                           ChessPiece piece = board.getPiece(attackPosition1);
+                           if (piece.pieceColor == ChessGame.TeamColor.BLACK){
+                               pawnMove.add(new ChessMove(myPosition,attackPosition1));
+                           }
+                       }
+                       else if (board.pieceAtPosition(attackPosition2)){
+                           ChessPiece piece = board.getPiece(attackPosition2);
+                           if (piece.pieceColor == ChessGame.TeamColor.BLACK){
+                               pawnMove.add(new ChessMove(myPosition,attackPosition2));
+                           }
+                       }
+                   }
             }
         }
         else {
