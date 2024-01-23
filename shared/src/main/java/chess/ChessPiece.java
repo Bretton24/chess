@@ -307,4 +307,10 @@ public class ChessPiece {
         }
         return rookMove;
     }
+
+    @Override
+    public String toString() {
+        String value = this.pieceColor + " " + this.getPieceType();
+        return value;
+    }
 }

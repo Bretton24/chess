@@ -33,7 +33,7 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that=(ChessBoard) o;
-        return Arrays.equals(squares, that.squares);
+        return Arrays.deepEquals(squares, that.squares);
     }
 
     @Override
@@ -145,8 +145,7 @@ public class ChessBoard {
                 ChessPosition position = new ChessPosition(i,j);
                 if (this.pieceAtPosition(position)){
                     ChessPiece piece = this.getPiece(position);
-
-                    value += "|" + piece.getTeamColor() + "|";
+                    value += "|" + piece.toString() + "|";
                 }
                 else{
                     value += "| |";
