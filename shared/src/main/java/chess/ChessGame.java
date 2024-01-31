@@ -9,9 +9,9 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
+    private ChessBoard board;
     public ChessGame() {
-
+        setBoard(this.board);
     }
 
     /**
@@ -105,6 +105,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return this.board;
     }
 }
