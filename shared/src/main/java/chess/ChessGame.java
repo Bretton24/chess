@@ -11,7 +11,6 @@ import java.util.Collection;
 public class ChessGame {
     private ChessBoard board;
     public ChessGame() {
-        setBoard(this.board);
     }
 
     /**
@@ -96,7 +95,8 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        board.resetBoard();
+        this.board = board;
+        this.board.resetBoard();
     }
 
     /**
@@ -104,7 +104,9 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard() {
-        return this.board;
-    }
+    public ChessBoard getBoard()
+        {
+            return this.board;
+        }
+
 }
