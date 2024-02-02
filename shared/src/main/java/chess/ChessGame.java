@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -10,6 +11,7 @@ import java.util.Collection;
  */
 public class ChessGame {
     private ChessBoard board;
+    private TeamColor teamColor;
     public ChessGame() {
     }
 
@@ -17,7 +19,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return teamColor;
     }
 
     /**
@@ -26,7 +28,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        teamColor = team;
     }
 
     /**
@@ -45,7 +47,35 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (this.board.pieceAtPosition(startPosition)){
+            ChessPiece piece = this.board.getPiece(startPosition);
+            return adjustedPieceMoves(piece,startPosition);
+        }
+        else{
+            return null;
+        }
+
+
+    }
+
+    private Collection<ChessMove> adjustedPieceMoves (ChessPiece piece,ChessPosition startPosition){
+        Collection<ChessMove> adjustedPieces =  piece.pieceMoves(board,startPosition);
+        for(int i = 1;i < 9;i++) {
+            for (int j=1; j < 9; j++) {
+                var position = new ChessPosition(i,j);
+                if (board.pieceAtPosition(position)){
+                    var enemyPiece = board.getPiece(position);
+                    if (enemyPiece.getTeamColor() != piece.getTeamColor()){
+                        var set = adjustedPieces;
+                        var enemyAttacks = enemyPiece.pieceMoves(board,position);
+                        set.retainAll(enemyAttacks);
+                        adjustedPieces.removeAll(set);
+                    }
+                }
+
+            }
+        }
+        return adjustedPieces;
     }
 
     /**
@@ -104,9 +134,8 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard()
-        {
+    public ChessBoard getBoard() {
             return this.board;
-        }
+    }
 
 }
