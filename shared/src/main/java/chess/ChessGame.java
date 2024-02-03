@@ -11,7 +11,7 @@ import java.util.HashSet;
  */
 public class ChessGame {
     private ChessBoard board;
-    private TeamColor teamColor;
+    private TeamColor team;
     public ChessGame() {
     }
 
@@ -19,7 +19,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return teamColor;
+        return this.team;
     }
 
     /**
@@ -28,7 +28,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        teamColor = team;
+        this.team = team;
     }
 
     /**
@@ -72,7 +72,6 @@ public class ChessGame {
                         adjustedPieces.removeAll(set);
                     }
                 }
-
             }
         }
         return adjustedPieces;
@@ -84,8 +83,21 @@ public class ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+    public void makeMove(ChessMove move) {
+        var piece = board.getPiece(move.getStartPosition());
+        var validMoves = validMoves(move.getStartPosition());
+        try{
+            if(validMoves.contains(move.getEndPosition())){
+                board.removePiece(move.getStartPosition());
+                //board.addPiece(move.getEndPosition(),piece);
+            }
+            else{
+                throw new InvalidMoveException("Invalid Move");
+            }
+        }catch(InvalidMoveException e){
+            System.out.println("Caught exception: " + e.getMessage());
+        }
+
     }
 
     /**
@@ -126,7 +138,6 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board = board;
-        this.board.resetBoard();
     }
 
     /**
@@ -135,7 +146,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-            return this.board;
+        return this.board;
     }
 
 }

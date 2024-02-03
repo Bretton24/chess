@@ -44,5 +44,5 @@ public class ChessBoardTests {
 
         Assertions.assertEquals(expectedBoard, actualBoard);
     }
-
+    
 }
