@@ -11,9 +11,19 @@ import java.util.Objects;
 public class ChessPosition {
     private final int row;
     private final int col;
+    private final int edgeBottom  = 1;
+    private final int edgeTop = 8;
+
     public ChessPosition(int row, int col) {
         this.row = row;
         this.col = col;
+    }
+
+    public int getEdgeBottom(){
+        return this.edgeBottom;
+    }
+    public int getEdgeTop(){
+        return this.edgeTop;
     }
 
     @Override

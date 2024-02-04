@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -13,6 +14,19 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor team;
     public ChessGame() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame=(ChessGame) o;
+        return Objects.equals(board, chessGame.board) && team == chessGame.team;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, team);
     }
 
     /**
@@ -47,35 +61,35 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (this.board.pieceAtPosition(startPosition)){
-            ChessPiece piece = this.board.getPiece(startPosition);
-            return adjustedPieceMoves(piece,startPosition);
+        if(board.pieceAtPosition(startPosition)){
+            var piece = board.getPiece(startPosition);
+            var myPieceMoves = piece.pieceMoves(board,startPosition);
+            for(int i = 1; i < 9;i++){
+                for(int j = 1; j < 9; j++){
+                    var position = new ChessPosition(i,j);
+                    if(board.pieceAtPosition(position) ){
+                        var maybeEnemy = board.getPiece(position);
+                        if(maybeEnemy.getTeamColor() != piece.getTeamColor()){
+                            if(position != startPosition){
+                                var enemyMoves = maybeEnemy.pieceMoves(board,position);
+                                var tempArray = myPieceMoves;
+                                tempArray.retainAll(enemyMoves);
+                                myPieceMoves.removeAll(tempArray);
+                            }
+                        }
+                    }
+                }
+            }
+            return myPieceMoves;
         }
         else{
             return null;
         }
-
-
     }
 
-    private Collection<ChessMove> adjustedPieceMoves (ChessPiece piece,ChessPosition startPosition){
-        Collection<ChessMove> adjustedPieces =  piece.pieceMoves(board,startPosition);
-        for(int i = 1;i < 9;i++) {
-            for (int j=1; j < 9; j++) {
-                var position = new ChessPosition(i,j);
-                if (board.pieceAtPosition(position)){
-                    var enemyPiece = board.getPiece(position);
-                    if (enemyPiece.getTeamColor() != piece.getTeamColor()){
-                        var set = adjustedPieces;
-                        var enemyAttacks = enemyPiece.pieceMoves(board,position);
-                        set.retainAll(enemyAttacks);
-                        adjustedPieces.removeAll(set);
-                    }
-                }
-            }
-        }
-        return adjustedPieces;
-    }
+
+
+
 
     /**
      * Makes a move in a chess game
@@ -87,9 +101,9 @@ public class ChessGame {
         var piece = board.getPiece(move.getStartPosition());
         var validMoves = validMoves(move.getStartPosition());
         try{
-            if(validMoves.contains(move.getEndPosition())){
+            if(validMoves.contains(move.getEndPosition()) && piece.getTeamColor() == getTeamTurn()){
+                board.addPiece(move.getEndPosition(),piece);
                 board.removePiece(move.getStartPosition());
-                //board.addPiece(move.getEndPosition(),piece);
             }
             else{
                 throw new InvalidMoveException("Invalid Move");
