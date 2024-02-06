@@ -170,7 +170,7 @@ public class ChessGame {
         if(isInCheck(teamColor)){
             var pos = board.getKingPosition(teamColor);
             var valid = this.validMoves(pos);
-            if (valid == null) {
+            if (valid.isEmpty()) {
                 return true;
             }
         }
