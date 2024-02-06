@@ -119,8 +119,17 @@ public class ChessGame {
             if(piece.getTeamColor() == getTeamTurn()){
                 for (ChessMove moveInPieceMoves : pieceMoves){
                     if(moveInPieceMoves.getEndPosition().getRow() == move.getEndPosition().getRow() && moveInPieceMoves.getEndPosition().getColumn() == move.getEndPosition().getColumn()){
-                        board.addPiece(move.getEndPosition(),piece);
-                        board.removePiece(move.getEndPosition());
+                        if(move.getPromotionPiece() == null){
+                            board.removePiece(move.getEndPosition());
+                            board.addPiece(move.getEndPosition(),piece);
+                            board.removePiece(move.getStartPosition());
+                        }
+                        else{
+                            board.removePiece(move.getEndPosition());
+                            board.addPiece(move.getEndPosition(),new ChessPiece(getTeamTurn(),move.getPromotionPiece()));
+                            board.removePiece(move.getStartPosition());
+                        }
+
                     }
                 }
                 if(getTeamTurn() == TeamColor.BLACK){
@@ -149,8 +158,10 @@ public class ChessGame {
                         var enemyMoves = piece.pieceMoves(board,position);
                         var kingPosition = board.getKingPosition(teamColor);
                         for (ChessMove pos : enemyMoves){
-                            if(pos.getEndPosition().getRow() == kingPosition.getRow() && pos.getEndPosition().getColumn()  == kingPosition.getColumn() && position != kingPosition){
-                                return true;
+                            if(kingPosition != null){
+                                if(pos.getEndPosition().getRow() == kingPosition.getRow() && pos.getEndPosition().getColumn()  == kingPosition.getColumn() && position != kingPosition){
+                                    return true;
+                                }
                             }
                         }
                     }

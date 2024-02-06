@@ -54,7 +54,7 @@ public class ChessMove {
     }
 
     public String toString(){
-        String value = endPosition.toString() + "\n";
+        String value = endPosition.toString();
         return value;
     }
 
