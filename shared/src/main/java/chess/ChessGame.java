@@ -154,7 +154,11 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if(isInCheck(teamColor)){
-            
+            var pos = board.getKingPosition(teamColor);
+            var valid = this.validMoves(pos);
+            if (valid == null) {
+                return true;
+            }
         }
         return false;
     }
