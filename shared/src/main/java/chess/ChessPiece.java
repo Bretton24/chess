@@ -16,6 +16,7 @@ public class ChessPiece {
         this.type = type;
     }
 
+
     /**
      * The various different chess piece options
      */
@@ -73,6 +74,7 @@ public class ChessPiece {
         }
         return new HashSet<>();
     }
+
 
     @Override
     public boolean equals(Object o) {

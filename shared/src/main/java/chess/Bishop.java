@@ -19,7 +19,6 @@ public class Bishop {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           bishopMove.add(new ChessMove(myPosition,position));
         }
         break;
@@ -36,7 +35,6 @@ public class Bishop {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           bishopMove.add(new ChessMove(myPosition,position));
         }
         break;
@@ -53,7 +51,6 @@ public class Bishop {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           bishopMove.add(new ChessMove(myPosition,position));
         }
         break;
@@ -70,7 +67,6 @@ public class Bishop {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           bishopMove.add(new ChessMove(myPosition,position));
         }
         break;

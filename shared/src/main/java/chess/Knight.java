@@ -40,7 +40,6 @@ public class Knight {
             if (board.pieceAtPosition(position)){
               ChessPiece piece = board.getPiece(position);
               if(this.pieceColor != piece.getTeamColor()){
-                board.removePiece(position);
                 knightMove.add(new ChessMove(myPosition,position));
               }
             }

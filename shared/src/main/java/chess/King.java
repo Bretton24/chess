@@ -5,6 +5,7 @@ import java.util.HashSet;
 public class King {
   private final ChessGame.TeamColor pieceColor;
   private HashSet<ChessMove> kingMove = new HashSet<>();
+  private ChessPosition currentPosition;
   King(ChessGame.TeamColor pieceColor){
     this.pieceColor = pieceColor;
   }
@@ -18,7 +19,6 @@ public class King {
             if (board.pieceAtPosition(position)){
               ChessPiece piece = board.getPiece(position);
               if(this.pieceColor != piece.getTeamColor()){
-                board.removePiece(position);
                 kingMove.add(new ChessMove(myPosition,position));
               }
             }

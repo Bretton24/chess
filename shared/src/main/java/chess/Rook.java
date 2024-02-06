@@ -22,7 +22,6 @@ public class Rook {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           rookMove.add(new ChessMove(myPosition,position));
         }
         break;
@@ -38,7 +37,6 @@ public class Rook {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           rookMove.add(new ChessMove(myPosition,position));
         }
         break;
@@ -54,7 +52,6 @@ public class Rook {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           rookMove.add(new ChessMove(myPosition,position));
         }
         break;
@@ -70,7 +67,6 @@ public class Rook {
       if (board.pieceAtPosition(position)) {
         ChessPiece piece =board.getPiece(position);
         if (this.pieceColor != piece.getTeamColor()){
-          board.removePiece(position);
           rookMove.add(new ChessMove(myPosition,position));
         }
         break;
