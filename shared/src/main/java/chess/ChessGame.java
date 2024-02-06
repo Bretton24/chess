@@ -63,15 +63,17 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        var someMoves = new HashSet<ChessMove>() {
+        };
         if(board.pieceAtPosition(startPosition)) {
             var piece=board.getPiece(startPosition);
             var moves=piece.pieceMoves(board, startPosition);
             for (ChessMove move : moves) {
-                if (!isValid(move)) {
-                    moves.remove(move);
+                if (isValid(move)) {
+                    someMoves.add(move);
                 }
             }
-            return moves;
+            return someMoves;
         }
         return null;
     }
@@ -93,6 +95,7 @@ public class ChessGame {
         var originalBoard = this.board;
         var copyBoard = this.copyChessboard();
         var piece = copyBoard.getPiece(move.getStartPosition());
+        copyBoard.removePiece(move.getStartPosition());
         copyBoard.addPiece(move.getEndPosition(),piece);
         this.setBoard(copyBoard);
         if(isInCheck(piece.getTeamColor())){
@@ -109,12 +112,23 @@ public class ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) {
+    public void makeMove(ChessMove move) throws InvalidMoveException {
         if(board.pieceAtPosition(move.getStartPosition())){
             var piece = board.getPiece(move.getStartPosition());
             var pieceMoves = this.validMoves(move.getStartPosition());
-            if(pieceMoves.contains(move.getEndPosition())){
-                board.addPiece(move.getEndPosition(),piece);
+            if(piece.getTeamColor() == getTeamTurn()){
+                for (ChessMove moveInPieceMoves : pieceMoves){
+                    if(moveInPieceMoves.getEndPosition().getRow() == move.getEndPosition().getRow() && moveInPieceMoves.getEndPosition().getColumn() == move.getEndPosition().getColumn()){
+                        board.addPiece(move.getEndPosition(),piece);
+                        board.removePiece(move.getEndPosition());
+                    }
+                }
+                if(getTeamTurn() == TeamColor.BLACK){
+                    setTeamTurn(TeamColor.WHITE);
+                }
+                else{
+                    setTeamTurn(TeamColor.BLACK);
+                }
             }
         }
     }
