@@ -133,15 +133,17 @@ public class ChessGame {
                         invalid = false;
                     }
                 }
+
+            }
+            if(invalid) {
+                throw new InvalidMoveException();
+            }else{
                 if(getTeamTurn() == TeamColor.BLACK){
                     setTeamTurn(TeamColor.WHITE);
                 }
                 else{
                     setTeamTurn(TeamColor.BLACK);
                 }
-            }
-            if(invalid) {
-                throw new InvalidMoveException();
             }
 
         }
