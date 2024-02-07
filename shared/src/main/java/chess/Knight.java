@@ -1,12 +1,26 @@
 package chess;
 
 import java.util.HashSet;
+import java.util.Objects;
 
 public class Knight {
   private final ChessGame.TeamColor pieceColor;
   private HashSet<ChessMove> knightMove = new HashSet<>();
   Knight(ChessGame.TeamColor pieceColor){
     this.pieceColor = pieceColor;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Knight knight=(Knight) o;
+    return pieceColor == knight.pieceColor && Objects.equals(knightMove, knight.knightMove);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(pieceColor, knightMove);
   }
 
   public HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition){

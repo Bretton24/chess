@@ -2,6 +2,7 @@ package chess;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class Queen {
   private final ChessGame.TeamColor pieceColor;
@@ -13,6 +14,19 @@ public class Queen {
     this.pieceColor = pieceColor;
      rook = new Rook(this.pieceColor);
      bishop = new Bishop(this.pieceColor);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Queen queen=(Queen) o;
+    return pieceColor == queen.pieceColor && Objects.equals(rook, queen.rook) && Objects.equals(bishop, queen.bishop) && Objects.equals(queenMove, queen.queenMove);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(pieceColor, rook, bishop, queenMove);
   }
 
   public HashSet<ChessMove> getQueenMove() {
