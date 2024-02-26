@@ -6,6 +6,7 @@ import model.UserData;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
 
 public class MemoryUserDAO implements UserDAO{
@@ -19,6 +20,20 @@ public class MemoryUserDAO implements UserDAO{
     }
     return user;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    MemoryUserDAO that=(MemoryUserDAO) o;
+    return nextId == that.nextId && Objects.equals(users, that.users);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(nextId, users);
+  }
+
   public boolean getUser(UserData user){
     return users.contains(user);
   }
