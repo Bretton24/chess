@@ -8,12 +8,4 @@ import model.AuthData;
 import model.GameData;
 
 public class GameService extends Services {
-
-
-
-
-//  public GameData addGame(GameData game){
-//    return new GameData();
-//  }
-
 }

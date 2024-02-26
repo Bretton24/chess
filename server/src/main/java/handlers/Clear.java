@@ -4,16 +4,19 @@ import dataAccess.GameDAO;
 import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
 import dataAccess.MemoryUserDAO;
+import org.eclipse.jetty.client.HttpResponseException;
 import service.DeleteService;
 import spark.Request;
 import spark.Response;
 
 public class Clear {
 
-  public static Object handle(Request request, Response response){
+  Clear(){}
+  public static Object handle(Request req, Response res) throws Exception{
     DeleteService service = new DeleteService();
     service.deleteDatabase();
-    response.status(200);
+    res.status(200);
     return "";
   }
+
 }

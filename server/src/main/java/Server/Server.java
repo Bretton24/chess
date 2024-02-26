@@ -1,6 +1,10 @@
 package server;
 
+import handlers.Clear;
+import handlers.Login;
+import handlers.Register;
 import spark.*;
+
 
 public class Server {
 
@@ -9,7 +13,10 @@ public class Server {
 
     Spark.staticFiles.location("web");
 
-    Spark.delete("/db", ((request, response) -> null));
+    Spark.delete("/db", Clear::handle);
+    Spark.post("/user", Register::handle);
+    Spark.post("/session", Login::handle);
+
 
     Spark.awaitInitialization();
     return Spark.port();
