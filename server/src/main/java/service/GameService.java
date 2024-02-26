@@ -2,16 +2,18 @@ package service;
 
 import dataAccess.AuthDAO;
 import dataAccess.GameDAO;
+import dataAccess.MemoryGameDAO;
 import dataAccess.UserDAO;
 import model.AuthData;
+import model.GameData;
 
-public class GameService {
-  private final GameDAO gameAccess;
-  public GameService(GameDAO gamesAccess){
-    this.gameAccess = gamesAccess;
-  }
-  public void clearGames(){
-    gameAccess.deleteAllGames();
-  }
+public class GameService extends Services {
+
+
+
+
+//  public GameData addGame(GameData game){
+//    return new GameData();
+//  }
 
 }

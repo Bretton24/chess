@@ -1,20 +1,9 @@
 package service;
 
-import dataAccess.AuthDAO;
-import dataAccess.GameDAO;
-import dataAccess.UserDAO;
+import dataAccess.*;
 
 
-public class DeleteService {
-  private final GameDAO gameAccess;
-  private final UserDAO userAccess;
-  private final AuthDAO authAccess;
-
-  public DeleteService(GameDAO gameAccess,UserDAO userAccess,AuthDAO authAccess){
-    this.gameAccess = gameAccess;
-    this.userAccess = userAccess;
-    this.authAccess = authAccess;
-  }
+public class DeleteService extends Services {
 
   public void deleteDatabase(){
     gameAccess.deleteAllGames();
