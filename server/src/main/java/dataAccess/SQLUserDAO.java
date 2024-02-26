@@ -1,4 +1,4 @@
 package dataAccess;
 
-public class SQLUserDAO {
+public class SQLUserDAO implements UserDAO {
 }
