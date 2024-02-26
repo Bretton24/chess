@@ -6,9 +6,12 @@ import dataAccess.UserDAO;
 import model.AuthData;
 
 public class GameService {
-  public void clearAll(AuthDAO authAccess,GameDAO gameAccess,UserDAO userAccess){
-    authAccess.deleteAllAuthTokens();
-    gameAccess.deleteAllGames();
-    userAccess.deleteAllUsers();
+  private final GameDAO gameAccess;
+  public GameService(GameDAO gamesAccess){
+    this.gameAccess = gamesAccess;
   }
+  public void clearGames(){
+    gameAccess.deleteAllGames();
+  }
+
 }

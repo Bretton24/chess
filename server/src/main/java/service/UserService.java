@@ -1,13 +1,16 @@
 package service;
 
+import dataAccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 
 public class UserService {
-  public AuthData register(UserData user){return null;}
-  public AuthData login(UserData user){return null;}
-  public void logout(UserData user){}
+  private final UserDAO userAccess;
+
+  public UserService(UserDAO userAccess){
+    this.userAccess = userAccess;
+  }
 
 
 
