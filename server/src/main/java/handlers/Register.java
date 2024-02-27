@@ -9,7 +9,6 @@ import spark.Request;
 import spark.Response;
 
 public class Register {
-  Register(){}
   public static Object handle(Request req, Response res) throws Exception{
     var user = new Gson().fromJson(req.body(), UserData.class);
     UserService service = new UserService();

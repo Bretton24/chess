@@ -22,6 +22,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
   }
 
+
   public void deleteAuth(UserData user){
     if (authTokens.containsKey(user.username())){
       var authToken = authTokens.remove(user.username());

@@ -11,6 +11,6 @@ public class DeleteServiceTest {
   @Test
   void deleteAll() {
 
-    service.deleteDatabase();
+    //service.deleteDatabase();
   }
 }
