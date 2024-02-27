@@ -15,9 +15,9 @@ public class ListGames {
     var authToken = req.headers("Authorization");
     GameService service = new GameService();
     try{
-      GameID newGame = service.listGames(authToken,game);
+      var games = service.listGames(authToken);
       res.status(200);
-      return new Gson().toJson(newGame);
+      return new Gson().toJson(games);
     }
     catch(UnauthorizedAccessException e){
       res.status(401);
