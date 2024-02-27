@@ -2,24 +2,50 @@ package dataAccess;
 
 import model.UserData;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO{
 
-  final private HashSet<UserData> users = new HashSet<>();
+  final private HashMap<String,UserData> users = new HashMap<>();
 
   public UserData createUser(UserData user) throws DuplicateException,BadRequestException{
-    if (user.username() == null || user.password() == null){
-      throw new BadRequestException("error: bad request");
+    if (user.username() == null || user.password() == null || user.email() == null){
+      throw new BadRequestException("Error: bad request");
     }
-    if (!users.contains(user)){
-      users.add(user);
+    if (!users.containsKey(user.username())){
+      users.put(user.username(), user);
       return user;
     }
     else{
       throw new DuplicateException("Error: already taken");
     }
+  }
+
+
+  public UserData getUser(UserData user) throws BadRequestException,UnauthorizedAccessException {
+    if (users.containsKey(user.username())){
+      var existingUser = users.get(user.username());
+      if (existingUser.password() != user.password()){
+        throw new UnauthorizedAccessException("Error: incorrect password");
+      }
+      return user;
+    }
+    else{
+      throw new BadRequestException("Error: user does not exist");
+    }
+  }
+
+  public void deleteAllUsers() throws DataAccessException {
+    users.clear();
+    if (!users.isEmpty()){
+      throw new DataAccessException("Error: users not deleted");
+    }
+  }
+
+  public Integer lengthOfUsers(){
+    return users.size();
   }
 
   @Override
@@ -33,21 +59,5 @@ public class MemoryUserDAO implements UserDAO{
   @Override
   public int hashCode() {
     return Objects.hash( users);
-  }
-
-  public UserData getUser(UserData user) throws DataAccessException {
-    if (users.contains(user)){
-      return user;
-    }
-    else{
-      throw new DataAccessException("User does not exist");
-    }
-  }
-
-  public void deleteAllUsers() throws DataAccessException {
-    users.clear();
-    if (!users.isEmpty()){
-      throw new DataAccessException("user still in users");
-    }
   }
 }

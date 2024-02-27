@@ -17,7 +17,14 @@ public class MemoryGameDAO implements GameDAO{
     return games.get(gameID);
   }
   @Override
-  public void deleteAllGames() {
+  public void deleteAllGames() throws DataAccessException {
     games.clear();
+    if (!games.isEmpty()){
+      throw new DataAccessException("Error: games not deleted");
+    }
+  }
+
+  public Integer lengthOfGames(){
+    return games.size();
   }
 }

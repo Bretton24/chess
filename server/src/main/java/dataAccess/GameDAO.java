@@ -1,5 +1,5 @@
 package dataAccess;
 
 public interface GameDAO {
-  default void deleteAllGames(){}
+  default void deleteAllGames() throws DataAccessException{}
 }

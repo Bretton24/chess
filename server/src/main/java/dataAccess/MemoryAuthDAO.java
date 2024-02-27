@@ -17,7 +17,7 @@ public class MemoryAuthDAO implements AuthDAO{
       return authToken;
     }
     else{
-      throw new DataAccessException("Authtoken already exists.");
+      throw new DataAccessException("Error: authToken already exists.");
     }
   }
 
@@ -31,7 +31,11 @@ public class MemoryAuthDAO implements AuthDAO{
   public void deleteAllAuthTokens() throws DataAccessException{
     authTokens.clear();
     if (!authTokens.isEmpty()){
-      throw new DataAccessException("authtokens not cleared");
+      throw new DataAccessException("Error: authTokens not deleted");
     }
+  }
+
+  public Integer sizeOfAuthTokens(){
+    return authTokens.size();
   }
 }

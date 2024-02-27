@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataAccess.BadRequestException;
 import dataAccess.DataAccessException;
 import dataAccess.DuplicateException;
+import dataAccess.UnauthorizedAccessException;
 import model.UserData;
 import model.message;
 import service.UserService;
@@ -19,6 +20,11 @@ public class Register {
       res.status(200);
       return new Gson().toJson(authToken);
     }
+    catch(UnauthorizedAccessException e){
+      res.status(401);
+      var mess = new message(e.getMessage());
+      return new Gson().toJson(mess);
+    }
     catch(DuplicateException e){
       res.status(403);
       var mess = new message(e.getMessage());
@@ -30,6 +36,7 @@ public class Register {
       return new Gson().toJson(mess);
     }
     catch(DataAccessException e){
+      res.status(500);
       var mess = new message(e.getMessage());
       return new Gson().toJson(mess);
     }
