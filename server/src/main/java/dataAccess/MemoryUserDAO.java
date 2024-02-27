@@ -10,15 +10,17 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class MemoryUserDAO implements UserDAO{
-  private int nextId = 1;
+
   final private HashSet<UserData> users = new HashSet<>();
 
-  public UserData createUser(UserData user){
+  public UserData createUser(UserData user) throws DataAccessException{
     if (!users.contains(user)){
       users.add(user);
       return user;
     }
-    return user;
+    else{
+      throw new DataAccessException("User already exists");
+    }
   }
 
   @Override
@@ -26,19 +28,27 @@ public class MemoryUserDAO implements UserDAO{
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     MemoryUserDAO that=(MemoryUserDAO) o;
-    return nextId == that.nextId && Objects.equals(users, that.users);
+    return Objects.equals(users, that.users);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(nextId, users);
+    return Objects.hash( users);
   }
 
-  public boolean getUser(UserData user){
-    return users.contains(user);
+  public UserData getUser(UserData user) throws DataAccessException{
+    if (users.contains(user)){
+      return user;
+    }
+    else{
+      throw new DataAccessException("User does not exist");
+    }
   }
-  @Override
-  public void deleteAllUsers() {
+
+  public void deleteAllUsers() throws DataAccessException {
     users.clear();
+    if (!users.isEmpty()){
+      throw new DataAccessException("user still in users");
+    }
   }
 }
