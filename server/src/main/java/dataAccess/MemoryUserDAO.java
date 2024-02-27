@@ -1,25 +1,24 @@
 package dataAccess;
 
-import model.AuthData;
-import model.GameData;
 import model.UserData;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.UUID;
 
 public class MemoryUserDAO implements UserDAO{
 
   final private HashSet<UserData> users = new HashSet<>();
 
-  public UserData createUser(UserData user) throws DataAccessException{
+  public UserData createUser(UserData user) throws DuplicateException,BadRequestException{
+    if (user.username() == null || user.password() == null){
+      throw new BadRequestException("error: bad request");
+    }
     if (!users.contains(user)){
       users.add(user);
       return user;
     }
     else{
-      throw new DataAccessException("User already exists");
+      throw new DuplicateException("Error: already taken");
     }
   }
 
@@ -36,7 +35,7 @@ public class MemoryUserDAO implements UserDAO{
     return Objects.hash( users);
   }
 
-  public UserData getUser(UserData user) throws DataAccessException{
+  public UserData getUser(UserData user) throws DataAccessException {
     if (users.contains(user)){
       return user;
     }

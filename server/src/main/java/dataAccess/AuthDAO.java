@@ -2,9 +2,6 @@ package dataAccess;
 
 import model.AuthData;
 import model.UserData;
-import passoffTests.testClasses.TestException;
-
-import javax.xml.crypto.Data;
 
 public interface AuthDAO {
   default void deleteAllAuthTokens() throws DataAccessException {}
