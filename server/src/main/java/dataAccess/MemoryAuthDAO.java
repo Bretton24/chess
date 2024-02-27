@@ -2,40 +2,55 @@ package dataAccess;
 
 import model.AuthData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
-  private int nextId = 1;
-  final private HashMap<String,AuthData> authTokens = new HashMap<>();
+  final private HashSet<AuthData> sessions = new HashSet<>();
 
-  public AuthData createAuth(UserData user) throws DataAccessException {
+  public AuthData createAuth(UserData user) throws DataAccessException {;
     AuthData authToken = new AuthData(UUID.randomUUID().toString(),user.username());
-    if (!authTokens.containsKey(user.username())) {
-      authTokens.put(user.username(), authToken);
-      return authToken;
+    sessions.add(authToken);
+    return authToken;
+  }
+
+  public boolean authTokenPresent(String newAuthToken)throws UnauthorizedAccessException{
+    for (AuthData token : sessions){
+      if(token.authToken().equals(newAuthToken)){
+        return true;
+      }
     }
-    else{
-      throw new DataAccessException("Error: authToken already exists.");
-    }
+    throw new UnauthorizedAccessException("Error: not logged in");
   }
 
 
-  public void deleteAuth(UserData user){
-    if (authTokens.containsKey(user.username())){
-      var authToken = authTokens.remove(user.username());
+  public void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{
+    boolean found = false;
+    for (AuthData value: sessions){
+      if (value.authToken().equals(newAuthToken)){
+        sessions.remove(value);
+        found = true;
+      }
+      if(sessions.contains(value) && found){
+        throw new DataAccessException("Error: authToken should've been removed");
+      }
+    }
+    if (!found){
+      throw new UnauthorizedAccessException("Error: unauthorized");
     }
   }
   @Override
   public void deleteAllAuthTokens() throws DataAccessException{
-    authTokens.clear();
-    if (!authTokens.isEmpty()){
+    sessions.clear();
+    if (!sessions.isEmpty()){
       throw new DataAccessException("Error: authTokens not deleted");
     }
   }
 
   public Integer sizeOfAuthTokens(){
-    return authTokens.size();
+    return sessions.size();
   }
 }

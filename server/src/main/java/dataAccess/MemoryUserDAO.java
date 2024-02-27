@@ -3,7 +3,6 @@ package dataAccess;
 import model.UserData;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO{
@@ -27,13 +26,17 @@ public class MemoryUserDAO implements UserDAO{
   public UserData getUser(UserData user) throws BadRequestException,UnauthorizedAccessException {
     if (users.containsKey(user.username())){
       var existingUser = users.get(user.username());
-      if (existingUser.password() != user.password()){
+
+      if (existingUser.password().equals(user.password())){
+        return user;
+      }
+      else{
         throw new UnauthorizedAccessException("Error: incorrect password");
       }
-      return user;
+
     }
     else{
-      throw new BadRequestException("Error: user does not exist");
+      throw new UnauthorizedAccessException("Error: user does not exist");
     }
   }
 

@@ -12,7 +12,6 @@ public class UserService extends Services{
 
   public AuthData addUser(UserData user) throws DataAccessException, DuplicateException , BadRequestException, UnauthorizedAccessException {
     user = userAccess.createUser(user);
-    this.loginUser(user);
     return authAccess.createAuth(user);
   }
   public AuthData loginUser(UserData user) throws DuplicateException,BadRequestException, UnauthorizedAccessException,DataAccessException {
