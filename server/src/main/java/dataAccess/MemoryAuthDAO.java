@@ -13,8 +13,14 @@ public class MemoryAuthDAO implements AuthDAO{
 
   public AuthData createAuth(UserData user) throws DataAccessException {;
     AuthData authToken = new AuthData(UUID.randomUUID().toString(),user.username());
-    sessions.put(authToken,user);
-    return authToken;
+    if (!sessions.containsKey(authToken)){
+      sessions.put(authToken,user);
+      return authToken;
+    }
+    else{
+      throw new DataAccessException("Error: authToken already exists");
+    }
+
   }
 
   public UserData getUser(String newAuthToken) throws UnauthorizedAccessException{

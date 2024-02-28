@@ -28,35 +28,38 @@ public class MemoryGameDAO implements GameDAO{
     }
   }
 
-  public void joinGame(PlayerInfo playerInfo,UserData user) throws DuplicateException, BadRequestException{
+  public void joinGame(PlayerInfo playerInfo,UserData user) throws DuplicateException, BadRequestException, DataAccessException{
     var game = games.get(playerInfo.gameID());
     if (game == null){
       throw new BadRequestException("Error: game does not exist");
     }
-    if (playerInfo.playerColor().equals("WHITE")){
-         if (game.whiteUsername() == null){
-           GameData newGame = new GameData(game.gameID(), user.username(),game.blackUsername(),game.gameName(),game.game());
-           games.remove(game);
-           games.put(newGame.gameID(),newGame);
-         }
-         else{
-           throw new DuplicateException("Error: white team taken");
-         }
-    }
-    else if (playerInfo.playerColor().equals("BLACK")){
-      if (game.blackUsername() == null) {
-        GameData newGame = new GameData(game.gameID(), game.whiteUsername(),user.username(),game.gameName(),game.game());
-        games.remove(game);
-        games.put(newGame.gameID(),newGame);
+    if (playerInfo.playerColor() != null){
+      if (playerInfo.playerColor().equals("WHITE")){
+        if (game.whiteUsername() == null){
+          GameData newGame = new GameData(game.gameID(), user.username(),game.blackUsername(),game.gameName(),game.game());
+          games.remove(game);
+          games.put(newGame.gameID(),newGame);
+        }
+        else{
+          throw new DuplicateException("Error: white team taken");
+        }
+      }
+      else if (playerInfo.playerColor().equals("BLACK")){
+        if (game.blackUsername() == null) {
+          GameData newGame = new GameData(game.gameID(), game.whiteUsername(),user.username(),game.gameName(),game.game());
+          games.remove(game);
+          games.put(newGame.gameID(),newGame);
+        }
+        else{
+          throw new DuplicateException("Error: black team taken");
+        }
       }
       else{
-        throw new DuplicateException("Error: black team taken");
+        throw new DataAccessException("Error: unable to join game");
       }
     }
-    else{
-      //pass
-    }
   }
+
 
   public GameList listGamesArray(){
     ArrayList<GameData> newGames = new ArrayList<>();

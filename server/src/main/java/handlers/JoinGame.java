@@ -2,6 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataAccess.BadRequestException;
+import dataAccess.DataAccessException;
 import dataAccess.DuplicateException;
 import dataAccess.UnauthorizedAccessException;
 import model.GameID;
@@ -34,6 +35,11 @@ public class JoinGame {
     }
     catch(BadRequestException e){
       res.status(400);
+      var mess = new message(e.getMessage());
+      return new Gson().toJson(mess);
+    }
+    catch(DataAccessException e){
+      res.status(500);
       var mess = new message(e.getMessage());
       return new Gson().toJson(mess);
     }
