@@ -19,6 +19,9 @@ public class GameService extends Services {
     return gameAccess.listGamesArray();
   }
 
+  public Integer returnGamesLength(){
+    return gameAccess.lengthOfGames();
+  }
   public void joinGame(String authToken,PlayerInfo playerInfo) throws UnauthorizedAccessException,DuplicateException,BadRequestException,DataAccessException{
     if(!authAccess.authTokenPresent(authToken)){
     }
