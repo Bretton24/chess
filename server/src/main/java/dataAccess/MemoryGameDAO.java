@@ -28,9 +28,12 @@ public class MemoryGameDAO implements GameDAO{
     }
   }
 
-  public void joinGame(PlayerInfo playerInfo,UserData user) throws DuplicateException{
+  public void joinGame(PlayerInfo playerInfo,UserData user) throws DuplicateException, BadRequestException{
     var game = games.get(playerInfo.gameID());
-    if (playerInfo.playerColor().equals(ChessGame.TeamColor.WHITE)){
+    if (game == null){
+      throw new BadRequestException("Error: game does not exist");
+    }
+    if (playerInfo.playerColor().equals("WHITE")){
          if (game.whiteUsername() == null){
            GameData newGame = new GameData(game.gameID(), user.username(),game.blackUsername(),game.gameName(),game.game());
            games.remove(game);
@@ -40,7 +43,7 @@ public class MemoryGameDAO implements GameDAO{
            throw new DuplicateException("Error: white team taken");
          }
     }
-    else if (playerInfo.playerColor().equals(ChessGame.TeamColor.BLACK)){
+    else if (playerInfo.playerColor().equals("BLACK")){
       if (game.blackUsername() == null) {
         GameData newGame = new GameData(game.gameID(), game.whiteUsername(),user.username(),game.gameName(),game.game());
         games.remove(game);
