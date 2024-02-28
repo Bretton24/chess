@@ -3,17 +3,10 @@ package handlers;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import dataAccess.UnauthorizedAccessException;
-import model.AuthData;
-import model.UserData;
-import model.message;
+import model.Message;
 import service.AuthService;
-import service.DeleteService;
-import service.Services;
-import service.UserService;
 import spark.Request;
 import spark.Response;
-
-import java.util.Map;
 
 public class Logout {
 
@@ -26,12 +19,12 @@ public class Logout {
     }
     catch(UnauthorizedAccessException e){
       res.status(401);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
     catch(DataAccessException e){
       res.status(500);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
 

@@ -5,10 +5,8 @@ import dataAccess.BadRequestException;
 import dataAccess.DataAccessException;
 import dataAccess.DuplicateException;
 import dataAccess.UnauthorizedAccessException;
-import model.GameID;
-import model.GameName;
 import model.PlayerInfo;
-import model.message;
+import model.Message;
 import service.GameService;
 import spark.Request;
 import spark.Response;
@@ -25,22 +23,22 @@ public class JoinGame {
     }
     catch(UnauthorizedAccessException e){
       res.status(401);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
     catch(DuplicateException e){
       res.status(403);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
     catch(BadRequestException e){
       res.status(400);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
     catch(DataAccessException e){
       res.status(500);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
   }

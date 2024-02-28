@@ -1,11 +1,8 @@
 package handlers;
 
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
 import dataAccess.UnauthorizedAccessException;
-import model.GameID;
-import model.GameName;
-import model.message;
+import model.Message;
 import service.GameService;
 import spark.Request;
 import spark.Response;
@@ -22,7 +19,7 @@ public class ListGames {
     }
     catch(UnauthorizedAccessException e){
       res.status(401);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
   }

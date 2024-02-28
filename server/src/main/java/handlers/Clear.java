@@ -2,8 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataAccess.*;
-import model.message;
-import org.eclipse.jetty.client.HttpResponseException;
+import model.Message;
 import service.DeleteService;
 import spark.Request;
 import spark.Response;
@@ -20,7 +19,7 @@ public class Clear {
     }
     catch(DataAccessException e){
       res.status(500);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
 

@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import dataAccess.UnauthorizedAccessException;
 import model.*;
 import service.GameService;
-import service.UserService;
 import spark.Response;
 import spark.Request;
 
@@ -21,7 +20,7 @@ public class CreateGame {
     }
     catch(UnauthorizedAccessException e){
       res.status(401);
-      var mess = new message(e.getMessage());
+      var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
   }

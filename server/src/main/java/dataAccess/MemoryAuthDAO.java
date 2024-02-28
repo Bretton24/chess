@@ -3,9 +3,11 @@ package dataAccess;
 import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
+import service.UserService;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
@@ -46,8 +48,9 @@ public class MemoryAuthDAO implements AuthDAO{
     boolean found = false;
     for (AuthData value: sessions.keySet()){
       if (value.authToken().equals(newAuthToken)){
-        sessions.remove(value);
+         sessions.remove(value);
         found = true;
+        break;
       }
       if(sessions.containsKey(value) && found){
         throw new DataAccessException("Error: authToken should've been removed");

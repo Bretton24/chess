@@ -23,49 +23,33 @@ public class Knight {
     return Objects.hash(pieceColor, knightMove);
   }
 
-  public HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition){
-    int i =myPosition.getRow() - 2;
-    while (i < myPosition.getRow() + 3){
-      for (int j =myPosition.getColumn() - 1;j < myPosition.getColumn() + 2;j += 2){
-        if (i < 9 && j  < 9 && i > 0 && j > 0){
-          ChessPosition position = new ChessPosition(i,j);
-          if (position != myPosition){
-            if (board.pieceAtPosition(position)){
-              ChessPiece piece = board.getPiece(position);
-              if(this.pieceColor != piece.getTeamColor()){
-                knightMove.add(new ChessMove(myPosition,position));
-              }
+  public HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+    HashSet<ChessMove> knightMove = new HashSet<>();
+
+    int[][] moves = {{-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}};
+
+    for (int[] move : moves) {
+      int newRow = myPosition.getRow() + move[0];
+      int newColumn = myPosition.getColumn() + move[1];
+
+      if (newRow >= 1 && newRow <= 8 && newColumn >= 1 && newColumn <= 8) {
+        ChessPosition position = new ChessPosition(newRow, newColumn);
+        if (!position.equals(myPosition)) {
+          if (board.pieceAtPosition(position)) {
+            ChessPiece piece = board.getPiece(position);
+            if (this.pieceColor != piece.getTeamColor()) {
+              knightMove.add(new ChessMove(myPosition, position));
             }
-            else{
-              knightMove.add(new ChessMove(myPosition,position));
-            }
+          } else {
+            knightMove.add(new ChessMove(myPosition, position));
           }
         }
       }
-      i += 4;
     }
-    int j =myPosition.getColumn() - 2;
-    while (j < myPosition.getColumn() + 3){
-      for (i =myPosition.getRow() - 1;i < myPosition.getRow() + 2;i += 2){
-        if (i < 9 && j  < 9 && i > 0 && j > 0){
-          ChessPosition position = new ChessPosition(i,j);
-          if (position != myPosition){
-            if (board.pieceAtPosition(position)){
-              ChessPiece piece = board.getPiece(position);
-              if(this.pieceColor != piece.getTeamColor()){
-                knightMove.add(new ChessMove(myPosition,position));
-              }
-            }
-            else{
-              knightMove.add(new ChessMove(myPosition,position));
-            }
-          }
-        }
-      }
-      j += 4;
-    }
+
     return knightMove;
   }
+
 
   public HashSet<ChessMove> getKnightMove() {
     return knightMove;
