@@ -9,16 +9,25 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
-  final private HashSet<AuthData> sessions = new HashSet<>();
+  final private HashMap<AuthData,UserData> sessions = new HashMap<>();
 
   public AuthData createAuth(UserData user) throws DataAccessException {;
     AuthData authToken = new AuthData(UUID.randomUUID().toString(),user.username());
-    sessions.add(authToken);
+    sessions.put(authToken,user);
     return authToken;
   }
 
+  public UserData getUser(String newAuthToken) throws UnauthorizedAccessException{
+    for (AuthData token: sessions.keySet()){
+      if(token.authToken().equals(newAuthToken)){
+        return sessions.get(token);
+      }
+    }
+    throw new UnauthorizedAccessException("Error: user does not exist");
+  }
+
   public boolean authTokenPresent(String newAuthToken)throws UnauthorizedAccessException{
-    for (AuthData token : sessions){
+    for (AuthData token : sessions.keySet()){
       if(token.authToken().equals(newAuthToken)){
         return true;
       }
@@ -29,12 +38,12 @@ public class MemoryAuthDAO implements AuthDAO{
 
   public void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{
     boolean found = false;
-    for (AuthData value: sessions){
+    for (AuthData value: sessions.keySet()){
       if (value.authToken().equals(newAuthToken)){
         sessions.remove(value);
         found = true;
       }
-      if(sessions.contains(value) && found){
+      if(sessions.containsKey(value) && found){
         throw new DataAccessException("Error: authToken should've been removed");
       }
     }

@@ -1,10 +1,7 @@
 package dataAccess;
 
 import chess.ChessGame;
-import model.GameData;
-import model.GameID;
-import model.GameList;
-import model.GameName;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +25,33 @@ public class MemoryGameDAO implements GameDAO{
     games.clear();
     if (!games.isEmpty()){
       throw new DataAccessException("Error: games not deleted");
+    }
+  }
+
+  public void joinGame(PlayerInfo playerInfo,UserData user) throws DuplicateException{
+    var game = games.get(playerInfo.gameID());
+    if (playerInfo.playerColor().equals(ChessGame.TeamColor.WHITE)){
+         if (game.whiteUsername() == null){
+           GameData newGame = new GameData(game.gameID(), user.username(),game.blackUsername(),game.gameName(),game.game());
+           games.remove(game);
+           games.put(newGame.gameID(),newGame);
+         }
+         else{
+           throw new DuplicateException("Error: white team taken");
+         }
+    }
+    else if (playerInfo.playerColor().equals(ChessGame.TeamColor.BLACK)){
+      if (game.blackUsername() == null) {
+        GameData newGame = new GameData(game.gameID(), game.whiteUsername(),user.username(),game.gameName(),game.game());
+        games.remove(game);
+        games.put(newGame.gameID(),newGame);
+      }
+      else{
+        throw new DuplicateException("Error: black team taken");
+      }
+    }
+    else{
+      //pass
     }
   }
 
