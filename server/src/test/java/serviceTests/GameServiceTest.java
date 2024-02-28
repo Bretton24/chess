@@ -1,10 +1,7 @@
 package serviceTests;
 
 import dataAccess.*;
-import model.AuthData;
-import model.GameID;
-import model.GameName;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.Test;
 import service.GameService;
 import service.UserService;
@@ -107,6 +104,29 @@ public class GameServiceTest {
     }
   }
 
+  @Test
+  public void joinGame(){
+    var user=new UserData("chad123", "hey123", "steve@gmail.com");
+    MemoryAuthDAO authAccess = new MemoryAuthDAO();
+    PlayerInfo player = new PlayerInfo("WHITE",1);
+    try {
+      helperService.addUser(user);
+      var authToken = helperService.loginUser(user);
+      var gameName = new GameName("sup");
+      service.createGame(authToken.authToken(),gameName);
+      service.joinGame(authToken.authToken(),player);
+      var list = service.listGames(authToken.authToken());
+      assertEquals("chad123",list.games().get(0).whiteUsername());
+    } catch (UnauthorizedAccessException e) {
+      //nothing happens
+    } catch (DuplicateException e) {
+      //nothing happens
+    } catch (BadRequestException e) {
+      //nothing happens
+    } catch (DataAccessException e) {
+      //nothing happens
+    }
+  }
 
 
 }
