@@ -128,6 +128,28 @@ public class GameServiceTest {
     }
   }
 
+  @Test
+  public void joinGameFailure(){
+    var user=new UserData("chad123", "hey123", "steve@gmail.com");
+    MemoryAuthDAO authAccess = new MemoryAuthDAO();
+    PlayerInfo player = new PlayerInfo("GREEN",1);
+    try {
+      helperService.addUser(user);
+      var authToken = helperService.loginUser(user);
+      var gameName = new GameName("sup");
+      service.createGame(authToken.authToken(),gameName);
+      assertThrows(DataAccessException.class,() -> service.joinGame(authToken.authToken(),player));
+    } catch (UnauthorizedAccessException e) {
+      //nothing happens
+    } catch (DuplicateException e) {
+      //nothing happens
+    } catch (BadRequestException e) {
+      //nothing happens
+    } catch (DataAccessException e) {
+      //nothing happens
+    }
+  }
+
 
 }
 
