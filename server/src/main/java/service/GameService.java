@@ -24,6 +24,5 @@ public class GameService extends Services {
     }
     var user = authAccess.getUser(authToken);
     gameAccess.joinGame(playerInfo,user);
-
   }
 }
