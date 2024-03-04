@@ -9,6 +9,7 @@ public class MemoryUserDAO implements UserDAO{
 
   final private HashMap<String,UserData> users = new HashMap<>();
 
+  @Override
   public UserData createUser(UserData user) throws DuplicateException,BadRequestException{
     if (user.username() == null || user.password() == null || user.email() == null){
       throw new BadRequestException("Error: bad request");
@@ -22,7 +23,7 @@ public class MemoryUserDAO implements UserDAO{
     }
   }
 
-
+  @Override
   public UserData getUser(UserData user) throws BadRequestException,UnauthorizedAccessException {
     if (users.containsKey(user.username())){
       var existingUser = users.get(user.username());
@@ -40,6 +41,7 @@ public class MemoryUserDAO implements UserDAO{
     }
   }
 
+  @Override
   public void deleteAllUsers() throws DataAccessException {
     users.clear();
     if (!users.isEmpty()){

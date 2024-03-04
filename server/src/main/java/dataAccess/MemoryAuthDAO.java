@@ -13,6 +13,7 @@ import java.util.UUID;
 public class MemoryAuthDAO implements AuthDAO{
   final private HashMap<AuthData,UserData> sessions = new HashMap<>();
 
+  @Override
   public AuthData createAuth(UserData user) throws DataAccessException {;
     AuthData authToken = new AuthData(UUID.randomUUID().toString(),user.username());
     if (!sessions.containsKey(authToken)){
@@ -25,6 +26,7 @@ public class MemoryAuthDAO implements AuthDAO{
 
   }
 
+  @Override
   public UserData getUser(String newAuthToken) throws UnauthorizedAccessException{
     for (AuthData token: sessions.keySet()){
       if(token.authToken().equals(newAuthToken)){
@@ -34,6 +36,7 @@ public class MemoryAuthDAO implements AuthDAO{
     throw new UnauthorizedAccessException("Error: user does not exist");
   }
 
+  @Override
   public boolean authTokenPresent(String newAuthToken)throws UnauthorizedAccessException{
     for (AuthData token : sessions.keySet()){
       if(token.authToken().equals(newAuthToken)){
@@ -44,6 +47,7 @@ public class MemoryAuthDAO implements AuthDAO{
   }
 
 
+  @Override
   public void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{
     boolean found = false;
     for (AuthData value: sessions.keySet()){

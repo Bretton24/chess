@@ -10,6 +10,7 @@ public class MemoryGameDAO implements GameDAO{
   private int nextId = 1;
   final private HashMap<Integer,GameData> games = new HashMap<>();
 
+  @Override
   public GameID createGame(GameName gameName){
     ChessGame chessGame = new ChessGame();
     GameData game = new GameData(nextId++,null,null,gameName.gameName(), chessGame);
@@ -17,6 +18,7 @@ public class MemoryGameDAO implements GameDAO{
     var gameid = new GameID(game.gameID());
     return gameid;
   }
+  @Override
   public GameData getGame(int gameID){
     return games.get(gameID);
   }
@@ -28,6 +30,7 @@ public class MemoryGameDAO implements GameDAO{
     }
   }
 
+  @Override
   public void joinGame(PlayerInfo playerInfo,UserData user) throws DuplicateException, BadRequestException, DataAccessException{
     var game = games.get(playerInfo.gameID());
     if (game == null){
@@ -61,6 +64,7 @@ public class MemoryGameDAO implements GameDAO{
   }
 
 
+  @Override
   public GameList listGamesArray(){
     ArrayList<GameData> newGames = new ArrayList<>();
     for (GameData game: games.values()){
