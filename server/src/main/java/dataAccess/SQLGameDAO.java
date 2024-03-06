@@ -1,6 +1,7 @@
 package dataAccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.*;
 
 import java.sql.SQLException;
@@ -11,11 +12,22 @@ import static java.sql.Types.NULL;
 
 public class SQLGameDAO implements GameDAO{
   @Override
-  public void deleteAllGames() throws DataAccessException{}
+  public void deleteAllGames() throws DataAccessException{
+    var statement = "TRUNCATE games";
+    executeUpdate(statement);
+  }
   @Override
-  public GameID createGame(GameName gameName){return new GameID(1);}
+  public GameID createGame(GameName gameName) throws DataAccessException {
+    var statement = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)";
+    ChessGame chessGame = new ChessGame();
+    var cGame = new Gson().toJson(chessGame);
+    var id = executeUpdate(statement,null,null, gameName.gameName(),cGame);
+    var gameid = new GameID(id);
+    return gameid;
+  }
   @Override
   public GameData getGame(int gameID){
+    var statement = "SELECT gameID,whiteUsername,blackUsername,gameName,chessGame FROM games WHERE gameID=?";
     return new GameData(gameID,"","","", new ChessGame());
   }
   @Override
@@ -34,9 +46,8 @@ public class SQLGameDAO implements GameDAO{
       try (var ps = conn.prepareStatement(statement)){
         for (var i = 0; i < params.length; i++){
           var param = params[i];
-          if (param instanceof String p) ps.setString(i + 1, p);
-          else if (param instanceof Integer p) ps.setInt(i + 1, p);
-          else if (param instanceof GameData p) ps.setString(i + 1, p.toString());
+          if (param instanceof Integer p) ps.setInt(i + 1, p);
+          else if (param instanceof String p) ps.setString(i + 1, p);
           else if (param == null) ps.setNull(i + 1, NULL);
         }
         ps.executeUpdate();
@@ -56,11 +67,11 @@ public class SQLGameDAO implements GameDAO{
   private final String[] createStatements = {
           """
             CREATE TABLE IF NOT EXISTS  Games (
-              `gameID` int NOT NULL ,
+              `gameID` int NOT NULL AUTO_INCREMENT ,
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256),
-              `chessGame` TEXT DEFAULT NULL,
+              `chessGame` TEXT DEFAULT NOT NULL,
               PRIMARY KEY (`GameID`),
               INDEX(gameID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

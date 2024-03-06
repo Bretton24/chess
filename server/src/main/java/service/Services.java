@@ -4,17 +4,13 @@ import dataAccess.*;
 
 public class Services {
 
-  public static AuthDAO authAccess = new MemoryAuthDAO();
-  public static GameDAO gameAccess = new MemoryGameDAO();
-  public static UserDAO userAccess = new MemoryUserDAO();
+  public static AuthDAO authAccess = new SQLAuthDAO();
+  public static GameDAO gameAccess = new SQLGameDAO();
+  public static UserDAO userAccess = new SQLUserDAO();
 
-  public static void specifySQLOrMemory(boolean useSQL) {
-    if (useSQL) {
-      authAccess = new SQLAuthDAO();
-      gameAccess = new SQLGameDAO();
-      userAccess = new SQLUserDAO();
-    }
-  }
-
-
+//  public static void specifySQL() {
+//      authAccess = new SQLAuthDAO();
+//      gameAccess = new SQLGameDAO();
+//      userAccess = new SQLUserDAO();
+//  }
 }

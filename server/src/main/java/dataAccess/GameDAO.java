@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public interface GameDAO {
   default void deleteAllGames() throws DataAccessException{}
-  default GameID createGame(GameName gameName){return new GameID(1);}
+  default GameID createGame(GameName gameName) throws DataAccessException {return new GameID(1);}
   default GameData getGame(int gameID){
     return new GameData(gameID,"","","", new ChessGame());
   }
