@@ -4,13 +4,26 @@ import model.AuthData;
 import model.UserData;
 
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.UUID;
 
 import static java.sql.Types.NULL;
 
-public class SQLAuthDAO extends Database{
+public class SQLAuthDAO implements AuthDAO{
+
+  public SQLAuthDAO() throws Exception {
+    configureDatabase();
+  }
   @Override
-  public AuthData createAuth(UserData user) throws DataAccessException {
-    return new AuthData("","");
+  public AuthData createAuth(UserData user) throws DataAccessException, DuplicateException {
+    var statement = "INSERT INTO authTokens (authID, authToken, userName) VALUES (?, ?, ?)";
+    var authToken = new AuthData(UUID.randomUUID().toString(), user.username());
+    // Check if the username already exists
+    if (authTokenExists(authToken.authToken())) {
+      throw new DuplicateException("Authtoken already exists");
+    }
+    int id = executeUpdate(statement, authToken.authToken(),authToken.username());
+    return authToken;
   }
 
   @Override
@@ -20,7 +33,10 @@ public class SQLAuthDAO extends Database{
   @Override
   public void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{}
   @Override
-  public void deleteAllAuthTokens() throws DataAccessException {}
+  public void deleteAllAuthTokens() throws Exception {
+    var statement = "TRUNCATE authTokens";
+    executeUpdate(statement);
+  }
 
   @Override
   public int sizeOfAuthTokens() {
@@ -28,32 +44,68 @@ public class SQLAuthDAO extends Database{
   }
 
 
-  @Override
-  public int lengthOfGames() {
-    return 0;
-  }
-
-  @Override
-  public Integer lengthOfUsers() {
-    return null;
-  }
-
   public final String[] createStatements = {
           """
-            CREATE TABLE IF NOT EXISTS  Games (
-              `gameID` int NOT NULL AUTO_INCREMENT ,
-              `whiteUsername` varchar(256),
-              `blackUsername` varchar(256),
-              `gameName` varchar(256),
-              `chessGame` TEXT DEFAULT NOT NULL,
-              PRIMARY KEY (`GameID`),
-              INDEX(gameID)
+            CREATE TABLE IF NOT EXISTS  authTokens (
+              `authID` int NOT NULL AUTO_INCREMENT ,
+              `authToken` varchar(256),
+              `userName` varchar(256),
+              PRIMARY KEY (`authID`),
+              INDEX(authID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
 
   };
 
-  public void databaseConfig() throws SQLException, DataAccessException {
-    configureDatabase(createStatements);
+  private void configureDatabase() throws Exception {
+    DatabaseManager.createDatabase();
+    try (var conn = DatabaseManager.getConnection()) {
+      for (var statement : createStatements) {
+        try (var preparedStatement = conn.prepareStatement(statement)) {
+          preparedStatement.executeUpdate();
+        }
+      }
+    } catch (SQLException ex) {
+      throw new Exception(ex);
+    }
   }
+
+  private int executeUpdate(String statement, Object... params) throws Exception {
+    try (var conn = DatabaseManager.getConnection()) {
+      try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+        for (var i = 0; i < params.length; i++) {
+          var param = params[i];
+          if (param instanceof String p) ps.setString(i + 1, p);
+          else if (param instanceof Integer p) ps.setInt(i + 1, p);
+          else if (param == null) ps.setNull(i + 1, NULL);
+        }
+        ps.executeUpdate();
+
+        var rs = ps.getGeneratedKeys();
+        if (rs.next()) {
+          return rs.getInt(1);
+        }
+
+        return 0;
+      }
+    } catch (SQLException e) {
+      throw new Exception(e);
+    }
+  }
+
+  private boolean authTokenExists(String authToken) throws DataAccessException {
+    try (var conn = DatabaseManager.getConnection();
+         var ps = conn.prepareStatement("SELECT COUNT(*) FROM users WHERE authToken = ?")) {
+      ps.setString(1, authToken);
+      try (var rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return rs.getInt(1) > 0;
+        }
+      }
+    } catch (SQLException e) {
+      throw new DataAccessException(e);
+    }
+    return false;
+  }
+
 }

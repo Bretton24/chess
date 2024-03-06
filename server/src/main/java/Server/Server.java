@@ -1,12 +1,12 @@
 package server;
 
+import dataAccess.DatabaseManager;
 import handlers.*;
 import service.Services;
 import spark.*;
 
 
 public class Server {
-
 
   public int run(int desiredPort) {
     Spark.port(desiredPort);
