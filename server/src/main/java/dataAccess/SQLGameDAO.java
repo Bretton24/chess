@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static java.sql.Types.NULL;
 
-public class SQLGameDAO implements GameDAO{
+public class SQLGameDAO extends Database{
   @Override
   public void deleteAllGames() throws DataAccessException{
     var statement = "TRUNCATE games";
@@ -64,7 +64,8 @@ public class SQLGameDAO implements GameDAO{
     }
   }
 
-  private final String[] createStatements = {
+
+public final String[] createStatements = {
           """
             CREATE TABLE IF NOT EXISTS  Games (
               `gameID` int NOT NULL AUTO_INCREMENT ,
@@ -79,18 +80,8 @@ public class SQLGameDAO implements GameDAO{
 
   };
 
-  private void configureDatabase() throws DataAccessException, SQLException {
-    DatabaseManager.createDatabase();
-    try (var conn = DatabaseManager.getConnection()){
-      for (var statement : createStatements){
-        try (var preparedStatement = conn.prepareStatement(statement)){
-          preparedStatement.executeUpdate();
-        }
-      }
-    } catch (SQLException e) {
-      throw new SQLException(e);
-    }
+  public void databaseConfig() throws SQLException, DataAccessException {
+    configureDatabase(createStatements);
   }
-
 
 }
