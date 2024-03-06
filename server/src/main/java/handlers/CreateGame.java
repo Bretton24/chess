@@ -1,6 +1,9 @@
 package handlers;
 
 import com.google.gson.Gson;
+import dataAccess.MemoryAuthDAO;
+import dataAccess.MemoryGameDAO;
+import dataAccess.MemoryUserDAO;
 import dataAccess.UnauthorizedAccessException;
 import model.*;
 import service.GameService;

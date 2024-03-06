@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class GameService extends Services {
 
+
   public GameID createGame(String authToken, GameName name) throws UnauthorizedAccessException {
     if (!authAccess.authTokenPresent(authToken)){
     }
@@ -28,4 +29,5 @@ public class GameService extends Services {
     var user = authAccess.getUser(authToken);
     gameAccess.joinGame(playerInfo,user);
   }
+
 }

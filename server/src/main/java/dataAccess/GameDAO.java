@@ -13,4 +13,6 @@ public interface GameDAO {
   }
   default void joinGame(PlayerInfo playerInfo, UserData user) throws DuplicateException, BadRequestException, DataAccessException{}
   default GameList listGamesArray(){return new GameList(new ArrayList<>());}
+
+  int lengthOfGames();
 }

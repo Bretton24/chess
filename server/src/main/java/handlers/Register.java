@@ -1,10 +1,7 @@
 package handlers;
 
 import com.google.gson.Gson;
-import dataAccess.BadRequestException;
-import dataAccess.DataAccessException;
-import dataAccess.DuplicateException;
-import dataAccess.UnauthorizedAccessException;
+import dataAccess.*;
 import model.UserData;
 import model.Message;
 import service.UserService;
@@ -36,6 +33,11 @@ public class Register {
       return new Gson().toJson(mess);
     }
     catch(DataAccessException e){
+      res.status(500);
+      var mess = new Message(e.getMessage());
+      return new Gson().toJson(mess);
+    }
+    catch(Exception e){
       res.status(500);
       var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);

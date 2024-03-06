@@ -23,10 +23,15 @@ public class SQLGameDAO implements GameDAO{
   @Override
   public GameList listGamesArray(){return new GameList(new ArrayList<>());}
 
+  @Override
+  public int lengthOfGames() {
+    return 0;
+  }
+
 
   private int executeUpdate(String statement, Object ... params) throws DataAccessException{
     try (var conn = DatabaseManager.getConnection()){
-      try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+      try (var ps = conn.prepareStatement(statement)){
         for (var i = 0; i < params.length; i++){
           var param = params[i];
           if (param instanceof String p) ps.setString(i + 1, p);
@@ -47,6 +52,7 @@ public class SQLGameDAO implements GameDAO{
       throw new DataAccessException("unable to update database");
     }
   }
+
   private final String[] createStatements = {
           """
             CREATE TABLE IF NOT EXISTS  Games (
@@ -59,9 +65,10 @@ public class SQLGameDAO implements GameDAO{
               INDEX(gameID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
+
   };
 
-  private void configureDatabase() throws DataAccessException{
+  private void configureDatabase() throws DataAccessException, SQLException {
     DatabaseManager.createDatabase();
     try (var conn = DatabaseManager.getConnection()){
       for (var statement : createStatements){
@@ -70,7 +77,9 @@ public class SQLGameDAO implements GameDAO{
         }
       }
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      throw new SQLException(e);
     }
   }
+
+
 }

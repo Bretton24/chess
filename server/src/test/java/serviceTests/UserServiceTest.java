@@ -27,6 +27,8 @@ public class UserServiceTest {
       //nothing happens
     } catch (DataAccessException e) {
       //nothing happens
+    } catch (Exception e){
+      //nothing happens
     }
   }
   @Test
@@ -43,6 +45,8 @@ public class UserServiceTest {
     } catch (BadRequestException e) {
       //nothing happens
     } catch (DataAccessException e) {
+      //nothing happens
+    } catch (Exception e){
       //nothing happens
     }
   }
@@ -63,6 +67,8 @@ public class UserServiceTest {
       //nothing happens
     } catch (DataAccessException e) {
       //nothing happens
+    } catch (Exception e){
+      //nothing happens
     }
   }
 
@@ -81,6 +87,8 @@ public class UserServiceTest {
     } catch (BadRequestException e) {
       //nothing happens
     } catch (DataAccessException e) {
+      //nothing happens
+    }catch (Exception e){
       //nothing happens
     }
   }

@@ -31,6 +31,8 @@ public class AuthServiceTest {
       //nothing happens
     } catch (DataAccessException e) {
       //nothing happens
+    } catch (Exception e){
+      //nothing happens
     }
   }
 

@@ -2,12 +2,8 @@ package dataAccess;
 
 import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
-import service.UserService;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO{
@@ -72,7 +68,8 @@ public class MemoryAuthDAO implements AuthDAO{
     }
   }
 
-  public Integer sizeOfAuthTokens(){
+  @Override
+  public int sizeOfAuthTokens(){
     return sessions.size();
   }
 }

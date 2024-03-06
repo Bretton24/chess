@@ -3,7 +3,7 @@ package dataAccess;
 import model.AuthData;
 import model.UserData;
 
-public class SQLAuthDAO implements AuthDAO {
+public class SQLAuthDAO implements AuthDAO, GameDAO, UserDAO {
   @Override
   public AuthData createAuth(UserData user) throws DataAccessException {
     return new AuthData("","");
@@ -18,7 +18,19 @@ public class SQLAuthDAO implements AuthDAO {
   @Override
   public void deleteAllAuthTokens() throws DataAccessException {}
 
+  @Override
+  public int sizeOfAuthTokens() {
+    return 0;
+  }
 
 
+  @Override
+  public int lengthOfGames() {
+    return 0;
+  }
 
+  @Override
+  public Integer lengthOfUsers() {
+    return null;
+  }
 }

@@ -9,4 +9,6 @@ public interface AuthDAO {
   default boolean authTokenPresent(String newAuthToken)throws UnauthorizedAccessException{return true;}
   default void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{}
   default void deleteAllAuthTokens() throws DataAccessException {}
+
+  int sizeOfAuthTokens();
 }

@@ -1,9 +1,6 @@
 package service;
 
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GameDAO;
-import dataAccess.UnauthorizedAccessException;
+import dataAccess.*;
 import handlers.Logout;
 import model.AuthData;
 import model.UserData;

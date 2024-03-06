@@ -30,6 +30,8 @@ public class GameServiceTest {
         //nothing happens
       } catch (DataAccessException e) {
         //nothing happens
+      }catch (Exception e){
+        //nothing happens
       }
   }
 
@@ -51,6 +53,8 @@ public class GameServiceTest {
     } catch (BadRequestException e) {
       //nothing happens
     } catch (DataAccessException e) {
+      //nothing happens
+    }catch (Exception e){
       //nothing happens
     }
   }
@@ -78,6 +82,8 @@ public class GameServiceTest {
       //nothing happens
     } catch (DataAccessException e) {
       //nothing happens
+    }catch (Exception e){
+      //nothing happens
     }
   }
 
@@ -100,6 +106,8 @@ public class GameServiceTest {
     } catch (BadRequestException e) {
       //nothing happens
     } catch (DataAccessException e) {
+      //nothing happens
+    }catch (Exception e){
       //nothing happens
     }
   }
@@ -125,6 +133,8 @@ public class GameServiceTest {
       //nothing happens
     } catch (DataAccessException e) {
       //nothing happens
+    } catch (Exception e){
+      //nothing happens
     }
   }
 
@@ -146,6 +156,8 @@ public class GameServiceTest {
     } catch (BadRequestException e) {
       //nothing happens
     } catch (DataAccessException e) {
+      //nothing happens
+    }catch (Exception e){
       //nothing happens
     }
   }

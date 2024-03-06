@@ -1,10 +1,7 @@
 package handlers;
 
 import com.google.gson.Gson;
-import dataAccess.BadRequestException;
-import dataAccess.DataAccessException;
-import dataAccess.DuplicateException;
-import dataAccess.UnauthorizedAccessException;
+import dataAccess.*;
 import model.PlayerInfo;
 import model.Message;
 import service.GameService;

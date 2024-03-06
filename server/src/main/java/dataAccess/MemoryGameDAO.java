@@ -73,7 +73,8 @@ public class MemoryGameDAO implements GameDAO{
     GameList games = new GameList(newGames);
     return games;
   }
-  public Integer lengthOfGames(){
+  @Override
+  public int lengthOfGames(){
     return games.size();
   }
 }

@@ -49,6 +49,7 @@ public class MemoryUserDAO implements UserDAO{
     }
   }
 
+  @Override
   public Integer lengthOfUsers(){
     return users.size();
   }
