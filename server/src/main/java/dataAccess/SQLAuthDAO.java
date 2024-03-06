@@ -5,7 +5,9 @@ import model.UserData;
 
 public class SQLAuthDAO implements AuthDAO {
   @Override
-  public AuthData createAuth(UserData user) throws DataAccessException {return new AuthData("","");}
+  public AuthData createAuth(UserData user) throws DataAccessException {
+    return new AuthData("","");
+  }
 
   @Override
   public UserData getUser(String newAuthToken) throws UnauthorizedAccessException{return new UserData("","","");}
@@ -15,4 +17,8 @@ public class SQLAuthDAO implements AuthDAO {
   public void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{}
   @Override
   public void deleteAllAuthTokens() throws DataAccessException {}
+
+
+
+
 }
