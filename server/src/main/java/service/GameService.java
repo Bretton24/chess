@@ -17,16 +17,17 @@ public class GameService extends Services {
 
   public GameList listGames(String authToken) throws Exception {
     if (!authAccess.authTokenPresent(authToken)){
-      throw new UnauthorizedAccessException("Error: unathorized game creation");
+      throw new UnauthorizedAccessException("Error: unathorized token");
     }
     return gameAccess.listGamesArray();
   }
 
-  public Integer returnGamesLength(){
+  public Integer returnGamesLength() throws DataAccessException {
     return gameAccess.lengthOfGames();
   }
-  public void joinGame(String authToken,PlayerInfo playerInfo) throws UnauthorizedAccessException,DuplicateException,BadRequestException,DataAccessException{
+  public void joinGame(String authToken,PlayerInfo playerInfo) throws Exception {
     if(!authAccess.authTokenPresent(authToken)){
+      throw new UnauthorizedAccessException("Error: unathorized token");
     }
     var user = authAccess.getUser(authToken);
     gameAccess.joinGame(playerInfo,user);

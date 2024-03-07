@@ -60,8 +60,18 @@ public class SQLUserDAO implements UserDAO{
   }
 
   @Override
-  public Integer lengthOfUsers() {
-    return null;
+  public Integer lengthOfUsers() throws DataAccessException {
+    try (var conn = DatabaseManager.getConnection();
+         var ps = conn.prepareStatement("SELECT COUNT(*) FROM users")) {
+      try (var rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return rs.getInt(1);
+        }
+      }
+    } catch (SQLException | DataAccessException e) {
+      throw new DataAccessException("Error: Unable to access database");
+    }
+    return 0; // If no data is retrieved, return 0
   }
 
   // Method to check if a username already exists in the database

@@ -8,11 +8,11 @@ import java.util.ArrayList;
 public interface GameDAO {
   default void deleteAllGames() throws Exception {}
   default GameID createGame(GameName gameName) throws Exception {return new GameID(1);}
-  default GameData getGame(int gameID){
+  default GameData getGame(int gameID) throws Exception {
     return new GameData(gameID,"","","", new ChessGame());
   }
-  default void joinGame(PlayerInfo playerInfo, UserData user) throws DuplicateException, BadRequestException, DataAccessException{}
+  default void joinGame(PlayerInfo playerInfo, UserData user) throws Exception {}
   default GameList listGamesArray() throws Exception {return new GameList(new ArrayList<>());}
 
-  int lengthOfGames();
+  int lengthOfGames() throws DataAccessException;
 }

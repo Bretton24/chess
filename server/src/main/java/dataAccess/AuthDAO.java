@@ -10,5 +10,5 @@ public interface AuthDAO {
   default void deleteAuth(String newAuthToken) throws Exception {}
   default void deleteAllAuthTokens() throws Exception {}
 
-  int sizeOfAuthTokens();
+  int sizeOfAuthTokens() throws DataAccessException;
 }

@@ -9,5 +9,5 @@ public interface UserDAO {
   default UserData createUser(UserData data) throws Exception {return data;}
   default UserData getUser(UserData user) throws BadRequestException, UnauthorizedAccessException, DataAccessException, SQLException {return user;}
 
-  Integer lengthOfUsers();
+  Integer lengthOfUsers() throws DataAccessException;
 }

@@ -66,8 +66,18 @@ public class SQLAuthDAO implements AuthDAO{
   }
 
   @Override
-  public int sizeOfAuthTokens() {
-    return 0;
+  public int sizeOfAuthTokens() throws DataAccessException {
+    try (var conn = DatabaseManager.getConnection();
+         var ps = conn.prepareStatement("SELECT COUNT(*) FROM authTokens")) {
+      try (var rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return rs.getInt(1);
+        }
+      }
+    } catch (SQLException | DataAccessException e) {
+      throw new DataAccessException("Error: Unable to access database");
+    }
+    return 0; // If no data is retrieved, return 0
   }
 
 

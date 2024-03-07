@@ -31,13 +31,54 @@ public class SQLGameDAO implements GameDAO{
     return gameid;
   }
   @Override
-  public GameData getGame(int gameID){
-//    var statement = "SELECT gameID,whiteUsername,blackUsername,gameName,chessGame FROM games WHERE gameID=?";
-    return new GameData(gameID,"","","", new ChessGame());
+  public GameData getGame(int gameID) throws Exception {
+      try (var conn = DatabaseManager.getConnection()) {
+        var statement = "SELECT gameID,whiteUsername,blackUsername,gameName,chessGame FROM games WHERE gameID=?";
+        try (var ps = conn.prepareStatement(statement)) {
+          ps.setInt(1, gameID);
+          try (var rs = ps.executeQuery()) {
+            if (rs.next()) {
+               return readChessGame(rs);
+            }
+          }
+        }
+      } catch (Exception e) {
+        throw new DataAccessException("Error: unable to get game");
+      }
+      return null;
+    }
+
+  @Override
+  public void joinGame(PlayerInfo playerInfo, UserData user) throws Exception {
+    var game = getGame(playerInfo.gameID());
+    if (game == null){
+      throw new BadRequestException("Error: game does not exist");
+    }
+    if (playerInfo.playerColor() != null){
+      if (playerInfo.playerColor().equals("WHITE")){
+        if (game.whiteUsername() == null){
+          var statement = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
+          executeUpdate(statement, user.username(), game.gameID());
+        }
+        else{
+          throw new DuplicateException("Error: white team taken");
+        }
+      }
+      else if (playerInfo.playerColor().equals("BLACK")){
+        if (game.blackUsername() == null) {
+          var statement = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
+          executeUpdate(statement, user.username(), game.gameID());
+        }
+        else{
+          throw new DuplicateException("Error: black team taken");
+        }
+      }
+      else{
+        throw new DataAccessException("Error: unable to join game");
+      }
+    }
 
   }
-  @Override
-  public void joinGame(PlayerInfo playerInfo, UserData user) throws DuplicateException, BadRequestException, DataAccessException{}
   @Override
   public GameList listGamesArray() throws Exception {
     var listOfGames = new ArrayList<GameData>();
@@ -67,8 +108,18 @@ public class SQLGameDAO implements GameDAO{
   }
 
   @Override
-  public int lengthOfGames() {
-    return 0;
+  public int lengthOfGames() throws DataAccessException {
+    try (var conn = DatabaseManager.getConnection();
+         var ps = conn.prepareStatement("SELECT COUNT(*) FROM games")) {
+      try (var rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return rs.getInt(1);
+        }
+      }
+    } catch (SQLException | DataAccessException e) {
+      throw new DataAccessException("Error: Unable to access database");
+    }
+    return 0; // If no data is retrieved, return 0
   }
 
 
