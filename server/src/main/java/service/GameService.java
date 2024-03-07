@@ -10,12 +10,14 @@ public class GameService extends Services {
 
   public GameID createGame(String authToken, GameName name) throws Exception {
     if (!authAccess.authTokenPresent(authToken)){
+      throw new UnauthorizedAccessException("Error: unathorized game creation");
     }
     return gameAccess.createGame(name);
   }
 
   public GameList listGames(String authToken) throws Exception {
     if (!authAccess.authTokenPresent(authToken)){
+      throw new UnauthorizedAccessException("Error: unathorized game creation");
     }
     return gameAccess.listGamesArray();
   }
