@@ -12,7 +12,7 @@ public interface GameDAO {
     return new GameData(gameID,"","","", new ChessGame());
   }
   default void joinGame(PlayerInfo playerInfo, UserData user) throws DuplicateException, BadRequestException, DataAccessException{}
-  default GameList listGamesArray(){return new GameList(new ArrayList<>());}
+  default GameList listGamesArray() throws Exception {return new GameList(new ArrayList<>());}
 
   int lengthOfGames();
 }

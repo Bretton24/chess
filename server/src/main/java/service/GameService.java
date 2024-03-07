@@ -14,7 +14,7 @@ public class GameService extends Services {
     return gameAccess.createGame(name);
   }
 
-  public GameList listGames(String authToken) throws UnauthorizedAccessException {
+  public GameList listGames(String authToken) throws Exception {
     if (!authAccess.authTokenPresent(authToken)){
     }
     return gameAccess.listGamesArray();

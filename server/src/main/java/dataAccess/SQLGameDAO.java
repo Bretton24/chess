@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -38,7 +39,32 @@ public class SQLGameDAO implements GameDAO{
   @Override
   public void joinGame(PlayerInfo playerInfo, UserData user) throws DuplicateException, BadRequestException, DataAccessException{}
   @Override
-  public GameList listGamesArray(){return new GameList(new ArrayList<>());}
+  public GameList listGamesArray() throws Exception {
+    var listOfGames = new ArrayList<GameData>();
+    try (var conn = DatabaseManager.getConnection()) {
+      var statement = "SELECT gameID,whiteUsername,blackUsername,gameName,chessGame FROM games";
+      try (var ps = conn.prepareStatement(statement)) {
+        try (var rs = ps.executeQuery()) {
+          while (rs.next()) {
+            listOfGames.add(readChessGame(rs));
+          }
+        }
+      }
+    } catch (Exception e) {
+      throw new Exception(e);
+    }
+    return new GameList(listOfGames);
+  }
+
+  private GameData readChessGame(ResultSet rs) throws SQLException {
+    var id = rs.getInt("gameID");
+    var white = rs.getString("whiteUsername");
+    var black = rs.getString("blackUsername");
+    var gameName = rs.getString("gameName");
+    var json = rs.getString("chessGame");
+    var chessGame = new Gson().fromJson(json, ChessGame.class);
+    return new GameData(id,white,black,gameName,chessGame);
+  }
 
   @Override
   public int lengthOfGames() {
