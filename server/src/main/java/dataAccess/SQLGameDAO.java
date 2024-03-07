@@ -12,11 +12,11 @@ import static java.sql.Types.NULL;
 
 public class SQLGameDAO implements GameDAO{
 
-  public SQLGameDAO() throws SQLException, DataAccessException {
+  public SQLGameDAO() throws Exception {
     configureDatabase();
   }
   @Override
-  public void deleteAllGames() throws DataAccessException{
+  public void deleteAllGames() throws Exception {
     var statement = "TRUNCATE games";
     executeUpdate(statement);
   }

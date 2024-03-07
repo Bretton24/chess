@@ -15,13 +15,9 @@ public class SQLAuthDAO implements AuthDAO{
     configureDatabase();
   }
   @Override
-  public AuthData createAuth(UserData user) throws DataAccessException, DuplicateException {
-    var statement = "INSERT INTO authTokens (authID, authToken, userName) VALUES (?, ?, ?)";
+  public AuthData createAuth(UserData user) throws Exception {
+    var statement = "INSERT INTO authTokens (authToken, userName) VALUES (?, ?)";
     var authToken = new AuthData(UUID.randomUUID().toString(), user.username());
-    // Check if the username already exists
-    if (authTokenExists(authToken.authToken())) {
-      throw new DuplicateException("Authtoken already exists");
-    }
     int id = executeUpdate(statement, authToken.authToken(),authToken.username());
     return authToken;
   }
@@ -103,7 +99,7 @@ public class SQLAuthDAO implements AuthDAO{
         }
       }
     } catch (SQLException e) {
-      throw new DataAccessException(e);
+      throw new DataAccessException("sql exception");
     }
     return false;
   }

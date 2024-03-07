@@ -27,6 +27,8 @@ public class Services {
       throw new RuntimeException(e);
     } catch (DataAccessException e) {
       throw new RuntimeException(e);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -38,6 +40,8 @@ public class Services {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     } catch (DataAccessException e) {
+      throw new RuntimeException(e);
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }

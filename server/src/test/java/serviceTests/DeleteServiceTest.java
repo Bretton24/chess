@@ -24,6 +24,8 @@ public class DeleteServiceTest {
    }
    catch(DataAccessException e){
      e.getMessage();
+   } catch (Exception e) {
+     throw new RuntimeException(e);
    }
 
 

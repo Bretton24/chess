@@ -8,7 +8,7 @@ import dataAccess.UserDAO;
 
 public class DeleteService extends Services {
 
-  public void deleteDatabase() throws DataAccessException {
+  public void deleteDatabase() throws DataAccessException,Exception {
     gameAccess.deleteAllGames();
     userAccess.deleteAllUsers();
     authAccess.deleteAllAuthTokens();

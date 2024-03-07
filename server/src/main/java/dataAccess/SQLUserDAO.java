@@ -9,24 +9,24 @@ import static java.sql.Types.NULL;
 
 public class SQLUserDAO implements UserDAO{
 
-  public SQLUserDAO() throws SQLException, DataAccessException {
+  public SQLUserDAO() throws SQLException, DataAccessException,Exception {
     configureDatabase();
   }
   @Override
-  public void deleteAllUsers() throws DataAccessException {
+  public void deleteAllUsers() throws Exception {
     var statement = "TRUNCATE users";
     executeUpdate(statement);
   }
   @Override
-  public UserData createUser(UserData user) throws DuplicateException, BadRequestException, DataAccessException {
+  public UserData createUser(UserData user) throws Exception {
     if (user.username() == null || user.password() == null || user.email() == null){
       throw new BadRequestException("Error: bad request");
     }
     // Check if the username already exists
     if (usernameExists(user.username())) {
-      throw new DuplicateException("Username already exists");
+      throw new DuplicateException("Error: username already exists");
     }
-    var statement = "INSERT INTO users (userID, userName, userPassword, email) VALUES (?, ?, ?, ?)";
+    var statement = "INSERT INTO users (userName, userPassword, email) VALUES (?, ?, ?)";
     var id = executeUpdate(statement, user.username(),user.password(),user.email());
     return user;
   }
