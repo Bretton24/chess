@@ -21,8 +21,13 @@ public class SQLAuthDAO implements AuthDAO{
     var statement = "INSERT INTO authTokens (authToken, userName,user) VALUES (?, ?, ?)";
     var authToken = new AuthData(UUID.randomUUID().toString(), user.username());
     var newUser = new Gson().toJson(user);
-    int id = executeUpdate(statement, authToken.authToken(),authToken.username(),newUser);
-    return authToken;
+    if(!authTokenPresent(authToken.authToken())){
+      int id = executeUpdate(statement, authToken.authToken(),authToken.username(),newUser);
+      return authToken;
+    }
+    else{
+      throw new DataAccessException("Error: authToken already exists");
+    }
   }
 
   @Override
