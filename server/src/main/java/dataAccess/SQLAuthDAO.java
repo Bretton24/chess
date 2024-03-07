@@ -46,7 +46,19 @@ public class SQLAuthDAO implements AuthDAO{
       }
     }
   @Override
-  public void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{}
+  public void deleteAuth(String newAuthToken) throws Exception {
+    if (authTokenPresent(newAuthToken)){
+      var statement = "DELETE FROM authTokens WHERE authToken=?";
+      executeUpdate(statement, newAuthToken);
+      if (authTokenPresent(newAuthToken)){
+        throw new DataAccessException("Error: authtoken should've been removed");
+      }
+    }
+    else{
+      throw new UnauthorizedAccessException("Error: authtoken doesn't exist");
+    }
+
+  }
   @Override
   public void deleteAllAuthTokens() throws Exception {
     var statement = "TRUNCATE authTokens";
