@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class GameService extends Services {
 
 
-  public GameID createGame(String authToken, GameName name) throws UnauthorizedAccessException,DataAccessException {
+  public GameID createGame(String authToken, GameName name) throws Exception {
     if (!authAccess.authTokenPresent(authToken)){
     }
     return gameAccess.createGame(name);

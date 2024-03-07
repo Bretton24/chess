@@ -49,7 +49,7 @@ public class SQLUserDAO implements UserDAO{
         }
       }
     } catch (SQLException e) {
-      throw new DataAccessException("Error checking username existence");
+      throw new DataAccessException("Error: checking username existence");
     }
     return false;
   }

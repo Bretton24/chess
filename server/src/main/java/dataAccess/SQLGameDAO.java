@@ -21,14 +21,13 @@ public class SQLGameDAO implements GameDAO{
     executeUpdate(statement);
   }
   @Override
-  public GameID createGame(GameName gameName) throws DataAccessException {
-//    var statement = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)";
-//    ChessGame chessGame = new ChessGame();
-//    var cGame = new Gson().toJson(chessGame);
-//    var id = executeUpdate(statement,null,null, gameName.gameName(),cGame);
-//    var gameid = new GameID(id);
-//    return gameid;
-    return new GameID(12);
+  public GameID createGame(GameName gameName) throws Exception {
+    var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)";
+    ChessGame chessGame = new ChessGame();
+    var cGame = new Gson().toJson(chessGame);
+    var id = executeUpdate(statement,null,null, gameName.gameName(),cGame);
+    var gameid = new GameID(id);
+    return gameid;
   }
   @Override
   public GameData getGame(int gameID){
