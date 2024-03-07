@@ -1,8 +1,10 @@
 package dataAccess;
 
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -34,8 +36,27 @@ public class SQLUserDAO implements UserDAO{
     return user;
   }
   @Override
-  public UserData getUser(UserData user) throws BadRequestException,UnauthorizedAccessException{
-    return user;
+  public UserData getUser(UserData user) throws BadRequestException, UnauthorizedAccessException, DataAccessException, SQLException {
+    try (var conn = DatabaseManager.getConnection()) {
+      var statement = "SELECT userPassword FROM users WHERE userName=?";
+      try (var ps = conn.prepareStatement(statement)) {
+        ps.setString(1, user.username());
+        try (var rs = ps.executeQuery()) {
+          if (rs.next()) {
+            String hashedPasswordFromDatabase = rs.getString("userPassword");
+            if (BCrypt.checkpw(user.password(), hashedPasswordFromDatabase)) {
+              return user;
+            } else {
+              throw new UnauthorizedAccessException("Error: Password does not match");
+            }
+          } else {
+            throw new UnauthorizedAccessException("Error: User does not exist");
+          }
+        }
+      }
+    } catch (SQLException e) {
+      throw new DataAccessException("Error: Unable to access database");
+    }
   }
 
   @Override

@@ -1,7 +1,9 @@
 package dataAccess;
 
+import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,16 +18,33 @@ public class SQLAuthDAO implements AuthDAO{
   }
   @Override
   public AuthData createAuth(UserData user) throws Exception {
-    var statement = "INSERT INTO authTokens (authToken, userName) VALUES (?, ?)";
+    var statement = "INSERT INTO authTokens (authToken, userName,user) VALUES (?, ?, ?)";
     var authToken = new AuthData(UUID.randomUUID().toString(), user.username());
-    int id = executeUpdate(statement, authToken.authToken(),authToken.username());
+    var newUser = new Gson().toJson(user);
+    int id = executeUpdate(statement, authToken.authToken(),authToken.username(),newUser);
     return authToken;
   }
 
   @Override
-  public UserData getUser(String newAuthToken) throws UnauthorizedAccessException{return new UserData("","","");}
- @Override
-  public boolean authTokenPresent(String newAuthToken)throws UnauthorizedAccessException{return true;}
+  public UserData getUser(String newAuthToken) throws UnauthorizedAccessException, DataAccessException {
+      try (var conn = DatabaseManager.getConnection()) {
+        var statement = "SELECT user FROM authTokens WHERE authToken=?";
+        try (var ps = conn.prepareStatement(statement)) {
+          ps.setString(1, newAuthToken);
+          try (var rs = ps.executeQuery()) {
+            if (rs.next()) {
+              String user = rs.getString("user");
+              var newUser =  new Gson().fromJson(user,UserData.class);
+              return newUser;
+            } else {
+              throw new UnauthorizedAccessException("Error: User does not exist");
+            }
+          }
+        }
+      } catch (SQLException e) {
+        throw new DataAccessException("Error: Unable to access database");
+      }
+    }
   @Override
   public void deleteAuth(String newAuthToken) throws UnauthorizedAccessException, DataAccessException{}
   @Override
@@ -46,6 +65,7 @@ public class SQLAuthDAO implements AuthDAO{
               `authID` int NOT NULL AUTO_INCREMENT ,
               `authToken` varchar(256),
               `userName` varchar(256),
+              `user` Text,
               PRIMARY KEY (`authID`),
               INDEX(authID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
@@ -89,16 +109,17 @@ public class SQLAuthDAO implements AuthDAO{
     }
   }
 
-  private boolean authTokenExists(String authToken) throws DataAccessException {
+  @Override
+  public boolean authTokenPresent(String authToken) throws DataAccessException {
     try (var conn = DatabaseManager.getConnection();
-         var ps = conn.prepareStatement("SELECT COUNT(*) FROM users WHERE authToken = ?")) {
+         var ps = conn.prepareStatement("SELECT COUNT(*) FROM authTokens WHERE authToken = ?")) {
       ps.setString(1, authToken);
       try (var rs = ps.executeQuery()) {
         if (rs.next()) {
           return rs.getInt(1) > 0;
         }
       }
-    } catch (SQLException e) {
+    } catch (SQLException | DataAccessException e) {
       throw new DataAccessException("sql exception");
     }
     return false;
