@@ -67,12 +67,26 @@ public class SQLGameDAOTests {
   public void testJoinGame_Positive () throws Exception {
     SQLUserDAO userAccess = new SQLUserDAO();
     SQLAuthDAO authAccess = new SQLAuthDAO();
-    var user = userAccess.createUser(new UserData("sup","joh","steve"));
-    var authToken = authAccess.createAuth(user);
-    gameDAO.createGame(GameName("gamename is here"));
-    PlayerInfo player = new PlayerInfo("WHITE",)
-    gameDAO.createGame(new GameName("steve"));
+    var user = new UserData("hello","howdy","stevejobs@email.com");
+    var authToken = new AuthData("howdyssd",user.username());
+    var gameID = gameDAO.createGame(new GameName("gamename is here"));
+    PlayerInfo player = new PlayerInfo("WHITE",gameID.gameID());
+    gameDAO.joinGame(player,user);
+    var game = gameDAO.getGame(gameID.gameID());
+    assertTrue(user.username().equals(game.whiteUsername()));
+  }
 
-
+  @Test
+  public void testJoinGame_Negative () throws Exception {
+    SQLUserDAO userAccess = new SQLUserDAO();
+    SQLAuthDAO authAccess = new SQLAuthDAO();
+    var user = new UserData("hello","howdy","stevejobs@email.com");
+    var authToken = new AuthData("howdyssd",user.username());
+    var gameID = gameDAO.createGame(new GameName("gamename is here"));
+    PlayerInfo player = new PlayerInfo("WHITE",gameID.gameID());
+    PlayerInfo player2 = new PlayerInfo("WHITE",gameID.gameID());
+    gameDAO.joinGame(player,user);
+    var game = gameDAO.getGame(gameID.gameID());
+    assertThrows(DuplicateException.class,() -> gameDAO.joinGame(player2,user));
   }
 }
