@@ -94,9 +94,7 @@ public class SQLGameDAO implements GameDAO{
     } catch (Exception e) {
       throw new Exception(e);
     }
-    if (lengthOfGames() == 0){
-      throw new DataAccessException("Error: List empty");
-    }
+
     return new GameList(listOfGames);
   }
 

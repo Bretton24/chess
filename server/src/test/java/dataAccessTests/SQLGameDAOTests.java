@@ -60,7 +60,7 @@ public class SQLGameDAOTests {
     gameDAO.createGame(new GameName("steve"));
     gameDAO.createGame(new GameName("jobs"));
     gameDAO.deleteAllGames();
-    assertThrows(DataAccessException.class,() -> gameDAO.listGamesArray());
+    assertEquals(0,gameDAO.lengthOfGames());
   }
 
   @Test
