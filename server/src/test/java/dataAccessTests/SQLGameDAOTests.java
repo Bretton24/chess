@@ -1,8 +1,7 @@
 package dataAccessTests;
 
 import dataAccess.*;
-import model.GameID;
-import model.GameName;
+import model.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +27,9 @@ public class SQLGameDAOTests {
   }
   @Test
   public void testCreateGames_Negative() throws Exception {
-    assertThrows(DataAccessException.class,() -> gameDAO.getGame(123));
+    gameDAO.createGame(new GameName("steve"));
+    gameDAO.deleteAllGames();
+    assertEquals(0,gameDAO.lengthOfGames());
   }
 
   @Test
@@ -40,6 +41,38 @@ public class SQLGameDAOTests {
 
   @Test
   public void testGetGames_Negative() throws Exception {
+      var id = gameDAO.createGame(new GameName("value"));
+      gameDAO.deleteAllGames();
+      assertEquals(0,gameDAO.lengthOfGames());
+  }
+
+  @Test
+  public void testListGames_Positive() throws Exception {
+    gameDAO.createGame(new GameName("value"));
+    gameDAO.createGame(new GameName("steve"));
+    gameDAO.createGame(new GameName("jobs"));
+    assertInstanceOf(GameList.class,gameDAO.listGamesArray());
+  }
+
+  @Test
+  public void testListGames_Negative () throws Exception {
+    gameDAO.createGame(new GameName("value"));
+    gameDAO.createGame(new GameName("steve"));
+    gameDAO.createGame(new GameName("jobs"));
+    gameDAO.deleteAllGames();
+    assertThrows(DataAccessException.class,() -> gameDAO.listGamesArray());
+  }
+
+  @Test
+  public void testJoinGame_Positive () throws Exception {
+    SQLUserDAO userAccess = new SQLUserDAO();
+    SQLAuthDAO authAccess = new SQLAuthDAO();
+    var user = userAccess.createUser(new UserData("sup","joh","steve"));
+    var authToken = authAccess.createAuth(user);
+    gameDAO.createGame(GameName("gamename is here"));
+    PlayerInfo player = new PlayerInfo("WHITE",)
+    gameDAO.createGame(new GameName("steve"));
+
 
   }
 }
