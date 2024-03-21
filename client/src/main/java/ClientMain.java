@@ -1,4 +1,5 @@
 import chess.*;
+import client.Repl
 
 public class ClientMain {
     public static void main(String[] args) {
@@ -7,5 +8,6 @@ public class ClientMain {
         serverUrl = args[0];
       }
       System.out.print("240 Chess Client");
+      new Repl(serverUrl).run();
     }
   }
