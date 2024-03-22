@@ -39,10 +39,12 @@ public class ServerFacade {
     return this.makeRequest("POST",path,user,AuthData.class);
   }
 
-//  public void logoutUser() throws Exception{
-//    var path = "/session";
-//    this.makeRequest("DELETE",path,AuthData.class,null);
-//  }
+  public void logoutUser(AuthData authToken) throws Exception{
+    var path = "/session";
+    this.makeRequest("DELETE",path,authToken,null);
+  }
+
+  public
 
   private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception{
     try{
@@ -50,8 +52,12 @@ public class ServerFacade {
       HttpURLConnection http = (HttpURLConnection) url.openConnection();
       http.setRequestMethod(method);
       http.setDoOutput(true);
-
-      writeBody(request,http);
+      if (request.getClass() == AuthData.class){
+        writeBody(request,http,((AuthData) request).authToken());
+      }
+      else {
+        writeBody(request, http, null);
+      }
       http.connect();
       throwIfNotSuccessful(http);
       return readBody(http,responseClass);
@@ -60,9 +66,12 @@ public class ServerFacade {
     }
   }
 
-  private static void writeBody(Object request, HttpURLConnection http) throws IOException{
+  private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException{
     if (request != null){
       http.addRequestProperty("Content-Type","application/json");
+      if (authToken != null){
+        http.setRequestProperty("Authorization",authToken);
+      }
       String reqData = new Gson().toJson(request);
       try (OutputStream reqBody = http.getOutputStream()){
         reqBody.write(reqData.getBytes());

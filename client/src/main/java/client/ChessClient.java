@@ -1,4 +1,5 @@
 package client;
+import model.AuthData;
 import model.UserData;
 import server.ServerFacade;
 
@@ -8,6 +9,7 @@ public class ChessClient {
   private final ServerFacade server;
   private String visitorName = null;
   private final String serverUrl;
+  private AuthData authToken = null;
   private State state = State.LOGGEDOUT;
   public ChessClient(String serverUrl){
     server = new ServerFacade(serverUrl);
@@ -36,7 +38,7 @@ public class ChessClient {
   public String register(String ... params) throws Exception{
     if (params.length == 3){
       var user = new UserData(params[0],params[1],params[2]);
-      server.addUser(user);
+      authToken = server.addUser(user);
       state = State.LOGGEDIN;
       visitorName = params[0];
       return String.format("You registered and signed in as %s.",visitorName);
@@ -47,7 +49,7 @@ public class ChessClient {
   public String login(String ... params) throws Exception{
     if (params.length == 2){
       var user = new UserData(params[0],params[1],null);
-      server.loginUser(user);
+      authToken = server.loginUser(user);
       state = State.LOGGEDIN;
       visitorName = params[0];
       return String.format("You signed in as %s.",visitorName);
@@ -58,7 +60,7 @@ public class ChessClient {
   public String logout() throws Exception{
     assertSignedIn();
     state = State.LOGGEDOUT;
-//    server.logoutUser();
+    server.logoutUser(authToken);
     return String.format("%s left the game",visitorName);
   }
 
@@ -72,9 +74,9 @@ public class ChessClient {
                     """;
     }
     return """
-                - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
+                - create <GameName>
+                - join <ID> <[WHITE|BLACK|<empty]
+                - observe <ID> 
                 - adoptAll
                 - signOut
                 - quit
