@@ -92,9 +92,8 @@ public class SQLGameDAO implements GameDAO{
         }
       }
     } catch (Exception e) {
-      throw new Exception(e);
+      throw new Exception(e.getMessage());
     }
-
     return new GameList(listOfGames);
   }
 

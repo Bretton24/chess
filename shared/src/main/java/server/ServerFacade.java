@@ -1,10 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import model.AuthData;
-import model.GameID;
-import model.GameName;
-import model.UserData;
+import model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +49,16 @@ public class ServerFacade {
     return this.makeRequest("POST",path,game, GameID.class,authToken.authToken());
   }
 
+  public GameList list(AuthData authToken) throws Exception{
+    var path = "/game";
+    return this.makeRequest("GET",path,null,GameList.class,authToken.authToken());
+  }
+
+  public void joinGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
+    var path = "/game";
+    this.makeRequest("PUT",path,PlayerInfo.class,null,authToken.authToken());
+  }
+
   private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception{
     try{
       URL url = (new URI(serverUrl + path)).toURL();
@@ -68,7 +75,7 @@ public class ServerFacade {
       throwIfNotSuccessful(http);
       return readBody(http,responseClass);
     } catch (Exception ex){
-      throw new Exception("Error");
+      throw new Exception(ex.getMessage());
     }
   }
 

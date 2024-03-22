@@ -1,5 +1,6 @@
 package client;
 import model.AuthData;
+import model.PlayerInfo;
 import model.UserData;
 import server.ServerFacade;
 
@@ -26,6 +27,7 @@ public class ChessClient {
         case "login" -> login(params);
         case "logout" -> logout();
         case "create" -> createGame(params);
+        case "list" -> listGames();
         case "quit" -> "quit";
         default -> help();
       };
@@ -63,6 +65,31 @@ public class ChessClient {
     state = State.LOGGEDOUT;
     server.logoutUser(authToken);
     return String.format("%s left the game",visitorName);
+  }
+
+  public String listGames() throws Exception{
+    assertSignedIn();
+    var games = server.list(authToken);
+    for (model.GameData game : games.games()){
+        System.out.println(game);
+    }
+    return String.format("strings");
+  }
+
+  public String joinGame(String ... params) throws Exception {
+    if (params.length == 1 || params.length == 2){
+      assertSignedIn();
+      if (params.length == 2){
+        Integer gameNum =Integer.valueOf(params[0]);
+        var playerInfo = new PlayerInfo(params[1],gameNum);
+        server.joinGame(authToken,playerInfo);
+      }
+      else{
+        Integer gameNum =Integer.valueOf(params[0]);
+        var playerInfo = new PlayerInfo(null,gameNum);
+        server.joinGame(authToken,playerInfo);
+      }
+    }
   }
 
   public String createGame(String ... params) throws Exception{
