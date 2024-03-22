@@ -29,7 +29,7 @@ public class Repl {
         System.out.print(msg);
       }
     }
-    System.out.println();
+    System.out.println("\nSee ya ...");
   }
 
   private void printPrompt() {

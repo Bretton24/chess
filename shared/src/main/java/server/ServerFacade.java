@@ -39,6 +39,11 @@ public class ServerFacade {
     return this.makeRequest("POST",path,user,AuthData.class);
   }
 
+//  public void logoutUser() throws Exception{
+//    var path = "/session";
+//    this.makeRequest("DELETE",path,AuthData.class,null);
+//  }
+
   private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception{
     try{
       URL url = (new URI(serverUrl + path)).toURL();

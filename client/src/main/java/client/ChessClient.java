@@ -22,6 +22,8 @@ public class ChessClient {
       return switch (cmd){
         case "register" -> register(params);
         case "login" -> login(params);
+        case "logout" -> logout();
+        case "quit" -> "quit";
         default -> help();
       };
 
@@ -44,6 +46,8 @@ public class ChessClient {
 
   public String login(String ... params) throws Exception{
     if (params.length == 2){
+      var user = new UserData(params[0],params[1],null);
+      server.loginUser(user);
       state = State.LOGGEDIN;
       visitorName = params[0];
       return String.format("You signed in as %s.",visitorName);
@@ -51,12 +55,19 @@ public class ChessClient {
     throw new Exception("Need more info.");
   }
 
+  public String logout() throws Exception{
+    assertSignedIn();
+    state = State.LOGGEDOUT;
+//    server.logoutUser();
+    return String.format("%s left the game",visitorName);
+  }
+
   public String help() {
     if (state == State.LOGGEDOUT) {
       return """
                     - help
                     - register <username> <password> <email>
-                    - login <username> <password> <email>
+                    - login <username> <password>
                     - quit
                     """;
     }
@@ -68,5 +79,12 @@ public class ChessClient {
                 - signOut
                 - quit
                 """;
+  }
+
+
+  private void assertSignedIn() throws Exception {
+    if (state == State.LOGGEDOUT) {
+      throw new Exception("You must sign in");
+    }
   }
 }
