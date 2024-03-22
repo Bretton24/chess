@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 public class ChessClient {
   private final ServerFacade server;
+  private String visitorName = null;
   private final String serverUrl;
   private State state = State.LOGGEDOUT;
   public ChessClient(String serverUrl){
@@ -19,6 +20,7 @@ public class ChessClient {
       var params =Arrays.copyOfRange(tokens, 1, tokens.length);
       return switch (cmd){
         case "register" -> register(params);
+        case "login" -> login(params);
         default -> help();
       };
 
@@ -29,18 +31,29 @@ public class ChessClient {
 
 
   public String register(String ... params) throws Exception{
-    if (params.length >= 1){
-      return null;
+    if (params.length == 3){
+      state = State.LOGGEDIN;
+      visitorName = params[0];
+      return String.format("You registered and signed in as %s.",visitorName);
     }
-    return null;
+    throw new Exception("Need more info.");
+  }
+
+  public String login(String ... params) throws Exception{
+    if (params.length == 2){
+      state = State.LOGGEDIN;
+      visitorName = params[0];
+      return String.format("You signed in as %s.",visitorName);
+    }
+    throw new Exception("Need more info.");
   }
 
   public String help() {
     if (state == State.LOGGEDOUT) {
       return """
                     - help
-                    - register
-                    - login <yourname>
+                    - register <username> <password> <email>
+                    - login <username> <password> <email>
                     - quit
                     """;
     }
