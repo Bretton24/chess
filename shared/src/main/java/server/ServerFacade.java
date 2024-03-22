@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.GameID;
+import model.GameName;
 import model.UserData;
 
 import java.io.IOException;
@@ -31,29 +33,33 @@ public class ServerFacade {
 
   public AuthData addUser(UserData user) throws Exception{
     var path = "/user";
-    return this.makeRequest("POST",path,user,AuthData.class);
+    return this.makeRequest("POST",path,user,AuthData.class,null);
   }
 
   public AuthData loginUser(UserData user) throws Exception{
     var path = "/session";
-    return this.makeRequest("POST",path,user,AuthData.class);
+    return this.makeRequest("POST",path,user,AuthData.class,null);
   }
 
   public void logoutUser(AuthData authToken) throws Exception{
     var path = "/session";
-    this.makeRequest("DELETE",path,authToken,null);
+    this.makeRequest("DELETE",path,null,null,authToken.authToken());
   }
 
-  public
+  public GameID gameCreate(AuthData authToken,String name) throws Exception{
+    var game = new GameName(name);
+    var path = "/game";
+    return this.makeRequest("POST",path,game, GameID.class,authToken.authToken());
+  }
 
-  private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception{
+  private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception{
     try{
       URL url = (new URI(serverUrl + path)).toURL();
       HttpURLConnection http = (HttpURLConnection) url.openConnection();
       http.setRequestMethod(method);
       http.setDoOutput(true);
-      if (request.getClass() == AuthData.class){
-        writeBody(request,http,((AuthData) request).authToken());
+      if (authToken != null){
+        writeBody(request,http,authToken);
       }
       else {
         writeBody(request, http, null);
@@ -67,7 +73,7 @@ public class ServerFacade {
   }
 
   private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException{
-    if (request != null){
+    if (request != null || authToken != null){
       http.addRequestProperty("Content-Type","application/json");
       if (authToken != null){
         http.setRequestProperty("Authorization",authToken);

@@ -25,6 +25,7 @@ public class ChessClient {
         case "register" -> register(params);
         case "login" -> login(params);
         case "logout" -> logout();
+        case "create" -> createGame(params);
         case "quit" -> "quit";
         default -> help();
       };
@@ -62,6 +63,16 @@ public class ChessClient {
     state = State.LOGGEDOUT;
     server.logoutUser(authToken);
     return String.format("%s left the game",visitorName);
+  }
+
+  public String createGame(String ... params) throws Exception{
+    if (params.length == 1){
+      assertSignedIn();
+      var gameID = server.gameCreate(authToken,params[0]);
+      return String.format("Created a game with GameID:" + gameID.gameID());
+    }
+    throw new Exception("need a game name");
+
   }
 
   public String help() {
