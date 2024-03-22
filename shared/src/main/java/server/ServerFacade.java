@@ -59,6 +59,11 @@ public class ServerFacade {
     this.makeRequest("PUT",path,PlayerInfo.class,null,authToken.authToken());
   }
 
+  public void deleteDatabase() throws Exception{
+    var path = "/db";
+    this.makeRequest("DELETE",path,null,null,null);
+  }
+
   private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception{
     try{
       URL url = (new URI(serverUrl + path)).toURL();
@@ -80,15 +85,13 @@ public class ServerFacade {
   }
 
   private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException{
-    if (request != null || authToken != null){
-      http.addRequestProperty("Content-Type","application/json");
-      if (authToken != null){
-        http.setRequestProperty("Authorization",authToken);
-      }
-      String reqData = new Gson().toJson(request);
-      try (OutputStream reqBody = http.getOutputStream()){
-        reqBody.write(reqData.getBytes());
-      }
+    http.addRequestProperty("Content-Type","application/json");
+    if (authToken != null){
+      http.setRequestProperty("Authorization",authToken);
+    }
+    String reqData = new Gson().toJson(request);
+    try (OutputStream reqBody = http.getOutputStream()){
+      reqBody.write(reqData.getBytes());
     }
   }
 

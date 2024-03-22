@@ -28,6 +28,7 @@ public class ChessClient {
         case "logout" -> logout();
         case "create" -> createGame(params);
         case "list" -> listGames();
+        case "deleteDB" -> deleteDB();
         case "quit" -> "quit";
         default -> help();
       };
@@ -76,6 +77,11 @@ public class ChessClient {
     return String.format("strings");
   }
 
+  public String deleteDB()throws Exception{
+    server.deleteDatabase();
+    return String.format("Database wiped.");
+  }
+
   public String joinGame(String ... params) throws Exception {
     if (params.length == 1 || params.length == 2){
       assertSignedIn();
@@ -90,6 +96,7 @@ public class ChessClient {
         server.joinGame(authToken,playerInfo);
       }
     }
+    return String.format("Successfully joined game.");
   }
 
   public String createGame(String ... params) throws Exception{
