@@ -1,4 +1,5 @@
 package client;
+import model.UserData;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -32,6 +33,8 @@ public class ChessClient {
 
   public String register(String ... params) throws Exception{
     if (params.length == 3){
+      var user = new UserData(params[0],params[1],params[2]);
+      server.addUser(user);
       state = State.LOGGEDIN;
       visitorName = params[0];
       return String.format("You registered and signed in as %s.",visitorName);

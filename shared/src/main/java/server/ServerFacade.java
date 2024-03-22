@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.ResponseCache;
 import java.net.URI;
 import java.net.URL;
+import java.util.logging.Handler;
 
 public class ServerFacade {
   private final String serverUrl;
@@ -30,6 +31,11 @@ public class ServerFacade {
 
   public AuthData addUser(UserData user) throws Exception{
     var path = "/user";
+    return this.makeRequest("POST",path,user,AuthData.class);
+  }
+
+  public AuthData loginUser(UserData user) throws Exception{
+    var path = "/session";
     return this.makeRequest("POST",path,user,AuthData.class);
   }
 
