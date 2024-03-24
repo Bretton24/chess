@@ -8,10 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.ResponseCache;
 import java.net.URI;
 import java.net.URL;
-import java.util.logging.Handler;
 
 public class ServerFacade {
   private final String serverUrl;
@@ -46,22 +44,17 @@ public class ServerFacade {
   public GameID gameCreate(AuthData authToken,String name) throws Exception{
     var game = new GameName(name);
     var path = "/game";
-    return this.makeRequest("POST",path,game, GameID.class,authToken.authToken());
+    return this.makeRequest("POST",path, game, GameID.class,authToken.authToken());
   }
 
-  public GameList list(AuthData authToken) throws Exception{
+  public GameList listGame(AuthData authToken) throws Exception{
     var path = "/game";
-    return this.makeRequest("GET",path,null,GameList.class,authToken.authToken());
+    return this.makeRequest("GET",path,authToken,GameList.class,authToken.authToken());
   }
 
   public void joinGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
     var path = "/game";
     this.makeRequest("PUT",path,PlayerInfo.class,null,authToken.authToken());
-  }
-
-  public void deleteDatabase() throws Exception{
-    var path = "/db";
-    this.makeRequest("DELETE",path,null,null,null);
   }
 
   private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception{
@@ -85,13 +78,15 @@ public class ServerFacade {
   }
 
   private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException{
-    http.addRequestProperty("Content-Type","application/json");
-    if (authToken != null){
-      http.setRequestProperty("Authorization",authToken);
-    }
-    String reqData = new Gson().toJson(request);
-    try (OutputStream reqBody = http.getOutputStream()){
-      reqBody.write(reqData.getBytes());
+    if(request != null || authToken != null){
+      http.addRequestProperty("Content-Type","application/json");
+      if (authToken != null){
+        http.setRequestProperty("Authorization",authToken);
+      }
+      String reqData = new Gson().toJson(request);
+      try (OutputStream reqBody = http.getOutputStream()){
+        reqBody.write(reqData.getBytes());
+      }
     }
   }
 

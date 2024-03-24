@@ -48,10 +48,11 @@ public class SQLGameDAOTests {
 
   @Test
   public void testListGames_Positive() throws Exception {
+    gameDAO.deleteAllGames();
     gameDAO.createGame(new GameName("value"));
     gameDAO.createGame(new GameName("steve"));
     gameDAO.createGame(new GameName("jobs"));
-    assertInstanceOf(GameList.class,gameDAO.listGamesArray());
+    assertEquals(3,gameDAO.lengthOfGames());
   }
 
   @Test

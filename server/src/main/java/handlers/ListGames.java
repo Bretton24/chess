@@ -5,6 +5,7 @@ import dataAccess.MemoryAuthDAO;
 import dataAccess.MemoryGameDAO;
 import dataAccess.MemoryUserDAO;
 import dataAccess.UnauthorizedAccessException;
+import model.GameList;
 import model.Message;
 import service.GameService;
 import spark.Request;
@@ -13,10 +14,9 @@ import spark.Response;
 public class ListGames {
 
   public static Object handle(Request req, Response res){
-    var authToken = req.headers("Authorization");
     GameService service = new GameService();
     try{
-      var games = service.listGames(authToken);
+      GameList games  = new GameList(service.listGames(req.headers("Authorization")));
       res.status(200);
       return new Gson().toJson(games);
     }

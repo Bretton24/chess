@@ -71,9 +71,9 @@ public class GameServiceTest {
       service.createGame(authToken.authToken(),new GameName("dude"));
       service.createGame(authToken.authToken(),new GameName("hey"));
       var list = service.listGames(authToken.authToken());
-      assertEquals("sup",list.games().get(0).gameName());
-      assertEquals("dude",list.games().get(1).gameName());
-      assertEquals("hey",list.games().get(2).gameName());
+      assertEquals("sup",list.get(0).gameName());
+      assertEquals("dude",list.get(1).gameName());
+      assertEquals("hey",list.get(2).gameName());
     } catch (UnauthorizedAccessException e) {
       //nothing happens
     } catch (DuplicateException e) {
@@ -124,7 +124,7 @@ public class GameServiceTest {
       service.createGame(authToken.authToken(),gameName);
       service.joinGame(authToken.authToken(),player);
       var list = service.listGames(authToken.authToken());
-      assertEquals("chad123",list.games().get(0).whiteUsername());
+      assertEquals("chad123",list.get(0).whiteUsername());
     } catch (UnauthorizedAccessException e) {
       //nothing happens
     } catch (DuplicateException e) {

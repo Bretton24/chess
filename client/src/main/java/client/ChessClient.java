@@ -28,7 +28,6 @@ public class ChessClient {
         case "logout" -> logout();
         case "create" -> createGame(params);
         case "list" -> listGames();
-        case "deleteDB" -> deleteDB();
         case "quit" -> "quit";
         default -> help();
       };
@@ -70,17 +69,11 @@ public class ChessClient {
 
   public String listGames() throws Exception{
     assertSignedIn();
-    var games = server.list(authToken);
-    for (model.GameData game : games.games()){
-        System.out.println(game);
-    }
+    var games = server.listGame(authToken);
+    System.out.println(games.toString());
     return String.format("strings");
   }
 
-  public String deleteDB()throws Exception{
-    server.deleteDatabase();
-    return String.format("Database wiped.");
-  }
 
   public String joinGame(String ... params) throws Exception {
     if (params.length == 1 || params.length == 2){
@@ -122,7 +115,7 @@ public class ChessClient {
                 - create <GameName>
                 - join <ID> <[WHITE|BLACK|<empty]
                 - observe <ID> 
-                - adoptAll
+                - list
                 - signOut
                 - quit
                 """;

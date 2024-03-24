@@ -23,12 +23,15 @@ public class SQLGameDAO implements GameDAO{
   }
   @Override
   public GameID createGame(GameName gameName) throws Exception {
-    var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)";
-    ChessGame chessGame = new ChessGame();
-    var cGame = new Gson().toJson(chessGame);
-    var id = executeUpdate(statement,null,null, gameName.gameName(),cGame);
-    var gameid = new GameID(id);
-    return gameid;
+    if (gameName != null){
+      var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)";
+      ChessGame chessGame = new ChessGame();
+      var cGame = new Gson().toJson(chessGame);
+      var id = executeUpdate(statement,null,null, gameName.gameName(),cGame);
+      var gameid = new GameID(id);
+      return gameid;
+    }
+    throw new UnauthorizedAccessException("Game name not provided");
   }
   @Override
   public GameData getGame(int gameID) throws Exception {
@@ -80,21 +83,23 @@ public class SQLGameDAO implements GameDAO{
 
   }
   @Override
-  public GameList listGamesArray() throws Exception {
+  public ArrayList<GameData> listGamesArray() throws Exception {
     var listOfGames = new ArrayList<GameData>();
     try (var conn = DatabaseManager.getConnection()) {
       var statement = "SELECT gameID,whiteUsername,blackUsername,gameName,chessGame FROM games";
       try (var ps = conn.prepareStatement(statement)) {
         try (var rs = ps.executeQuery()) {
           while (rs.next()) {
-            listOfGames.add(readChessGame(rs));
+            var game = readChessGame(rs);
+            System.out.println(game.toString());
+            listOfGames.add(game);
           }
         }
       }
     } catch (Exception e) {
       throw new Exception(e.getMessage());
     }
-    return new GameList(listOfGames);
+    return listOfGames;
   }
 
   private GameData readChessGame(ResultSet rs) throws SQLException {
