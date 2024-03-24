@@ -91,7 +91,6 @@ public class SQLGameDAO implements GameDAO{
         try (var rs = ps.executeQuery()) {
           while (rs.next()) {
             var game = readChessGame(rs);
-            System.out.println(game.toString());
             listOfGames.add(game);
           }
         }
@@ -109,7 +108,8 @@ public class SQLGameDAO implements GameDAO{
     var gameName = rs.getString("gameName");
     var json = rs.getString("chessGame");
     var chessGame = new Gson().fromJson(json, ChessGame.class);
-    return new GameData(id,white,black,gameName,chessGame);
+    var game = new GameData(id,white,black,gameName,chessGame);
+    return game;
   }
 
   @Override

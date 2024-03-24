@@ -27,7 +27,9 @@ public class ChessClient {
         case "login" -> login(params);
         case "logout" -> logout();
         case "create" -> createGame(params);
+        case "join" -> joinGame(params);
         case "list" -> listGames();
+        case "observe" -> observeGame(params);
         case "quit" -> "quit";
         default -> help();
       };
@@ -74,20 +76,31 @@ public class ChessClient {
     return String.format("strings");
   }
 
+  public String observeGame(String ... params) throws Exception{
+    if (params.length == 1){
+      assertSignedIn();
+      Integer gameNum=Integer.valueOf(params[0]);
+      PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
+      server.observeGame(authToken,playerInfo);
+    }
+    return String.format("Successfully observing game.");
+  }
+
 
   public String joinGame(String ... params) throws Exception {
-    if (params.length == 1 || params.length == 2){
+    if (params.length == 2) {
       assertSignedIn();
-      if (params.length == 2){
-        Integer gameNum =Integer.valueOf(params[0]);
-        var playerInfo = new PlayerInfo(params[1],gameNum);
-        server.joinGame(authToken,playerInfo);
+      Integer gameNum=Integer.valueOf(params[0]);
+      if (params[1] == "white"){
+        var playerInfo=new PlayerInfo("WHITE", gameNum);
+        server.joinGame(authToken, playerInfo);
+      } else if (params[1] == "black") {
+        var playerInfo = new PlayerInfo("BLACK",gameNum);
+        server.joinGame(authToken, playerInfo);
       }
-      else{
-        Integer gameNum =Integer.valueOf(params[0]);
-        var playerInfo = new PlayerInfo(null,gameNum);
-        server.joinGame(authToken,playerInfo);
-      }
+    }
+    else{
+      throw new Exception("Need to specify team to join");
     }
     return String.format("Successfully joined game.");
   }

@@ -49,12 +49,17 @@ public class ServerFacade {
 
   public GameList listGame(AuthData authToken) throws Exception{
     var path = "/game";
-    return this.makeRequest("GET",path,authToken,GameList.class,authToken.authToken());
+    return this.makeRequest("GET",path,null,GameList.class,authToken.authToken());
+  }
+
+  public void observeGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
+    var path = "/game";
+    this.makeRequest("PUT",path,playerInfo,null,authToken.authToken());
   }
 
   public void joinGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
     var path = "/game";
-    this.makeRequest("PUT",path,PlayerInfo.class,null,authToken.authToken());
+    this.makeRequest("PUT",path,playerInfo,null,authToken.authToken());
   }
 
   private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws Exception{
