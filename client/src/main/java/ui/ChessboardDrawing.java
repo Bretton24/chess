@@ -8,7 +8,7 @@ import static ui.EscapeSequences.*;
 public class ChessboardDrawing {
 
   private static final int BOARD_SIZE_IN_SQUARES = 8;
-  private static final int SQUARE_SIZE_IN_CHARS = 3;
+  private static final int SQUARE_SIZE_IN_CHARS = 5;
   private static final int LINE_WIDTH_IN_CHARS = 3;
   private static final String EMPTY = " ";
 
@@ -36,34 +36,31 @@ public class ChessboardDrawing {
 
       drawHeader(out, headers[boardCol]);
 
-      if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
+//      if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
         out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
-      }
+//      }
     }
     out.println();
   }
 
   private static void drawChessboard(PrintStream out) {
-    for (int row=1; row < BOARD_SIZE_IN_SQUARES; row++) {
+    for (int row=0; row < BOARD_SIZE_IN_SQUARES; row++) {
       drawRowOfSquares(out,row);
-
-
     }
     out.println();
   }
 
 
   private static void drawRowOfSquares(PrintStream out,Integer row) {
-    for (int col=1; col < BOARD_SIZE_IN_SQUARES; col++) {
-      if (col * row % 2 == 0){
+    for (int col=0; col <= BOARD_SIZE_IN_SQUARES; col++) {
+      if ((col + row) % 2 == 0){
         setWhite(out);
       }
       else{
         setBlack(out);
       }
-      if (col < BOARD_SIZE_IN_SQUARES){
-        out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
-      }
+      out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+
     }
     out.println();
   }
