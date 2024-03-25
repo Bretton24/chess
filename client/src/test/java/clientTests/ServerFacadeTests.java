@@ -1,5 +1,6 @@
 
 import dataAccess.UnauthorizedAccessException;
+import model.AuthData;
 import model.GameData;
 import model.GameID;
 import model.UserData;
@@ -55,7 +56,28 @@ public class ServerFacadeTests {
 
     @Test
     void createGamePass() throws Exception {
-        assertThrows(Exception.class,()-> facade.registerUser(new UserData(null, null, null)));
+        var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
+        var id = facade.gameCreate(authData,"yo");
+        assertTrue(id.gameID() == 1);
+    }
+
+    @Test
+    void createGameFail() throws Exception {
+        var authData = new AuthData("adhlfdkjadsljk","aslkdjfas");
+        assertThrows(Exception.class,()->facade.gameCreate(authData,"yo"));
+    }
+
+    @Test
+    void createGamePass() throws Exception {
+        var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
+        var id = facade.gameCreate(authData,"yo");
+        assertTrue(id.gameID() == 1);
+    }
+
+    @Test
+    void createGameFail() throws Exception {
+        var authData = new AuthData("adhlfdkjadsljk","aslkdjfas");
+        assertThrows(Exception.class,()->facade.gameCreate(authData,"yo"));
     }
 
     @AfterAll
