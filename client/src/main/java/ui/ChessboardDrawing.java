@@ -61,19 +61,46 @@ public class ChessboardDrawing {
         out.print(EMPTY.repeat(prefixLength));
         out.print(row + 1);
         out.print(EMPTY.repeat(suffixLength));
-
       }
       else{
         if ((col + row) % 2 == 0){
           setWhite(out);
+          if (row == 1 || row == 6){
+            int prefixLength = 1;
+            int suffixLength = 1;
+            out.print(SET_BG_COLOR_WHITE);
+            out.print(EMPTY.repeat(prefixLength));
+            out.print(SET_TEXT_COLOR_BLACK);
+
+            out.print("P");
+
+            setWhite(out);
+            out.print(EMPTY.repeat(suffixLength));
+          }
+          else{
+            out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+          }
         }
         else{
-          setBlack(out);
+          if (row == 1 || row == 6){
+            int prefixLength = 1;
+            int suffixLength = 1;
+            out.print(SET_BG_COLOR_BLACK);
+            out.print(EMPTY.repeat(prefixLength));
+            out.print(SET_TEXT_COLOR_WHITE);
+
+            out.print("P");
+
+            setBlack(out);
+            out.print(EMPTY.repeat(suffixLength));
+
+          }
+          else{
+            setBlack(out);
+            out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+          }
         }
-        out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
       }
-
-
     }
     out.println();
   }
