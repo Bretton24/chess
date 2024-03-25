@@ -55,7 +55,6 @@ public class SQLAuthDAO implements AuthDAO{
     if (authTokenPresent(newAuthToken)){
       var statement = "DELETE FROM authTokens WHERE authToken=?";
       executeUpdate(statement, newAuthToken);
-      deleteAllAuthTokens();
       if (authTokenPresent(newAuthToken)){
         throw new DataAccessException("Error: authtoken should've been removed");
       }

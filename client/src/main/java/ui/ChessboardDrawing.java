@@ -28,6 +28,7 @@ public class ChessboardDrawing {
       drawChessboard(out,white);
       drawHeaders(out,white);
     }
+    out.print(ERASE_SCREEN);
 
   }
 

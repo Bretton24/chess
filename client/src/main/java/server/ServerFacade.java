@@ -18,15 +18,7 @@ public class ServerFacade {
     serverUrl = url;
   }
 
-//  Spark.delete("/db", Clear::handle);
-//    Spark.post("/user", Register::handle);
-//    Spark.post("/session", Login::handle);
-//    Spark.delete("/session", Logout::handle);
-//    Spark.post("/game", CreateGame::handle);
-//    Spark.get("/game",ListGames::handle);
-//    Spark.put("/game",JoinGame::handle);
-
-  public AuthData addUser(UserData user) throws Exception{
+  public AuthData registerUser(UserData user) throws Exception{
     var path = "/user";
     return this.makeRequest("POST",path,user,AuthData.class,null);
   }
@@ -83,11 +75,11 @@ public class ServerFacade {
   }
 
   private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException{
-    if(request != null || authToken != null){
+    if (authToken != null){
+      http.setRequestProperty("Authorization",authToken);
+    }
+    if(request != null){
       http.addRequestProperty("Content-Type","application/json");
-      if (authToken != null){
-        http.setRequestProperty("Authorization",authToken);
-      }
       String reqData = new Gson().toJson(request);
       try (OutputStream reqBody = http.getOutputStream()){
         reqBody.write(reqData.getBytes());

@@ -45,7 +45,7 @@ public class ChessClient {
   public String register(String ... params) throws Exception{
     if (params.length == 3){
       var user = new UserData(params[0],params[1],params[2]);
-      authToken = server.addUser(user);
+      authToken = server.registerUser(user);
       state = State.LOGGEDIN;
       visitorName = params[0];
       return String.format("You registered and signed in as %s.",visitorName);
@@ -134,7 +134,7 @@ public class ChessClient {
                 - join <ID> <[WHITE|BLACK|<empty]
                 - observe <ID> 
                 - list
-                - signOut
+                - logout
                 - quit
                 """;
   }
