@@ -67,8 +67,12 @@ public class ServerFacadeTests {
     void joinGamePass() throws Exception {
         var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
         var id = facade.gameCreate(authData,"yo");
-        facade.joinGame(authData,new PlayerInfo("BLACK",1));
-        assertTrue(authData.authToken().length() > 10);
+        try{
+            facade.joinGame(authData,new PlayerInfo("WHITE",id.gameID()));
+        }
+        catch(Exception ex){
+            fail();
+        }
     }
 
     @Test
@@ -82,8 +86,12 @@ public class ServerFacadeTests {
     void observeGamePass() throws Exception {
         var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
         var id = facade.gameCreate(authData,"yo");
-        facade.observeGame(authData,new PlayerInfo(null,1));
-        assertTrue(authData.authToken().length() > 10);
+        try{
+            facade.observeGame(authData,new PlayerInfo(null,id.gameID()));
+        }
+        catch(Exception ex){
+            fail();
+        }
     }
 
     @Test
@@ -93,7 +101,40 @@ public class ServerFacadeTests {
         assertThrows(Exception.class,() -> facade.joinGame(authData,new PlayerInfo(null,2)));
     }
 
+    @Test
+    void listGamePass() throws Exception {
+        var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
+        try{
+            facade.listGame(authData);
+        }
+        catch(Exception ex){
+            fail();
+        }
+    }
 
+    @Test
+    void listGameFail() throws Exception {
+        var authData = new AuthData("aldsjkflasd","asdlfj");
+        assertThrows(Exception.class,() -> facade.listGame(authData));
+    }
+
+
+    @Test
+    void logoutPass() throws Exception {
+        var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));;
+        try{
+            facade.logoutUser(authData);
+        }
+        catch(Exception ex){
+            fail();
+        }
+    }
+
+    @Test
+    void logoutFail() throws Exception {
+        var authData = new AuthData("aldsjkflasd","asdlfj");
+        assertThrows(Exception.class,() -> facade.logoutUser(authData));
+    }
 
     @AfterAll
     static void stopServer() {
