@@ -1,17 +1,20 @@
-package java.clientTests;
 
+import dataAccess.UnauthorizedAccessException;
+import model.GameData;
+import model.GameID;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
-    static ServerFacade facade;
+    private static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
@@ -22,10 +25,37 @@ public class ServerFacadeTests {
         facade = new ServerFacade(serverUrl);
     }
 
+    @BeforeEach
+    public void clear() throws Exception {
+        facade.clearDatabase();
+    }
+
     @Test
-    void register() throws Exception {
+    void registerPass() throws Exception {
         var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
         assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void registerFail() throws Exception {
+        assertThrows(Exception.class,()-> facade.registerUser(new UserData("player1", null, null)));
+    }
+
+    @Test
+    void loginPass() throws Exception {
+        facade.registerUser(new UserData("player1", "password", "p1@email.com"));
+        var authData = facade.loginUser(new UserData("player1", "password", null));
+        assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void loginFails() throws Exception {
+        assertThrows(Exception.class,()-> facade.registerUser(new UserData(null, null, null)));
+    }
+
+    @Test
+    void createGamePass() throws Exception {
+        assertThrows(Exception.class,()-> facade.registerUser(new UserData(null, null, null)));
     }
 
     @AfterAll

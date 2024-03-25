@@ -1,5 +1,6 @@
 package client;
 import model.AuthData;
+import model.GameData;
 import model.PlayerInfo;
 import model.UserData;
 import server.ServerFacade;
@@ -74,7 +75,9 @@ public class ChessClient {
   public String listGames() throws Exception{
     assertSignedIn();
     var games = server.listGame(authToken);
-    System.out.println(games.toString());
+    for (GameData game: games.games()){
+      System.out.println(game);
+    }
     return String.format("strings");
   }
 
