@@ -1,15 +1,11 @@
 
 import dataAccess.UnauthorizedAccessException;
-import model.AuthData;
-import model.GameData;
-import model.GameID;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -68,17 +64,36 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void createGamePass() throws Exception {
+    void joinGamePass() throws Exception {
         var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
         var id = facade.gameCreate(authData,"yo");
-        assertTrue(id.gameID() == 1);
+        facade.joinGame(authData,new PlayerInfo("BLACK",1));
+        assertTrue(authData.authToken().length() > 10);
     }
 
     @Test
-    void createGameFail() throws Exception {
-        var authData = new AuthData("adhlfdkjadsljk","aslkdjfas");
-        assertThrows(Exception.class,()->facade.gameCreate(authData,"yo"));
+    void joinGameFail() throws Exception {
+        var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
+        var id = facade.gameCreate(authData,"yo");
+        assertThrows(Exception.class,() -> facade.joinGame(authData,new PlayerInfo("WHITE",2)));
     }
+
+    @Test
+    void observeGamePass() throws Exception {
+        var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
+        var id = facade.gameCreate(authData,"yo");
+        facade.observeGame(authData,new PlayerInfo(null,1));
+        assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void observeGameFail() throws Exception {
+        var authData = facade.registerUser(new UserData("player1", "password", "p1@email.com"));
+        var id = facade.gameCreate(authData,"yo");
+        assertThrows(Exception.class,() -> facade.joinGame(authData,new PlayerInfo(null,2)));
+    }
+
+
 
     @AfterAll
     static void stopServer() {
