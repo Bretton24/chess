@@ -1,3 +1,4 @@
+package clientTests;
 
 import dataAccess.UnauthorizedAccessException;
 import model.*;
