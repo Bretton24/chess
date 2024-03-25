@@ -9,7 +9,7 @@ public class ChessboardDrawing {
 
   private static final int BOARD_SIZE_IN_SQUARES = 8;
   private static final int SQUARE_SIZE_IN_CHARS = 3;
-  private static final int LINE_WIDTH_IN_CHARS = 1;
+  private static final int LINE_WIDTH_IN_CHARS = 3;
   private static final String EMPTY = " ";
 
   public static void main(String[] args) {
@@ -29,9 +29,9 @@ public class ChessboardDrawing {
 
   private static void drawHeaders(PrintStream out) {
 
-    setBlack(out);
+    setGrey(out);
 
-    String[] headers = { " ","a", "b", "c", "d", "e", "f", "g", "h", " " };
+    String[] headers = {" ","a", "b", "c", "d", "e", "f", "g", "h"," "};
     for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
 
       drawHeader(out, headers[boardCol]);
@@ -44,18 +44,25 @@ public class ChessboardDrawing {
   }
 
   private static void drawChessboard(PrintStream out) {
-    for (int row=0; row < BOARD_SIZE_IN_SQUARES; row++) {
+    for (int row=1; row < BOARD_SIZE_IN_SQUARES; row++) {
+      drawRowOfSquares(out,row);
 
 
     }
     out.println();
   }
 
-  private static void drawRowOfSquares(PrintStream out) {
-    for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_CHARS; ++squareRow) {
-      for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-        if()
+
+  private static void drawRowOfSquares(PrintStream out,Integer row) {
+    for (int col=1; col < BOARD_SIZE_IN_SQUARES; col++) {
+      if (col * row % 2 == 0){
+        setWhite(out);
+      }
+      else{
         setBlack(out);
+      }
+      if (col < BOARD_SIZE_IN_SQUARES){
+        out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
       }
     }
     out.println();
@@ -72,17 +79,12 @@ public class ChessboardDrawing {
   }
 
   private static void printHeaderText(PrintStream out, String player) {
-    out.print(SET_BG_COLOR_BLACK);
-    out.print(SET_TEXT_COLOR_GREEN);
+    out.print(SET_BG_COLOR_LIGHT_GREY);
+    out.print(SET_TEXT_COLOR_BLACK);
 
     out.print(player);
 
-    setBlack(out);
-  }
-
-  private static void drawVerticalLine(PrintStream out) {
-    setBlack(out);
-    out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+    setGrey(out);
   }
 
   private static void setWhite(PrintStream out) {
@@ -92,6 +94,11 @@ public class ChessboardDrawing {
 
   private static void setBlack(PrintStream out) {
     out.print(SET_BG_COLOR_BLACK);
+    out.print(SET_TEXT_COLOR_BLACK);
+  }
+
+  private static void setGrey(PrintStream out) {
+    out.print(SET_BG_COLOR_LIGHT_GREY);
     out.print(SET_TEXT_COLOR_BLACK);
   }
 }
