@@ -3,6 +3,7 @@ import model.AuthData;
 import model.PlayerInfo;
 import model.UserData;
 import server.ServerFacade;
+import ui.ChessboardDrawing;
 
 import java.util.Arrays;
 
@@ -11,6 +12,7 @@ public class ChessClient {
   private String visitorName = null;
   private final String serverUrl;
   private AuthData authToken = null;
+  private ChessboardDrawing board = new ChessboardDrawing();
   private State state = State.LOGGEDOUT;
   public ChessClient(String serverUrl){
     server = new ServerFacade(serverUrl);
@@ -82,6 +84,7 @@ public class ChessClient {
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       server.observeGame(authToken,playerInfo);
+      board.createChessboard(true);
     }
     return String.format("Successfully observing game.");
   }
@@ -91,12 +94,14 @@ public class ChessClient {
     if (params.length == 2) {
       assertSignedIn();
       Integer gameNum=Integer.valueOf(params[0]);
-      if (params[1] == "white"){
+      if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         server.joinGame(authToken, playerInfo);
-      } else if (params[1] == "black") {
+        board.createChessboard(true);
+      } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
         server.joinGame(authToken, playerInfo);
+        board.createChessboard(false);
       }
     }
     else{
