@@ -8,7 +8,7 @@ import static ui.EscapeSequences.*;
 public class ChessboardDrawing {
 
   private static final int BOARD_SIZE_IN_SQUARES = 8;
-  private static final int SQUARE_SIZE_IN_CHARS = 5;
+  private static final int SQUARE_SIZE_IN_CHARS = 3;
   private static final int LINE_WIDTH_IN_CHARS = 3;
   private static final String EMPTY = " ";
 
@@ -21,6 +21,8 @@ public class ChessboardDrawing {
 
     drawChessboard(out);
 
+    drawHeaders(out);
+
 //    out.print(SET_BG_COLOR_BLACK);
 //    out.print(SET_TEXT_COLOR_WHITE);
   }
@@ -31,14 +33,13 @@ public class ChessboardDrawing {
 
     setGrey(out);
 
-    String[] headers = {" ","a", "b", "c", "d", "e", "f", "g", "h"," "};
-    for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
+    String[] headers = {" ","h", "g", "f", "e", "d", "c", "b","a"," "};
+    for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES + 1; ++boardCol) {
 
       drawHeader(out, headers[boardCol]);
 
-//      if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-        out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
-//      }
+      out.print(EMPTY.repeat(0));
+
     }
     out.println();
   }
@@ -47,19 +48,31 @@ public class ChessboardDrawing {
     for (int row=0; row < BOARD_SIZE_IN_SQUARES; row++) {
       drawRowOfSquares(out,row);
     }
-    out.println();
+//    out.println();
   }
 
 
   private static void drawRowOfSquares(PrintStream out,Integer row) {
-    for (int col=0; col <= BOARD_SIZE_IN_SQUARES; col++) {
-      if ((col + row) % 2 == 0){
-        setWhite(out);
+    for (int col=0; col <= BOARD_SIZE_IN_SQUARES + 1; col++) {
+      if (col == 0 || col == 9){
+        setGrey(out);
+        int prefixLength = 1;
+        int suffixLength = 1;
+        out.print(EMPTY.repeat(prefixLength));
+        out.print(row + 1);
+        out.print(EMPTY.repeat(suffixLength));
+
       }
       else{
-        setBlack(out);
+        if ((col + row) % 2 == 0){
+          setWhite(out);
+        }
+        else{
+          setBlack(out);
+        }
+        out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
       }
-      out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
+
 
     }
     out.println();
@@ -67,8 +80,8 @@ public class ChessboardDrawing {
 
 
   private static void drawHeader(PrintStream out, String headerText) {
-    int prefixLength = SQUARE_SIZE_IN_CHARS / 2;
-    int suffixLength = SQUARE_SIZE_IN_CHARS - prefixLength - 1;
+    int prefixLength = 1;
+    int suffixLength = 1;
 
     out.print(EMPTY.repeat(prefixLength));
     printHeaderText(out, headerText);
