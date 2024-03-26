@@ -78,7 +78,7 @@ public class ChessClient {
     for (GameData game: games.games()){
       System.out.println(game);
     }
-    return String.format("strings");
+    return String.format("Games listed above.");
   }
 
   public String observeGame(String ... params) throws Exception{
@@ -87,7 +87,7 @@ public class ChessClient {
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       server.observeGame(authToken,playerInfo);
-      board.createChessboard(true);
+      board.createChessboard(false);
     }
     return String.format("Successfully observing game.");
   }
@@ -100,11 +100,11 @@ public class ChessClient {
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         server.joinGame(authToken, playerInfo);
-        board.createChessboard(true);
+        board.createChessboard(false);
       } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
         server.joinGame(authToken, playerInfo);
-        board.createChessboard(false);
+        board.createChessboard(true);
       }
     }
     else{
