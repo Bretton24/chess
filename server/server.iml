@@ -23,4 +23,7 @@
     <orderEntry type="library" name="mysql.connector.j" level="project" />
     <orderEntry type="library" name="glassfish.tyrus.bundles.standalone.client1" level="project" />
   </component>
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="f2b0465c-f3ba-41d0-bca8-3f894912ba70" />
+  </component>
 </module>

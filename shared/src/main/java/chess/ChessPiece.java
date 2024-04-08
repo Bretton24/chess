@@ -120,10 +120,10 @@ public class ChessPiece {
             }
             case KNIGHT -> {
                 if (pieceColor == ChessGame.TeamColor.WHITE){
-                    value += "K";
+                    value += "N";
                 }
                 else{
-                    value += "k";
+                    value += "n";
                 }
             }
             case ROOK -> {

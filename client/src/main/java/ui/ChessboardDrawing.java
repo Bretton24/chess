@@ -1,5 +1,9 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPosition;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -13,20 +17,21 @@ public class ChessboardDrawing {
   private static final int SQUARE_SIZE_IN_CHARS = 3;
   private static final int LINE_WIDTH_IN_CHARS = 3;
   private static final String EMPTY = " ";
+  private static ChessGame chessGame = new ChessGame();
 
-  public void createChessboard(Boolean white) {
+  public void createChessboard(Boolean black) {
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
     out.print(ERASE_SCREEN);
-    if (white){
-      drawHeaders(out,white);
-      drawChessboard(out,white);
-      drawHeaders(out,white);
+    if (black){
+      drawHeaders(out,black);
+      drawChessboard(out,black);
+      drawHeaders(out,black);
     }
     else{
-      drawHeaders(out,white);
-      drawChessboard(out,white);
-      drawHeaders(out,white);
+      drawHeaders(out,black);
+      drawChessboard(out,black);
+      drawHeaders(out,black);
     }
     out.print(RESET_BG_COLOR);
 
@@ -34,11 +39,13 @@ public class ChessboardDrawing {
 
 
 
-  private static void drawHeaders(PrintStream out,Boolean white) {
-
+  private static void drawHeaders(PrintStream out,Boolean black) {
+    ChessBoard board = new ChessBoard();
+    board.resetBoard();
+    chessGame.setBoard(board);
     setGrey(out);
     String[] headers;
-    if (white) {
+    if (black) {
       headers = new String[]{" ", "h", "g", "f", "e", "d", "c", "b", "a"};
     } else {
       headers = new String[]{" ", "a", "b", "c", "d", "e", "f", "g", "h"};
@@ -54,22 +61,46 @@ public class ChessboardDrawing {
     out.println();
   }
 
-  private static void drawChessboard(PrintStream out,Boolean white) {
+  private static void drawChessboard(PrintStream out,Boolean black) {
     for (int row=0; row < BOARD_SIZE_IN_SQUARES; row++) {
-      drawRowOfSquares(out,row,white);
+      drawRowOfSquares(out,row,black);
     }
   }
 
 
-  private static void drawRowOfSquares(PrintStream out,Integer row,Boolean white) {
-    String[] backRow;
+  private static void drawRowOfSquares(PrintStream out,Integer row,Boolean black) {
     String[] numbers;
-    if (white) {
-      backRow = new String[]{"R", "N", "B", "K", "Q", "B", "N", "R"};
+    if (black) {
       numbers = new String[]{"1","2","3","4","5","6","7","8"};
+
     } else {
-      backRow = new String[]{"R", "N", "B", "Q", "K", "B", "N", "R"};
       numbers = new String[]{"8","7","6","5","4","3","2","1"};
+      switch(row){
+        case 0:
+          row = 7;
+          break;
+        case 1:
+          row = 6;
+          break;
+        case 2:
+          row = 5;
+          break;
+        case 3:
+          row = 4;
+          break;
+        case 4:
+          row = 3;
+          break;
+        case 5:
+          row = 2;
+          break;
+        case 6:
+          row = 1;
+          break;
+        case 7:
+          row = 0;
+          break;
+      }
     }
     for (int col=0; col <= BOARD_SIZE_IN_SQUARES + 1; col++) {
       if (col == 0 || col == 9){
@@ -88,13 +119,14 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_RED);
             }
             else{
               out.print(SET_TEXT_COLOR_BLUE);
             }
-            out.print(backRow[col - 1]);
+            var piece = chessGame.getBoard().getPiece(new ChessPosition(row + 1,col));
+            out.print(piece.toString());
             setWhite(out);
             out.print(EMPTY.repeat(suffixLength));
           }
@@ -103,13 +135,13 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_RED);
             }
             else{
               out.print(SET_TEXT_COLOR_BLUE);
             }
-            out.print("P");
+            out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)).toString());
             setWhite(out);
             out.print(EMPTY.repeat(suffixLength));
           }
@@ -118,13 +150,13 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_BLUE);
             }
             else{
               out.print(SET_TEXT_COLOR_RED);
             }
-            out.print("P");
+            out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setWhite(out);
             out.print(EMPTY.repeat(suffixLength));
           }
@@ -133,13 +165,13 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_BLUE);
             }
             else{
               out.print(SET_TEXT_COLOR_RED);
             }
-            out.print(backRow[col - 1]);
+            out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setWhite(out);
             out.print(EMPTY.repeat(suffixLength));
           }
@@ -153,13 +185,13 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_RED);
             }
             else{
               out.print(SET_TEXT_COLOR_BLUE);
             }
-            out.print(backRow[col - 1]);
+            out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));
           }
@@ -168,13 +200,13 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_RED);
             }
             else{
               out.print(SET_TEXT_COLOR_BLUE);
             }
-            out.print("P");
+            out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));
           }
@@ -183,13 +215,13 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_BLUE);
             }
             else{
               out.print(SET_TEXT_COLOR_RED);
             }
-            out.print("P");
+            out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));
           }
@@ -198,13 +230,13 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(white){
+            if(black){
               out.print(SET_TEXT_COLOR_BLUE);
             }
             else{
               out.print(SET_TEXT_COLOR_RED);
             }
-            out.print(backRow[col - 1]);
+            out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));
           }

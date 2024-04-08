@@ -1,0 +1,38 @@
+
+>
+java:S5411"(Use a primitive boolean expression here.(²áº
+>
+java:S5411)"(Use a primitive boolean expression here.(²áº
+>
+java:S5411C"(Use a primitive boolean expression here.(²áº
+>
+java:S5411["(Use a primitive boolean expression here.(²áº
+>
+java:S5411j"(Use a primitive boolean expression here.(²áº
+>
+java:S5411y"(Use a primitive boolean expression here.(²áº
+?
+java:S5411ˆ"(Use a primitive boolean expression here.(²áº
+?
+java:S5411œ"(Use a primitive boolean expression here.(²áº
+?
+java:S5411«"(Use a primitive boolean expression here.(²áº
+?
+java:S5411º"(Use a primitive boolean expression here.(²áº
+?
+java:S5411É"(Use a primitive boolean expression here.(²áº
+E	java:S106"+Replace this use of System.out by a logger.(ÌñÒÜÿÿÿÿÿ
+q
+java:S3923"[Remove this conditional structure or edit its code blocks so that they're not all the same.(²áº
+h
+java:S3776@"RRefactor this method to reduce its Cognitive Complexity from 75 to the 15 allowed.(‹ä¿°
+F
+java:S1128"0Remove this unused import 'java.util.ArrayList'.(÷‰îƒ
+F
+java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ
+H
+java:S1128"-Remove this unused import 'java.util.Random'.(èøÉ›ùÿÿÿÿ
+N
+java:S1068"8Remove this unused "SQUARE_SIZE_IN_CHARS" private field.(‹Ö…
+İ
+java:S6541@"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 156 to 64, Complexity from 22 to 14, Nesting Level from 5 to 2, Number of Variables from 24 to 6.(‹ä¿°

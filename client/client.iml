@@ -17,4 +17,7 @@
     <orderEntry type="library" name="junit.jupiter" level="project" />
     <orderEntry type="library" name="glassfish.tyrus.bundles.standalone.client" level="project" />
   </component>
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="40da69e0-7e7a-412d-b036-e344ec7084df" />
+  </component>
 </module>
