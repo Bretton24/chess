@@ -19,7 +19,7 @@ public class ChessboardDrawing {
   private static final String EMPTY = " ";
   private static ChessGame chessGame = new ChessGame();
 
-  public void createChessboard(Boolean black) {
+  public void createInitialChessboard(Boolean black) {
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
     out.print(ERASE_SCREEN);
@@ -119,12 +119,9 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
-              out.print(SET_TEXT_COLOR_RED);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_BLUE);
-            }
+
+            out.print(SET_TEXT_COLOR_RED);
+
             var piece = chessGame.getBoard().getPiece(new ChessPosition(row + 1,col));
             out.print(piece.toString());
             setWhite(out);
@@ -135,12 +132,9 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
-              out.print(SET_TEXT_COLOR_RED);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_BLUE);
-            }
+
+            out.print(SET_TEXT_COLOR_RED);
+
             out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)).toString());
             setWhite(out);
             out.print(EMPTY.repeat(suffixLength));
@@ -150,12 +144,9 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
-              out.print(SET_TEXT_COLOR_BLUE);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_RED);
-            }
+
+            out.print(SET_TEXT_COLOR_BLUE);
+
             out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setWhite(out);
             out.print(EMPTY.repeat(suffixLength));
@@ -165,12 +156,8 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_WHITE);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
-              out.print(SET_TEXT_COLOR_BLUE);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_RED);
-            }
+            out.print(SET_TEXT_COLOR_BLUE);
+
             out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setWhite(out);
             out.print(EMPTY.repeat(suffixLength));
@@ -185,12 +172,8 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
-              out.print(SET_TEXT_COLOR_RED);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_BLUE);
-            }
+            out.print(SET_TEXT_COLOR_RED);
+
             out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));
@@ -200,12 +183,8 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
-              out.print(SET_TEXT_COLOR_RED);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_BLUE);
-            }
+            out.print(SET_TEXT_COLOR_RED);
+
             out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));
@@ -215,12 +194,8 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
-              out.print(SET_TEXT_COLOR_BLUE);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_RED);
-            }
+            out.print(SET_TEXT_COLOR_BLUE);
+
             out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));
@@ -230,12 +205,10 @@ public class ChessboardDrawing {
             int suffixLength = 1;
             out.print(SET_BG_COLOR_BLACK);
             out.print(EMPTY.repeat(prefixLength));
-            if(black){
               out.print(SET_TEXT_COLOR_BLUE);
-            }
-            else{
-              out.print(SET_TEXT_COLOR_RED);
-            }
+
+//              out.print(SET_TEXT_COLOR_RED);
+
             out.print(chessGame.getBoard().getPiece(new ChessPosition(row + 1,col)));
             setBlack(out);
             out.print(EMPTY.repeat(suffixLength));

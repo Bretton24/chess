@@ -15,6 +15,7 @@ public class ChessClient {
   private AuthData authToken = null;
   private ChessboardDrawing board = new ChessboardDrawing();
   private State state = State.LOGGEDOUT;
+  private State playingState = State.NOTPLAYING;
   public ChessClient(String serverUrl){
     server = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
@@ -33,6 +34,8 @@ public class ChessClient {
         case "join" -> joinGame(params);
         case "list" -> listGames();
         case "observe" -> observeGame(params);
+        case "leave" -> leaveGame();
+//        case "redraw" -> redrawChessboard();
         case "quit" -> "quit";
         default -> help();
       };
@@ -52,6 +55,19 @@ public class ChessClient {
       return String.format("You registered and signed in as %s.",visitorName);
     }
     throw new Exception("Need more info.");
+  }
+
+//  public String redrawChessboard() throws Exception {
+//    assertPlaying();
+//
+//  }
+
+  public String leaveGame() throws Exception {
+      if (playingState == State.OBSERVING || playingState == State.PLAYING){
+        playingState = State.NOTPLAYING;
+        return String.format("Successfully left game");
+      }
+     throw new Exception("You're not playing or observing. Join or observe to leave.");
   }
 
   public String login(String ... params) throws Exception{
@@ -84,10 +100,11 @@ public class ChessClient {
   public String observeGame(String ... params) throws Exception{
     if (params.length == 1){
       assertSignedIn();
+      playingState = State.OBSERVING;
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       server.observeGame(authToken,playerInfo);
-      board.createChessboard(false);
+      board.createInitialChessboard(false);
     }
     return String.format("Successfully observing game.");
   }
@@ -97,14 +114,15 @@ public class ChessClient {
     if (params.length == 2) {
       assertSignedIn();
       Integer gameNum=Integer.valueOf(params[0]);
+      playingState = state.PLAYING;
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         server.joinGame(authToken, playerInfo);
-        board.createChessboard(false);
+        board.createInitialChessboard(false);
       } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
         server.joinGame(authToken, playerInfo);
-        board.createChessboard(true);
+        board.createInitialChessboard(true);
       }
     }
     else{
@@ -126,26 +144,48 @@ public class ChessClient {
   public String help() {
     if (state == State.LOGGEDOUT) {
       return """
-                    - help
-                    - register <username> <password> <email>
-                    - login <username> <password>
-                    - quit
-                    """;
+              - help
+              - register <username> <password> <email>
+              - login <username> <password>
+              - quit
+              """;
+    } else if ((playingState == State.NOTPLAYING) && (state == State.LOGGEDIN)) {
+      return """
+              - create <GameName>
+              - join <ID> <[WHITE|BLACK|<empty]
+              - observe <ID> 
+              - list
+              - logout
+              - quit
+              """;
+    } else {
+      return """
+              - help
+              - redraw board
+              - leave
+              - make move
+              - resign
+              - highlight legal moves
+              """;
     }
-    return """
-                - create <GameName>
-                - join <ID> <[WHITE|BLACK|<empty]
-                - observe <ID> 
-                - list
-                - logout
-                - quit
-                """;
   }
 
 
   private void assertSignedIn() throws Exception {
     if (state == State.LOGGEDOUT) {
       throw new Exception("You must sign in");
+    }
+  }
+
+  private void assertPlaying() throws Exception {
+    if (playingState == State.NOTPLAYING) {
+      throw new Exception("You must sign in");
+    }
+  }
+
+  private void assertObserving() throws Exception {
+    if (playingState != State.OBSERVING) {
+      throw new Exception("You're not an observer");
     }
   }
 }

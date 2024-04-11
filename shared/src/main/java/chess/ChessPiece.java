@@ -95,52 +95,29 @@ public class ChessPiece {
         String value = "";
         switch(this.getPieceType()){
             case KING -> {
-                if (pieceColor == ChessGame.TeamColor.WHITE){
-                    value += "K";
-                }
-                else{
-                    value += "k";
-                }
+                value += "K";
             }
             case QUEEN -> {
-                if (pieceColor == ChessGame.TeamColor.WHITE){
                     value += "Q";
-                }
-                else{
-                    value += "q";
-                }
+
             }
             case BISHOP -> {
-                if (pieceColor == ChessGame.TeamColor.WHITE){
                     value += "B";
-                }
-                else{
-                    value += "b";
-                }
+
             }
             case KNIGHT -> {
-                if (pieceColor == ChessGame.TeamColor.WHITE){
+
                     value += "N";
-                }
-                else{
-                    value += "n";
-                }
+
             }
             case ROOK -> {
-                if (pieceColor == ChessGame.TeamColor.WHITE){
                     value += "R";
-                }
-                else{
-                    value += "r";
-                }
+
             }
             case PAWN ->{
-                if (pieceColor == ChessGame.TeamColor.WHITE){
+
                     value += "P";
-                }
-                else{
-                    value += "p";
-                }
+
             }
         }
 
