@@ -17,7 +17,8 @@ public class ChessboardDrawing {
   private static final String EMPTY = " ";
   private static ChessGame chessGame = new ChessGame();
 
-  public void createInitialChessboard(Boolean black) {
+  public void drawChessboard(Boolean black,ChessGame game) {
+    chessGame = game;
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     out.print(ERASE_SCREEN);
     if (black){
@@ -37,16 +38,6 @@ public class ChessboardDrawing {
 
 
   private static void drawHeaders(PrintStream out,Boolean black) {
-    ChessBoard board = new ChessBoard();
-    board.resetBoard();
-    chessGame.setBoard(board);
-    var piece = chessGame.getBoard().getPiece(new ChessPosition(2,1));
-    var moves = chessGame.validMoves(new ChessPosition(2,1));
-    var pos = new ChessPosition(3,1);
-    if (moves.contains(new ChessMove(new ChessPosition(2,1),pos))){
-      chessGame.getBoard().removePiece(new ChessPosition(2,1));
-      chessGame.getBoard().addPiece(pos,piece);
-    }
     setGrey(out);
     String[] headers;
     if (black) {

@@ -44,14 +44,14 @@ public class ServerFacade {
     return this.makeRequest("GET",path,null,GameList.class,authToken.authToken());
   }
 
-  public void observeGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
+  public GameData observeGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
     var path = "/game";
-    this.makeRequest("PUT",path,playerInfo,null,authToken.authToken());
+    return this.makeRequest("PUT",path,playerInfo,GameData.class,authToken.authToken());
   }
 
-  public void joinGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
+  public GameData joinGame(AuthData authToken,PlayerInfo playerInfo) throws Exception{
     var path = "/game";
-    this.makeRequest("PUT",path,playerInfo,null,authToken.authToken());
+    return this.makeRequest("PUT",path,playerInfo,GameData.class,authToken.authToken());
   }
 
   public void clearDatabase() throws Exception{

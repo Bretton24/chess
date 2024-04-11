@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
@@ -26,12 +27,29 @@ public class SQLGameDAO implements GameDAO{
     if (gameName != null){
       var statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)";
       ChessGame chessGame = new ChessGame();
+      ChessBoard board = new ChessBoard();
+      board.resetBoard();
+      chessGame.setBoard(board);
       var cGame = new Gson().toJson(chessGame);
       var id = executeUpdate(statement,null,null, gameName.gameName(),cGame);
       var gameid = new GameID(id);
       return gameid;
     }
     throw new UnauthorizedAccessException("Game name not provided");
+  }
+
+  public void updateGame(int gameID, ChessGame updatedGame) throws Exception {
+    try (var conn = DatabaseManager.getConnection()) {
+      var statement = "UPDATE games SET chessGame = ? WHERE gameID = ?";
+      try (var ps = conn.prepareStatement(statement)) {
+        var json = new Gson().toJson(updatedGame);
+        ps.setString(1, json);
+        ps.setInt(2, gameID);
+        ps.executeUpdate();
+      }
+    } catch (Exception e) {
+      throw new DataAccessException("Error: unable to update game");
+    }
   }
   @Override
   public GameData getGame(int gameID) throws Exception {

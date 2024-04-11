@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataAccess.*;
 import model.*;
 
@@ -22,15 +23,20 @@ public class GameService extends Services {
     return gameAccess.listGamesArray();
   }
 
+  public void updateGame(int gameID, ChessGame game) throws Exception {
+    gameAccess.updateGame(gameID,game);
+  }
+
   public Integer returnGamesLength() throws DataAccessException {
     return gameAccess.lengthOfGames();
   }
-  public void joinGame(String authToken,PlayerInfo playerInfo) throws Exception {
+  public GameData joinGame(String authToken,PlayerInfo playerInfo) throws Exception {
     if(!authAccess.authTokenPresent(authToken)){
       throw new UnauthorizedAccessException("Error: unathorized token");
     }
     var user = authAccess.getUser(authToken);
     gameAccess.joinGame(playerInfo,user);
+    return gameAccess.getGame(playerInfo.gameID());
   }
 
 }

@@ -12,6 +12,7 @@ public interface GameDAO {
     return new GameData(gameID,"","","", new ChessGame());
   }
   default void joinGame(PlayerInfo playerInfo, UserData user) throws Exception {}
+  default void updateGame(int gameID,ChessGame game) throws Exception {}
   default ArrayList<GameData> listGamesArray() throws Exception {return new ArrayList<>();}
 
   int lengthOfGames() throws DataAccessException;

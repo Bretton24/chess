@@ -1,4 +1,5 @@
 package client;
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.PlayerInfo;
@@ -16,6 +17,8 @@ public class ChessClient {
   private ChessboardDrawing board = new ChessboardDrawing();
   private State state = State.LOGGEDOUT;
   private State playingState = State.NOTPLAYING;
+  private GameData game;
+  private UserData user;
   public ChessClient(String serverUrl){
     server = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
@@ -35,7 +38,8 @@ public class ChessClient {
         case "list" -> listGames();
         case "observe" -> observeGame(params);
         case "leave" -> leaveGame();
-//        case "redraw" -> redrawChessboard();
+//        case "highlight moves" -> highlightMoves();
+        case "redraw" -> redrawChessboard();
         case "quit" -> "quit";
         default -> help();
       };
@@ -48,7 +52,7 @@ public class ChessClient {
 
   public String register(String ... params) throws Exception{
     if (params.length == 3){
-      var user = new UserData(params[0],params[1],params[2]);
+      user = new UserData(params[0],params[1],params[2]);
       authToken = server.registerUser(user);
       state = State.LOGGEDIN;
       visitorName = params[0];
@@ -57,10 +61,15 @@ public class ChessClient {
     throw new Exception("Need more info.");
   }
 
-//  public String redrawChessboard() throws Exception {
-//    assertPlaying();
-//
-//  }
+  public String redrawChessboard() throws Exception {
+    assertPlaying();
+    if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
+      board.drawChessboard(true,game.game());
+    }else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())){
+      board.drawChessboard(false,game.game());
+    }
+    throw new Exception("You must be playing to redraw the board");
+  }
 
   public String leaveGame() throws Exception {
       if (playingState == State.OBSERVING || playingState == State.PLAYING){
@@ -72,7 +81,7 @@ public class ChessClient {
 
   public String login(String ... params) throws Exception{
     if (params.length == 2){
-      var user = new UserData(params[0],params[1],null);
+      user = new UserData(params[0],params[1],null);
       authToken = server.loginUser(user);
       state = State.LOGGEDIN;
       visitorName = params[0];
@@ -103,8 +112,8 @@ public class ChessClient {
       playingState = State.OBSERVING;
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
-      server.observeGame(authToken,playerInfo);
-      board.createInitialChessboard(false);
+      game = server.observeGame(authToken,playerInfo);
+      board.drawChessboard(false,game.game());
     }
     return String.format("Successfully observing game.");
   }
@@ -117,12 +126,12 @@ public class ChessClient {
       playingState = state.PLAYING;
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
-        server.joinGame(authToken, playerInfo);
-        board.createInitialChessboard(false);
+        game = server.joinGame(authToken, playerInfo);
+        board.drawChessboard(false,game.game());
       } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
-        server.joinGame(authToken, playerInfo);
-        board.createInitialChessboard(true);
+        game = server.joinGame(authToken, playerInfo);
+        board.drawChessboard(true,game.game());
       }
     }
     else{
@@ -138,8 +147,12 @@ public class ChessClient {
       return String.format("Created a game with GameID:" + gameID.gameID());
     }
     throw new Exception("need a game name");
-
   }
+
+//  public String highlightMoves() throws Exception{
+//    assertPlaying();
+//
+//  }
 
   public String help() {
     if (state == State.LOGGEDOUT) {

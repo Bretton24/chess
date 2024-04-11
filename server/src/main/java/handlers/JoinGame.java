@@ -14,9 +14,9 @@ public class JoinGame {
     var authToken = req.headers("Authorization");
     GameService service = new GameService();
     try{
-      service.joinGame(authToken,playerInfo);
+      var game = service.joinGame(authToken,playerInfo);
       res.status(200);
-      return "";
+      return game;
     }
     catch(UnauthorizedAccessException e){
       res.status(401);
