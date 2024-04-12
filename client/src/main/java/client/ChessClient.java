@@ -26,10 +26,12 @@ public class ChessClient {
   private GameData game;
   private UserData user;
   private WebSocketFacade ws;
+  private ServerMessageHandler serverMessageHandler;
   private HashMap<Character,Integer> dictionary = new HashMap<>();
-  public ChessClient(String serverUrl){
+  public ChessClient(String serverUrl,ServerMessageHandler serverMessageHandler){
     server = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
+    this.serverMessageHandler = serverMessageHandler;
   }
 
   public String eval(String input){
@@ -149,7 +151,7 @@ public class ChessClient {
       assertSignedIn();
       Integer gameNum=Integer.valueOf(params[0]);
       playingState = state.PLAYING;
-      ws = new WebSocketFacade(serverUrl);
+      ws = new WebSocketFacade(serverUrl,serverMessageHandler);
       ws.send("Yo is this working?");
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);

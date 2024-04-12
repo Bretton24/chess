@@ -1,14 +1,18 @@
 package client;
 
+import webSocket.ServerMessageHandler;
+import webSocketMessages.serverMessages.*;
+import webSocketMessages.userCommands.*;
+
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Repl {
+public class Repl implements ServerMessageHandler {
 
   private final ChessClient client;
   public Repl(String serverUrl){
-    client = new ChessClient(serverUrl);
+    client = new ChessClient(serverUrl,this);
   }
 
   public void run(){
@@ -34,5 +38,11 @@ public class Repl {
 
   private void printPrompt() {
     System.out.print("\n" + RESET_TEXT_COLOR +  ">>> " + SET_TEXT_COLOR_GREEN);
+  }
+
+  @Override
+  public void notify(ServerMessageHandler serverMessageHandler) {
+    System.out.println(SET_TEXT_COLOR_BLUE + serverMessageHandler.toString());
+    printPrompt();
   }
 }

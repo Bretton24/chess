@@ -14,11 +14,11 @@ public class WebSocketFacade extends Endpoint {
 
   Session session;
   ServerMessageHandler  serverMessageHandler;
-  public WebSocketFacade(String url) throws Exception {
+  public WebSocketFacade(String url,ServerMessageHandler serverMessageHandler) throws Exception {
     try {
       url = url.replace("http", "ws");
       URI socketURI = new URI(url + "/connect");
-//      this.serverMessageHandler = serverMessageHandler;
+      this.serverMessageHandler = serverMessageHandler;
 
       WebSocketContainer container = ContainerProvider.getWebSocketContainer();
       this.session = container.connectToServer(this, socketURI);
