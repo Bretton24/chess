@@ -149,7 +149,8 @@ public class ChessClient {
       assertSignedIn();
       Integer gameNum=Integer.valueOf(params[0]);
       playingState = state.PLAYING;
-      ws = new WebSocketFacade(serverUrl,configWebSocket);
+      ws = new WebSocketFacade(serverUrl);
+      ws.send("Yo is this working?");
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         game = server.joinGame(authToken, playerInfo);

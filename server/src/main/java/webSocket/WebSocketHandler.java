@@ -17,15 +17,17 @@ public class WebSocketHandler {
 
   @OnWebSocketMessage
   public void onMessage(Session session, String message) throws IOException {
+    System.out.println(message);
     UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
-    switch (userGameCommand.getCommandType()) {
-      case JOIN_PLAYER ->
-    }
+    System.out.println(userGameCommand.toString());
+//    switch (userGameCommand.getCommandType()) {
+//      case JOIN_PLAYER ->
+//    }
   }
 
-  private void join(String authToken, Session session){
-    connections.add(authToken,session);
-    var message = String.format("%s is joining the game",)
-  }
+//  private void join(String authToken, Session session){
+//    connections.add(authToken,session);
+//    var message = String.format("%s is joining the game",)
+//  }
 
 }

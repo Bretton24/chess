@@ -3,8 +3,6 @@ package webSocket;
 import com.google.gson.Gson;
 import com.sun.nio.sctp.Notification;
 import com.sun.nio.sctp.NotificationHandler;
-import webSocketMessages.Action;
-import webSocketMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.websocket.*;
@@ -16,7 +14,7 @@ public class WebSocketFacade extends Endpoint {
 
   Session session;
   ServerMessageHandler  serverMessageHandler;
-  public WebSocketFacade(String url, ServerMessageHandler serverMessageHandler) throws Exception {
+  public WebSocketFacade(String url) throws Exception {
     try {
       url = url.replace("http", "ws");
       URI socketURI = new URI(url + "/connect");
@@ -29,6 +27,7 @@ public class WebSocketFacade extends Endpoint {
       this.session.addMessageHandler(new MessageHandler.Whole<String>() {
         @Override
         public void onMessage(String message) {
+          System.out.println(message);
           ServerMessage serverMessage = new Gson().fromJson(message,ServerMessage.class);
           System.out.println(serverMessage.toString());
           switch(serverMessage.getServerMessageType()) {
