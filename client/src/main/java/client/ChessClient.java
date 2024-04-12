@@ -7,6 +7,8 @@ import model.PlayerInfo;
 import model.UserData;
 import server.ServerFacade;
 import ui.ChessboardDrawing;
+import webSocket.ServerMessageHandler;
+import webSocket.WebSocketFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ public class ChessClient {
   private State playingState = State.NOTPLAYING;
   private GameData game;
   private UserData user;
+  private WebSocketFacade ws;
   private HashMap<Character,Integer> dictionary = new HashMap<>();
   public ChessClient(String serverUrl){
     server = new ServerFacade(serverUrl);
@@ -146,6 +149,7 @@ public class ChessClient {
       assertSignedIn();
       Integer gameNum=Integer.valueOf(params[0]);
       playingState = state.PLAYING;
+      ws = new WebSocketFacade(serverUrl,configWebSocket);
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         game = server.joinGame(authToken, playerInfo);

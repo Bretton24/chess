@@ -4,6 +4,7 @@ import dataAccess.DatabaseManager;
 import handlers.*;
 import service.Services;
 import spark.*;
+import webSocket.WebSocketHandler;
 
 
 public class Server {
@@ -12,6 +13,8 @@ public class Server {
     Spark.port(desiredPort);
 
     Spark.staticFiles.location("web");
+    WebSocketHandler webSocketHandler = new WebSocketHandler();
+    Spark.webSocket("/connect",webSocketHandler);
 
 
     Spark.delete("/db", Clear::handle);
