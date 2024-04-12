@@ -24,9 +24,9 @@ public class ConnectionManager {
     var removeList = new ArrayList<Connection>();
     for (var c : connections.values()) {
       if (c.session.isOpen()) {
-        if (!c.authToken.equals(excludeAuthToken)) {
-          c.send(serverMessage.toString());
-        }
+//        if (c.authToken.equals(excludeAuthToken)) {
+        c.send(serverMessage.toString());
+//      }
       } else {
         removeList.add(c);
       }

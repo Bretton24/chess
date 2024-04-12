@@ -18,15 +18,20 @@ public class WebSocketHandler {
 
   @OnWebSocketMessage
   public void onMessage(Session session, String message) throws IOException {
-    System.out.println(message);
     UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
-    System.out.println(userGameCommand.toString());
     switch (userGameCommand.getCommandType()) {
       case JOIN_PLAYER -> join(userGameCommand.getAuthString(),session);
+      case JOIN_OBSERVER -> observe(userGameCommand.getAuthString(), session);
     }
   }
 
   private void join(String authToken, Session session) throws IOException {
+    connections.add(authToken,session);
+    var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+    connections.broadcast(authToken,serverMessage);
+  }
+
+  private void observe(String authToken, Session session) throws IOException {
     connections.add(authToken,session);
     var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
     connections.broadcast(authToken,serverMessage);

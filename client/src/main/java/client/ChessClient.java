@@ -137,6 +137,7 @@ public class ChessClient {
     if (params.length == 1){
       assertSignedIn();
       playingState = State.OBSERVING;
+      ws = new WebSocketFacade(serverUrl,serverMessageHandler);
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       game = server.observeGame(authToken,playerInfo);
@@ -152,14 +153,15 @@ public class ChessClient {
       Integer gameNum=Integer.valueOf(params[0]);
       playingState = state.PLAYING;
       ws = new WebSocketFacade(serverUrl,serverMessageHandler);
-      ws.send("Yo is this working?");
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         game = server.joinGame(authToken, playerInfo);
+        ws.joinGame(authToken.authToken());
         board.drawChessboard(false,game.game(),null);
       } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
         game = server.joinGame(authToken, playerInfo);
+        ws.joinGame(authToken.authToken());
         board.drawChessboard(true,game.game(),null);
       }
     }

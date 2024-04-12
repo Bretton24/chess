@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.nio.sctp.Notification;
 import com.sun.nio.sctp.NotificationHandler;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -22,13 +23,28 @@ public class WebSocketFacade extends Endpoint {
 
       WebSocketContainer container = ContainerProvider.getWebSocketContainer();
       this.session = container.connectToServer(this, socketURI);
-
       //set message handler
       this.session.addMessageHandler(new MessageHandler.Whole<String>() {
         @Override
         public void onMessage(String message) {
           ServerMessage serverMessage=new Gson().fromJson(message, ServerMessage.class);
-          serverMessageHandler.notify(serverMessage);
+          switch (serverMessage.getServerMessageType()){
+            case NOTIFICATION: {
+              ServerMessage serverMessage1 = new Gson().fromJson(message,ServerMessage.class);
+              System.out.println(serverMessage1.toString());
+              break;
+            }
+            case ERROR: {
+              ServerMessage serverMessage1 = new Gson().fromJson(message,ServerMessage.class);
+              System.out.println(serverMessage1.toString());
+              break;
+            }
+            case LOAD_GAME:{
+              ServerMessage serverMessage1 = new Gson().fromJson(message,ServerMessage.class);
+              System.out.println(serverMessage1.toString());
+              break;
+            }
+          }
         };
       });
     ;}catch (Exception e){
@@ -36,8 +52,24 @@ public class WebSocketFacade extends Endpoint {
     }
   }
 
-  public void send(String msg) throws Exception {
-    this.session.getBasicRemote().sendText(msg);
+  public void joinGame(String authToken) throws Exception{
+    try {
+      var client = new UserGameCommand(authToken);
+      System.out.println(client.getCommandType());
+      this.session.getBasicRemote().sendText(new Gson().toJson(client));
+    }catch(Exception e){
+      throw new Exception("Could not connect");
+    }
+  }
+
+  public void observeGame(String authToken) throws Exception{
+    try {
+      var client = new UserGameCommand(authToken);
+      System.out.println(client.getCommandType());
+      this.session.getBasicRemote().sendText(new Gson().toJson(client));
+    }catch(Exception e){
+      throw new Exception("Could not connect");
+    }
   }
 
   @Override
