@@ -11,6 +11,7 @@ import ui.ChessboardDrawing;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class ChessClient {
   private final ServerFacade server;
@@ -43,6 +44,7 @@ public class ChessClient {
         case "observe" -> observeGame(params);
         case "leave" -> leaveGame();
         case "highlight" -> highlightMoves(params);
+        case "resign" -> resign();
         case "redraw" -> redrawChessboard();
         case "quit" -> "quit";
         default -> help();
@@ -63,6 +65,22 @@ public class ChessClient {
       return String.format("You registered and signed in as %s.",visitorName);
     }
     throw new Exception("Need more info.");
+  }
+
+  public String resign() throws Exception{
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Are you sure you want to resign? (yes/no)");
+    String response = scanner.nextLine().trim().toLowerCase();
+
+    if (response.equals("yes")) {
+      assertPlaying();
+      playingState = State.OBSERVING;
+      return "You have resigned from the game.";
+    } else if (response.equals("no")) {
+      return "Resignation canceled.";
+    } else {
+      return "Invalid response. Please type 'yes' or 'no'.";
+    }
   }
 
   public String redrawChessboard() throws Exception {
@@ -238,8 +256,8 @@ public class ChessClient {
   }
 
   private void assertPlaying() throws Exception {
-    if (playingState == State.NOTPLAYING) {
-      throw new Exception("You must sign in");
+    if (playingState != State.PLAYING) {
+      throw new Exception("You must be playing or you have already resigned");
     }
   }
 
