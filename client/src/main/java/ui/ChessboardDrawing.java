@@ -4,9 +4,7 @@ import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 public class ChessboardDrawing {
@@ -16,9 +14,21 @@ public class ChessboardDrawing {
   private static final int LINE_WIDTH_IN_CHARS = 3;
   private static final String EMPTY = " ";
   private static ChessGame chessGame = new ChessGame();
+  private static ChessPosition pos;
+  private static Collection<ChessMove> moves;
 
-  public void drawChessboard(Boolean black,ChessGame game) {
+  public void drawChessboard(Boolean black,ChessGame game,ChessPosition position) {
     chessGame = game;
+    pos = position;
+    if (pos != null){
+//      if (!black){
+//        pos = new ChessPosition(9 - position.getRow(), position.getColumn());
+//      }
+      moves = chessGame.validMoves(pos);
+    }
+    else{
+      moves = null;
+    }
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     out.print(ERASE_SCREEN);
     if (black){
@@ -77,12 +87,24 @@ public class ChessboardDrawing {
         int prefixLength = 1;
         int suffixLength = 1;
         out.print(EMPTY.repeat(prefixLength));
-        out.print(numbers[row]);
+        if (!black){
+          out.print(numbers[7 - row]);
+        }
+        else{
+          out.print(numbers[row]);
+        }
+
         out.print(EMPTY.repeat(suffixLength));
       }
       else{
         Boolean whiteSquare = (col + row) % 2 == 0;
         setSquareColor(out,whiteSquare);
+        ChessPosition currentPosition = new ChessPosition(row + 1, col);
+        if (moves != null && moves.contains(new ChessMove(pos,currentPosition))) {
+          out.print(SET_BG_COLOR_GREEN); // Set background color to light green for valid moves
+        }else if (currentPosition.equals(pos)){
+          out.print(SET_BG_COLOR_YELLOW);
+        }
         if (chessGame.getBoard().pieceAtPosition(new ChessPosition(row + 1,col))){
           int prefixLength = 1;
           int suffixLength = 1;

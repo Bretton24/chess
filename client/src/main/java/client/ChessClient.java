@@ -1,5 +1,6 @@
 package client;
 import chess.ChessGame;
+import chess.ChessPosition;
 import model.AuthData;
 import model.GameData;
 import model.PlayerInfo;
@@ -8,6 +9,8 @@ import server.ServerFacade;
 import ui.ChessboardDrawing;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChessClient {
   private final ServerFacade server;
@@ -19,6 +22,7 @@ public class ChessClient {
   private State playingState = State.NOTPLAYING;
   private GameData game;
   private UserData user;
+  private HashMap<Character,Integer> dictionary = new HashMap<>();
   public ChessClient(String serverUrl){
     server = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
@@ -38,7 +42,7 @@ public class ChessClient {
         case "list" -> listGames();
         case "observe" -> observeGame(params);
         case "leave" -> leaveGame();
-//        case "highlight moves" -> highlightMoves();
+        case "highlight" -> highlightMoves(params);
         case "redraw" -> redrawChessboard();
         case "quit" -> "quit";
         default -> help();
@@ -64,9 +68,9 @@ public class ChessClient {
   public String redrawChessboard() throws Exception {
     assertPlaying();
     if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
-      board.drawChessboard(true,game.game());
+      board.drawChessboard(true,game.game(),null);
     }else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())){
-      board.drawChessboard(false,game.game());
+      board.drawChessboard(false,game.game(),null);
     }
     throw new Exception("You must be playing to redraw the board");
   }
@@ -113,7 +117,7 @@ public class ChessClient {
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       game = server.observeGame(authToken,playerInfo);
-      board.drawChessboard(false,game.game());
+      board.drawChessboard(false,game.game(),null);
     }
     return String.format("Successfully observing game.");
   }
@@ -127,11 +131,11 @@ public class ChessClient {
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         game = server.joinGame(authToken, playerInfo);
-        board.drawChessboard(false,game.game());
+        board.drawChessboard(false,game.game(),null);
       } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
         game = server.joinGame(authToken, playerInfo);
-        board.drawChessboard(true,game.game());
+        board.drawChessboard(true,game.game(),null);
       }
     }
     else{
@@ -149,10 +153,53 @@ public class ChessClient {
     throw new Exception("need a game name");
   }
 
-//  public String highlightMoves() throws Exception{
-//    assertPlaying();
-//
-//  }
+  public String highlightMoves(String ... params) throws Exception{
+    assertPlaying();
+    Map<Character, Integer> whiteDictionary = new HashMap<>();
+    whiteDictionary.put('a', 1);
+    whiteDictionary.put('b', 2);
+    whiteDictionary.put('c', 3);
+    whiteDictionary.put('d', 4);
+    whiteDictionary.put('e', 5);
+    whiteDictionary.put('f', 6);
+    whiteDictionary.put('g', 7);
+    whiteDictionary.put('h', 8);
+    Map<Character, Integer> blackDictionary = new HashMap<>();
+    blackDictionary.put('h', 1);
+    blackDictionary.put('g', 2);
+    blackDictionary.put('f', 3);
+    blackDictionary.put('e', 4);
+    blackDictionary.put('d', 5);
+    blackDictionary.put('c', 6);
+    blackDictionary.put('b', 7);
+    blackDictionary.put('a', 8);
+    if (params.length == 1){
+      String values = params[0];
+      var letter = values.charAt(0);
+      var digiNumber = values.charAt(1);
+      var number = digiNumber - '0';
+      if (whiteDictionary.containsKey(letter) && number > 0 && number < 9){
+        if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
+          var pos = new ChessPosition(number,blackDictionary.get(letter));
+          if (game.game().getBoard().pieceAtPosition(pos)) {
+            board.drawChessboard(true, game.game(), pos);
+            return String.format("succesffuly highlighted");
+          }
+        }
+        else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())) {
+          var pos=new ChessPosition(number, whiteDictionary.get(letter));
+          if (game.game().getBoard().pieceAtPosition(pos)) {
+            board.drawChessboard(false, game.game(), pos);
+            return String.format("succesffuly highlighted");
+          }
+        }
+        throw new Exception("theres no piece at this position");
+      }
+      throw new Exception("Wrong input");
+
+    }
+    throw new Exception("Enter it as one word, example: A6 or B7");
+  }
 
   public String help() {
     if (state == State.LOGGEDOUT) {
@@ -178,7 +225,7 @@ public class ChessClient {
               - leave
               - make move
               - resign
-              - highlight legal moves
+              - highlight <CHESSPOSITION> ex. A5 or C2
               """;
     }
   }
