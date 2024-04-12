@@ -41,8 +41,8 @@ public class Repl implements ServerMessageHandler {
   }
 
   @Override
-  public void notify(ServerMessageHandler serverMessageHandler) {
-    System.out.println(SET_TEXT_COLOR_BLUE + serverMessageHandler.toString());
+  public void notify(ServerMessage serverMessage) {
+    System.out.println(SET_TEXT_COLOR_BLUE + serverMessage.getServerMessageType());
     printPrompt();
   }
 }

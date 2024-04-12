@@ -1,6 +1,7 @@
 package webSocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.management.Notification;
 import java.io.IOException;
@@ -19,12 +20,12 @@ public class ConnectionManager {
     connections.remove(authToken);
   }
 
-  public void broadcast(String excludeAuthToken, Notification notification) throws IOException {
+  public void broadcast(String excludeAuthToken, ServerMessage serverMessage) throws IOException {
     var removeList = new ArrayList<Connection>();
     for (var c : connections.values()) {
       if (c.session.isOpen()) {
         if (!c.authToken.equals(excludeAuthToken)) {
-          c.send(notification.toString());
+          c.send(serverMessage.toString());
         }
       } else {
         removeList.add(c);
