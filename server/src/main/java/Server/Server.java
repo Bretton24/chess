@@ -13,6 +13,7 @@ public class Server {
 
     Spark.staticFiles.location("web");
 
+
     Spark.delete("/db", Clear::handle);
     Spark.post("/user", Register::handle);
     Spark.post("/session", Login::handle);
