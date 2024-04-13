@@ -29,10 +29,11 @@ public class ConnectionManager {
 
   public void broadcast(String excludeAuthToken, ServerMessage serverMessage) throws IOException {
     var removeList = new ArrayList<Connection>();
+    var message = new Gson().toJson(serverMessage);
     for (var c : connections.values()) {
       if (c.session.isOpen()) {
-        if (c.authToken.equals(excludeAuthToken)) {
-          c.send(serverMessage.getServerMessageType().toString());
+        if (!c.authToken.equals(excludeAuthToken)) {
+          c.send(message);
         }
       } else {
         removeList.add(c);

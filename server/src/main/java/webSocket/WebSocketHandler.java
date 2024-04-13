@@ -6,12 +6,15 @@ import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
 import model.AuthData;
 import model.GameData;
+import model.UserData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.AuthService;
 import service.GameService;
 import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
@@ -39,14 +42,22 @@ public class WebSocketHandler {
 
   private void join(String authToken, Integer gameID, ChessGame.TeamColor teamColor, Session session) throws Exception {
     connections.add(authToken,session);
-    try{
-      GameData game =GameService.gameAccess.getGame(gameID);
+    GameData game = null;
+    UserData user = null;
+    try {
+      game=GameService.gameAccess.getGame(gameID);
       if(!AuthService.authAccess.authTokenPresent(authToken)){
         Error error = new Error("Error: unauthorized access");
         connections.respondToSender(authToken,error);
         return;
       }
-      if (teamColor == ChessGame.TeamColor.WHITE && game.whiteUsername() != null || teamColor == ChessGame.TeamColor.BLACK && game.blackUsername() != null){
+      user = AuthService.authAccess.getUser(authToken);
+      if (teamColor == ChessGame.TeamColor.WHITE && !game.whiteUsername().equals(user.username())){
+        Error error = new Error("Error: team taken");
+        connections.respondToSender(authToken,error);
+        return;
+      }
+      if (teamColor == ChessGame.TeamColor.BLACK && !game.blackUsername().equals(user.username())){
         Error error = new Error("Error: team taken");
         connections.respondToSender(authToken,error);
         return;
@@ -54,7 +65,15 @@ public class WebSocketHandler {
     }catch(Exception e){
       Error error = new Error("Error: game does not exist");
       connections.respondToSender(authToken,error);
+      return;
     }
+
+      LoadGame game1 = new LoadGame(game.game());
+      String message = String.format("%s joined the game as %s",user.username(),teamColor);
+      Notification notification = new Notification(message);
+      connections.respondToSender(authToken,game1);
+      connections.broadcast(authToken,notification);
+
 
 
 
