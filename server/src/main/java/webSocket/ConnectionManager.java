@@ -16,6 +16,11 @@ public class ConnectionManager {
     connections.put(authToken, connection);
   }
 
+  public void respondToSender(String authToken,ServerMessage message) throws IOException {
+    var currSession = connections.get(authToken);
+    currSession.send(message.getServerMessageType().toString());
+  }
+
   public void remove(String authToken) {
     connections.remove(authToken);
   }
@@ -24,9 +29,9 @@ public class ConnectionManager {
     var removeList = new ArrayList<Connection>();
     for (var c : connections.values()) {
       if (c.session.isOpen()) {
-//        if (c.authToken.equals(excludeAuthToken)) {
-        c.send(serverMessage.toString());
-//      }
+        if (c.authToken.equals(excludeAuthToken)) {
+          c.send(serverMessage.getServerMessageType().toString());
+        }
       } else {
         removeList.add(c);
       }

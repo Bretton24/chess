@@ -156,12 +156,12 @@ public class ChessClient {
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         game = server.joinGame(authToken, playerInfo);
-        ws.joinGame(authToken.authToken());
+        ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.WHITE);
         board.drawChessboard(false,game.game(),null);
       } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
         game = server.joinGame(authToken, playerInfo);
-        ws.joinGame(authToken.authToken());
+        ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.BLACK);
         board.drawChessboard(true,game.game(),null);
       }
     }

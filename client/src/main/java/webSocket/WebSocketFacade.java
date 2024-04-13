@@ -1,9 +1,13 @@
 package webSocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
-import com.sun.nio.sctp.Notification;
 import com.sun.nio.sctp.NotificationHandler;
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
@@ -30,18 +34,19 @@ public class WebSocketFacade extends Endpoint {
           ServerMessage serverMessage=new Gson().fromJson(message, ServerMessage.class);
           switch (serverMessage.getServerMessageType()){
             case NOTIFICATION: {
-              ServerMessage serverMessage1 = new Gson().fromJson(message,ServerMessage.class);
-              System.out.println(serverMessage1.toString());
+              Notification notification = new Gson().fromJson(message, Notification.class);
+              System.out.println(notification.getMessage());
               break;
             }
             case ERROR: {
-              ServerMessage serverMessage1 = new Gson().fromJson(message,ServerMessage.class);
-              System.out.println(serverMessage1.toString());
+              Error error = new Gson().fromJson(message, Error.class);
+              System.out.println(error.getServerMessageType());
               break;
             }
             case LOAD_GAME:{
-              ServerMessage serverMessage1 = new Gson().fromJson(message,ServerMessage.class);
-              System.out.println(serverMessage1.toString());
+              LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
+              loadGame.getGame();
+
               break;
             }
           }
@@ -52,11 +57,11 @@ public class WebSocketFacade extends Endpoint {
     }
   }
 
-  public void joinGame(String authToken) throws Exception{
+  public void joinGame(String authToken, int gameID, ChessGame.TeamColor color) throws Exception{
     try {
-      var client = new UserGameCommand(authToken);
-      System.out.println(client.getCommandType());
-      this.session.getBasicRemote().sendText(new Gson().toJson(client));
+      var joinPlayer = new JoinPlayer(authToken,gameID,color);
+      joinPlayer.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
+      this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
     }catch(Exception e){
       throw new Exception("Could not connect");
     }
