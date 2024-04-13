@@ -19,6 +19,7 @@ public class ConnectionManager {
 
   public void respondToSender(String authToken,ServerMessage message) throws IOException {
     var currSession = connections.get(authToken);
+
     var mess = new Gson().toJson(message);
     currSession.send(mess);
   }

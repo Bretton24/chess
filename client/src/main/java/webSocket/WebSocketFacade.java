@@ -7,6 +7,7 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -66,11 +67,11 @@ public class WebSocketFacade extends Endpoint {
     }
   }
 
-  public void observeGame(String authToken) throws Exception{
+  public void observeGame(String authToken, Integer gameID) throws Exception{
     try {
-      var client = new UserGameCommand(authToken);
-      System.out.println(client.getCommandType());
-      this.session.getBasicRemote().sendText(new Gson().toJson(client));
+      var joinObserver = new JoinObserver(authToken,gameID);
+      joinObserver.setCommandType(UserGameCommand.CommandType.JOIN_OBSERVER);
+      this.session.getBasicRemote().sendText(new Gson().toJson(joinObserver));
     }catch(Exception e){
       throw new Exception("Could not connect");
     }

@@ -32,6 +32,7 @@ public class ChessClient {
     server = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
     this.serverMessageHandler = serverMessageHandler;
+
   }
 
   public String eval(String input){
@@ -137,10 +138,13 @@ public class ChessClient {
     if (params.length == 1){
       assertSignedIn();
       playingState = State.OBSERVING;
-      ws = new WebSocketFacade(serverUrl,serverMessageHandler);
+      if (ws == null) {
+        ws=new WebSocketFacade(serverUrl, serverMessageHandler);
+      }
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       game = server.observeGame(authToken,playerInfo);
+      ws.observeGame(authToken.authToken(),game.gameID());
       board.drawChessboard(false,game.game(),null);
     }
     return String.format("Successfully observing game.");
@@ -152,7 +156,9 @@ public class ChessClient {
       assertSignedIn();
       Integer gameNum=Integer.valueOf(params[0]);
       playingState = state.PLAYING;
-      ws = new WebSocketFacade(serverUrl,serverMessageHandler);
+      if (ws == null){
+        ws = new WebSocketFacade(serverUrl,serverMessageHandler);
+      }
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         game = server.joinGame(authToken, playerInfo);
