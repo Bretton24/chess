@@ -1,5 +1,6 @@
 package webSocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
 
@@ -18,7 +19,8 @@ public class ConnectionManager {
 
   public void respondToSender(String authToken,ServerMessage message) throws IOException {
     var currSession = connections.get(authToken);
-    currSession.send(message.getServerMessageType().toString());
+    var mess = new Gson().toJson(message);
+    currSession.send(mess);
   }
 
   public void remove(String authToken) {

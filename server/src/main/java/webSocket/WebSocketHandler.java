@@ -4,11 +4,14 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
+import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import service.AuthService;
 import service.GameService;
+import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
@@ -38,8 +41,18 @@ public class WebSocketHandler {
     connections.add(authToken,session);
     try{
       GameData game =GameService.gameAccess.getGame(gameID);
+      if(!AuthService.authAccess.authTokenPresent(authToken)){
+        Error error = new Error("Error: unauthorized access");
+        connections.respondToSender(authToken,error);
+        return;
+      }
+      if (teamColor == ChessGame.TeamColor.WHITE && game.whiteUsername() != null || teamColor == ChessGame.TeamColor.BLACK && game.blackUsername() != null){
+        Error error = new Error("Error: team taken");
+        connections.respondToSender(authToken,error);
+        return;
+      }
     }catch(Exception e){
-      ServerMessage error = new Error("Error: game does not exist");
+      Error error = new Error("Error: game does not exist");
       connections.respondToSender(authToken,error);
     }
 
