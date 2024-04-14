@@ -22,10 +22,7 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.MakeMove;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -53,6 +50,11 @@ public class WebSocketHandler {
       case MAKE_MOVE: {
         MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
         move(makeMove.getAuthString(),makeMove.getGameID(),makeMove.getMove(),session);
+        break;
+      }
+      case LEAVE: {
+        Leave leaveGame = new Gson().fromJson(message, Leave.class);
+        leave(leaveGame.getAuthString(),leaveGame.getGameID(),session);
         break;
       }
     }
@@ -114,8 +116,33 @@ public class WebSocketHandler {
     connections.broadcast(authToken,notification);
   }
 
+  private void leave(String authToken, Integer gameID, Session session) throws Exception {
+    GameData game = null;
+    game = GameService.gameAccess.getGame(gameID);
+    if (game == null){
+      Error error = new Error("Error: game does not exist");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+    if(!AuthService.authAccess.authTokenPresent(authToken)){
+      Error error = new Error("Error: unauthorized access");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+    UserData user = AuthService.authAccess.getUser(authToken);
+    if (game.blackUsername().equals(user.username())){
+       var updatedGame = new GameData(game.gameID(),game.whiteUsername(),null,game.gameName(),game.game());
+       GameService.gameAccess.updateGame();
+    }
+    LoadGame loadGame = new LoadGame(game.game());
+    connections.respondToSender(authToken,loadGame);
+    String message = String.format("%s joined the game as observer",user.username());
+    Notification notification = new Notification(message);
+    connections.broadcast(authToken,notification);
+  }
+
   private void move(String authToken, Integer gameID, ChessMove chessMove, Session session) throws Exception {
-    connections.add(authToken,session);
+//    connections.add(authToken,session);
     var game = GameService.gameAccess.getGame(gameID);
     var user = UserService.authAccess.getUser(authToken);
     if (game.blackUsername() != null && game.whiteUsername() != null){
@@ -151,7 +178,7 @@ public class WebSocketHandler {
               if(moves.contains(chessMove)){
                 game.game().makeMove(chessMove);
                 LoadGame loadGame = new LoadGame(game.game());
-//                GameService.gameAccess.updateGame(gameID,game.game());
+                GameService.gameAccess.
                 connections.respondToSender(authToken,loadGame);
                 connections.broadcast(authToken,loadGame);
                 return;

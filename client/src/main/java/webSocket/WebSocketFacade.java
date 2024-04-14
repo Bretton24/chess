@@ -8,10 +8,7 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.MakeMove;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -84,6 +81,16 @@ public class WebSocketFacade extends Endpoint {
       var makeMove = new MakeMove(authToken,gameID,chessMove);
       makeMove.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
       this.session.getBasicRemote().sendText(new Gson().toJson(makeMove));
+    }catch(Exception e){
+      throw new Exception("Could not connect");
+    }
+  }
+
+  public void leave(String authToken, int gameID) throws Exception{
+    try {
+      var leave = new Leave(authToken,gameID);
+      leave.setCommandType(UserGameCommand.CommandType.LEAVE);
+      this.session.getBasicRemote().sendText(new Gson().toJson(leave));
     }catch(Exception e){
       throw new Exception("Could not connect");
     }

@@ -162,6 +162,7 @@ public class ChessClient {
   public String leaveGame() throws Exception {
       if (playingState == State.OBSERVING || playingState == State.PLAYING){
         playingState = State.NOTPLAYING;
+        ws.leave(authToken.authToken(),game.gameID());
         return String.format("Successfully left game");
       }
      throw new Exception("You're not playing or observing. Join or observe to leave.");

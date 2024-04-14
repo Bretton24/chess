@@ -38,19 +38,23 @@ public class SQLGameDAO implements GameDAO{
     throw new UnauthorizedAccessException("Game name not provided");
   }
 
-  public void updateGame(int gameID, ChessGame updatedGame) throws Exception {
+  public void updateGame(int gameID, GameData updatedGameData) throws Exception {
     try (var conn = DatabaseManager.getConnection()) {
-      var statement = "UPDATE games SET chessGame = ? WHERE gameID = ?";
+      var statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, chessGame = ? WHERE gameID = ?";
       try (var ps = conn.prepareStatement(statement)) {
-        var json = new Gson().toJson(updatedGame);
-        ps.setString(1, json);
-        ps.setInt(2, gameID);
+        ps.setString(1, updatedGameData.whiteUsername());
+        ps.setString(2, updatedGameData.blackUsername());
+        ps.setString(3, updatedGameData.gameName());
+        var json = new Gson().toJson(updatedGameData.game());
+        ps.setString(4, json);
+        ps.setInt(5, gameID);
         ps.executeUpdate();
       }
     } catch (Exception e) {
       throw new DataAccessException("Error: unable to update game");
     }
   }
+
   @Override
   public GameData getGame(int gameID) throws Exception {
       try (var conn = DatabaseManager.getConnection()) {
