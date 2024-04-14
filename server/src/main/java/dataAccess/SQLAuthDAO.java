@@ -22,7 +22,7 @@ public class SQLAuthDAO implements AuthDAO{
     var authToken = new AuthData(UUID.randomUUID().toString(), user.username());
     var newUser = new Gson().toJson(user);
     if(!authTokenPresent(authToken.authToken())){
-      int id = executeUpdate(statement, authToken.authToken(),authToken.username(),newUser);
+      int id = doUpdate(statement, authToken.authToken(),authToken.username(),newUser);
       return authToken;
     }
     else{
@@ -54,7 +54,7 @@ public class SQLAuthDAO implements AuthDAO{
   public void deleteAuth(String newAuthToken) throws Exception {
     if (authTokenPresent(newAuthToken)){
       var statement = "DELETE FROM authTokens WHERE authToken=?";
-      executeUpdate(statement, newAuthToken);
+      doUpdate(statement, newAuthToken);
       if (authTokenPresent(newAuthToken)){
         throw new DataAccessException("Error: authtoken should've been removed");
       }
@@ -67,7 +67,7 @@ public class SQLAuthDAO implements AuthDAO{
   @Override
   public void deleteAllAuthTokens() throws Exception {
     var statement = "TRUNCATE authTokens";
-    executeUpdate(statement);
+    doUpdate(statement);
   }
 
   @Override
@@ -114,9 +114,9 @@ public class SQLAuthDAO implements AuthDAO{
     }
   }
 
-  private int executeUpdate(String statement, Object... params) throws Exception {
-    try (var conn = DatabaseManager.getConnection()) {
-      try (var ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+  private int doUpdate(String phrase, Object... params) throws Exception {
+    try (var connectivity = DatabaseManager.getConnection()) {
+      try (var ps = connectivity.prepareStatement(phrase, Statement.RETURN_GENERATED_KEYS)) {
         for (var i = 0; i < params.length; i++) {
           var param = params[i];
           if (param instanceof String p) ps.setString(i + 1, p);
