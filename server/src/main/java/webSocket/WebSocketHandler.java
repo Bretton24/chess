@@ -92,7 +92,7 @@ public class WebSocketHandler {
       connections.respondToSender(authToken,error);
       return;
     }
-      LoadGame game1 = new LoadGame(game.game());
+      LoadGame game1 = new LoadGame(game);
       String message = String.format("%s joined the game as %s",user.username(),teamColor);
       Notification notification = new Notification(message);
       connections.respondToSender(authToken,game1);
@@ -125,6 +125,7 @@ public class WebSocketHandler {
       Notification notification = new Notification(message);
       connections.broadcast(authToken,notification);
       connections.respondToSender(authToken,notification);
+      connections.remove(authToken);
       return;
     }
     else if (game.whiteUsername().equals(user.username())){
@@ -134,6 +135,7 @@ public class WebSocketHandler {
       Notification notification = new Notification(message);
       connections.broadcast(authToken,notification);
       connections.respondToSender(authToken,notification);
+      connections.remove(authToken);
       return;
     }
     else{
@@ -158,7 +160,7 @@ public class WebSocketHandler {
       return;
     }
     UserData user = AuthService.authAccess.getUser(authToken);
-    LoadGame loadGame = new LoadGame(game.game());
+    LoadGame loadGame = new LoadGame(game);
     connections.respondToSender(authToken,loadGame);
     String message = String.format("%s joined the game as observer",user.username());
     Notification notification = new Notification(message);
@@ -221,10 +223,28 @@ public class WebSocketHandler {
               var moves = game.game().validMoves(chessMove.getStartPosition());
               if(moves.contains(chessMove)){
                 game.game().makeMove(chessMove);
-                LoadGame loadGame = new LoadGame(game.game());
+                LoadGame loadGame = new LoadGame(game);
                 GameService.gameAccess.updateGame(gameID,game);
                 connections.respondToSender(authToken,loadGame);
                 connections.broadcast(authToken,loadGame);
+                if (game.game().isInCheck(ChessGame.TeamColor.WHITE)){
+                  String message = String.format("White team is in check");
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                  connections.respondToSender(authToken,notification);
+                }
+                else if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+                  String message = String.format("White team is in checkmate");
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                  connections.respondToSender(authToken,notification);
+                  connections.remove(authToken);
+                }
+                else{
+                  String message = String.format("Black team moved %s",chessMove.toString());
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                }
                 return;
               }
             }
@@ -244,10 +264,28 @@ public class WebSocketHandler {
               var moves = game.game().validMoves(chessMove.getStartPosition());
               if(moves.contains(chessMove)){
                 game.game().makeMove(chessMove);
-                LoadGame loadGame = new LoadGame(game.game());
+                LoadGame loadGame = new LoadGame(game);
                 GameService.gameAccess.updateGame(gameID,game);
                 connections.respondToSender(authToken,loadGame);
                 connections.broadcast(authToken,loadGame);
+                if (game.game().isInCheck(ChessGame.TeamColor.BLACK)){
+                  String message = String.format("Black team is in check");
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                  connections.respondToSender(authToken,notification);
+                }
+                else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+                  String message = String.format("Black team is in checkmate");
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                  connections.respondToSender(authToken,notification);
+                  connections.remove(authToken);
+                }
+                else{
+                  String message = String.format("White team moved %s",chessMove.toString());
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                }
                 return;
               }
             }

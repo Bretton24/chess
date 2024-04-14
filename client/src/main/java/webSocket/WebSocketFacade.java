@@ -4,6 +4,8 @@ import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
+import model.UserData;
+import ui.ChessboardDrawing;
 import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
@@ -19,6 +21,8 @@ public class WebSocketFacade extends Endpoint {
 
   Session session;
   ServerMessageHandler  serverMessageHandler;
+  UserData user;
+  ChessboardDrawing drawing = new ChessboardDrawing();
   public WebSocketFacade(String url,ServerMessageHandler serverMessageHandler) throws Exception {
     try {
       url = url.replace("http", "ws");
@@ -45,7 +49,13 @@ public class WebSocketFacade extends Endpoint {
             }
             case LOAD_GAME:{
               LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
-              System.out.println(loadGame.getServerMessageType());
+              var game = loadGame.getGame();
+              if (game.blackUsername().equals(user.username())){
+                drawing.drawChessboard(true,game.game(),null);
+              }
+              else if (game.whiteUsername().equals(user.username())){
+                drawing.drawChessboard(false,game.game(),null);
+              }
               break;
             }
           }
@@ -56,8 +66,9 @@ public class WebSocketFacade extends Endpoint {
     }
   }
 
-  public void joinGame(String authToken, int gameID, ChessGame.TeamColor color) throws Exception{
+  public void joinGame(String authToken, int gameID, ChessGame.TeamColor color,UserData user) throws Exception{
     try {
+      this.user = user;
       var joinPlayer = new JoinPlayer(authToken,gameID,color);
       joinPlayer.setCommandType(UserGameCommand.CommandType.JOIN_PLAYER);
       this.session.getBasicRemote().sendText(new Gson().toJson(joinPlayer));
@@ -66,8 +77,9 @@ public class WebSocketFacade extends Endpoint {
     }
   }
 
-  public void observeGame(String authToken, Integer gameID) throws Exception{
+  public void observeGame(String authToken, Integer gameID,UserData user) throws Exception{
     try {
+      this.user = user;
       var joinObserver = new JoinObserver(authToken,gameID);
       joinObserver.setCommandType(UserGameCommand.CommandType.JOIN_OBSERVER);
       this.session.getBasicRemote().sendText(new Gson().toJson(joinObserver));

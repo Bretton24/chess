@@ -206,7 +206,7 @@ public class ChessClient {
       Integer gameNum=Integer.valueOf(params[0]);
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       game = server.observeGame(authToken,playerInfo);
-      ws.observeGame(authToken.authToken(),game.gameID());
+      ws.observeGame(authToken.authToken(),game.gameID(),user);
       board.drawChessboard(false,game.game(),null);
     }
     return String.format("Successfully observing game.");
@@ -224,12 +224,12 @@ public class ChessClient {
       if (params[1].equals("white")){
         var playerInfo=new PlayerInfo("WHITE", gameNum);
         game = server.joinGame(authToken, playerInfo);
-        ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.WHITE);
+        ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.WHITE,user);
         board.drawChessboard(false,game.game(),null);
       } else if (params[1].equals("black")) {
         var playerInfo = new PlayerInfo("BLACK",gameNum);
         game = server.joinGame(authToken, playerInfo);
-        ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.BLACK);
+        ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.BLACK,user);
         board.drawChessboard(true,game.game(),null);
       }
     }
