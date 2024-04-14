@@ -23,7 +23,7 @@ public class GameService extends Services {
     return gameAccess.listGamesArray();
   }
 
-  public void updateGame(int gameID, ChessGame game) throws Exception {
+  public void updateGame(int gameID, GameData game) throws Exception {
     gameAccess.updateGame(gameID,game);
   }
 

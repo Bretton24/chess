@@ -85,6 +85,7 @@ public class ChessClient {
 
     if (response.equals("yes")) {
       assertPlaying();
+      ws.resign(authToken.authToken(), game.gameID());
       playingState = State.OBSERVING;
       return "You have resigned from the game.";
     } else if (response.equals("no")) {

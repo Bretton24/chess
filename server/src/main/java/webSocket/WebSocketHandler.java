@@ -57,6 +57,11 @@ public class WebSocketHandler {
         leave(leaveGame.getAuthString(),leaveGame.getGameID(),session);
         break;
       }
+      case RESIGN: {
+        Resign resign = new Gson().fromJson(message, Resign.class);
+        resign(resign.getAuthString(),resign.getGameID(),session);
+        break;
+      }
     }
   }
 
@@ -94,6 +99,50 @@ public class WebSocketHandler {
       connections.broadcast(authToken,notification);
   }
 
+  private void resign(String authToken, Integer gameID, Session session) throws Exception {
+    GameData game = null;
+    game = GameService.gameAccess.getGame(gameID);
+    if (game == null){
+      Error error = new Error("Error: game does not exist");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+    if (game.whiteUsername() == null && game.blackUsername() == null && game.gameName() == null && game.game() == null){
+      Error error = new Error("Error: you already resigned");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+    if(!AuthService.authAccess.authTokenPresent(authToken)){
+      Error error = new Error("Error: unauthorized access");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+    UserData user = AuthService.authAccess.getUser(authToken);
+    if (game.blackUsername().equals(user.username())){
+      var updatedGame = new GameData(game.gameID(),null,null,null,null);
+      GameService.gameAccess.updateGame(gameID,updatedGame);
+      String message = String.format("%s resigned",user.username());
+      Notification notification = new Notification(message);
+      connections.broadcast(authToken,notification);
+      connections.respondToSender(authToken,notification);
+      return;
+    }
+    else if (game.whiteUsername().equals(user.username())){
+      var updatedGame = new GameData(game.gameID(),null,null,null,null);
+      GameService.gameAccess.updateGame(gameID,updatedGame);
+      String message = String.format("%s resigned",user.username());
+      Notification notification = new Notification(message);
+      connections.broadcast(authToken,notification);
+      connections.respondToSender(authToken,notification);
+      return;
+    }
+    else{
+      Error error = new Error("Error: you can't resign you're an observer");
+//      connections.broadcast(authToken,error);
+      connections.respondToSender(authToken,error);
+      return;
+    }
+  }
   private void observe(String authToken, Integer gameID, Session session) throws Exception {
     connections.add(authToken,session);
     GameData game = null;
@@ -132,13 +181,34 @@ public class WebSocketHandler {
     UserData user = AuthService.authAccess.getUser(authToken);
     if (game.blackUsername().equals(user.username())){
        var updatedGame = new GameData(game.gameID(),game.whiteUsername(),null,game.gameName(),game.game());
-       GameService.gameAccess.updateGame();
+       GameService.gameAccess.updateGame(gameID,game);
+       String message = String.format("%s left the game",user.username());
+       Notification notification = new Notification(message);
+       connections.broadcast(authToken,notification);
+       connections.remove(authToken);
+       return;
     }
-    LoadGame loadGame = new LoadGame(game.game());
-    connections.respondToSender(authToken,loadGame);
-    String message = String.format("%s joined the game as observer",user.username());
-    Notification notification = new Notification(message);
-    connections.broadcast(authToken,notification);
+    else if (game.whiteUsername().equals(user.username())){
+      var updatedGame = new GameData(game.gameID(),null,game.blackUsername(),game.gameName(),game.game());
+      GameService.gameAccess.updateGame(gameID,game);
+      String message = String.format("%s left the game",user.username());
+      Notification notification = new Notification(message);
+      connections.broadcast(authToken,notification);
+      connections.remove(authToken);
+      return;
+    }
+    else{
+      String message = String.format("%s left the game",user.username());
+      Notification notification = new Notification(message);
+      connections.broadcast(authToken,notification);
+      connections.remove(authToken);
+      return;
+    }
+//    LoadGame loadGame = new LoadGame(game.game());
+//    connections.respondToSender(authToken,loadGame);
+//    String message = String.format("%s joined the game as observer",user.username());
+//    Notification notification = new Notification(message);
+//    connections.broadcast(authToken,notification);
   }
 
   private void move(String authToken, Integer gameID, ChessMove chessMove, Session session) throws Exception {
@@ -157,7 +227,7 @@ public class WebSocketHandler {
               if(moves.contains(chessMove)){
                 game.game().makeMove(chessMove);
                 LoadGame loadGame = new LoadGame(game.game());
-                GameService.gameAccess.updateGame(gameID,game.game());
+                GameService.gameAccess.updateGame(gameID,game);
                 connections.respondToSender(authToken,loadGame);
                 connections.broadcast(authToken,loadGame);
                 return;
@@ -178,7 +248,7 @@ public class WebSocketHandler {
               if(moves.contains(chessMove)){
                 game.game().makeMove(chessMove);
                 LoadGame loadGame = new LoadGame(game.game());
-                GameService.gameAccess.
+                GameService.gameAccess.updateGame(gameID,game);
                 connections.respondToSender(authToken,loadGame);
                 connections.broadcast(authToken,loadGame);
                 return;
