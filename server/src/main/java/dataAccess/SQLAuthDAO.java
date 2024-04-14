@@ -116,16 +116,16 @@ public class SQLAuthDAO implements AuthDAO{
 
   private int doUpdate(String phrase, Object... params) throws Exception {
     try (var connectivity = DatabaseManager.getConnection()) {
-      try (var ps = connectivity.prepareStatement(phrase, Statement.RETURN_GENERATED_KEYS)) {
-        for (var i = 0; i < params.length; i++) {
-          var param = params[i];
-          if (param instanceof String p) ps.setString(i + 1, p);
-          else if (param instanceof Integer p) ps.setInt(i + 1, p);
-          else if (param == null) ps.setNull(i + 1, NULL);
+      try (var prep = connectivity.prepareStatement(phrase, Statement.RETURN_GENERATED_KEYS)) {
+        for (var iter = 0; iter < params.length; iter++) {
+          var param = params[iter];
+          if (param instanceof String p) prep.setString(iter + 1, p);
+          else if (param instanceof Integer p) prep.setInt(iter + 1, p);
+          else if (param == null) prep.setNull(iter + 1, NULL);
         }
-        ps.executeUpdate();
+        prep.executeUpdate();
 
-        var rs = ps.getGeneratedKeys();
+        var rs = prep.getGeneratedKeys();
         if (rs.next()) {
           return rs.getInt(1);
         }
