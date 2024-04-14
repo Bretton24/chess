@@ -204,15 +204,9 @@ public class WebSocketHandler {
       connections.remove(authToken);
       return;
     }
-//    LoadGame loadGame = new LoadGame(game.game());
-//    connections.respondToSender(authToken,loadGame);
-//    String message = String.format("%s joined the game as observer",user.username());
-//    Notification notification = new Notification(message);
-//    connections.broadcast(authToken,notification);
   }
 
   private void move(String authToken, Integer gameID, ChessMove chessMove, Session session) throws Exception {
-//    connections.add(authToken,session);
     var game = GameService.gameAccess.getGame(gameID);
     var user = UserService.authAccess.getUser(authToken);
     if (game.blackUsername() != null && game.whiteUsername() != null){
@@ -220,6 +214,7 @@ public class WebSocketHandler {
           if (game.game().getTeamTurn().equals(ChessGame.TeamColor.WHITE)){
             Error error = new Error("Error: it's not your turn");
             connections.respondToSender(authToken,error);
+            return;
           }
           else{
             if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
@@ -235,12 +230,14 @@ public class WebSocketHandler {
             }
             Error error = new Error("Error: no piece at selected position");
             connections.respondToSender(authToken,error);
+            return;
           }
         }
         else if (user.username().equals(game.whiteUsername())){
           if (game.game().getTeamTurn().equals(ChessGame.TeamColor.BLACK)){
             Error error = new Error("Error: it's not your turn");
             connections.respondToSender(authToken,error);
+            return;
           }
           else{
             if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
@@ -256,12 +253,15 @@ public class WebSocketHandler {
             }
             Error error = new Error("Error: no piece at selected position");
             connections.respondToSender(authToken,error);
+            return;
           }
         }
         Error error = new Error("Error: you aren't even playing");
         connections.respondToSender(authToken,error);
+        return;
     }
     Error error = new Error("Error: other player must join");
     connections.respondToSender(authToken,error);
+    return;
   }
 }
