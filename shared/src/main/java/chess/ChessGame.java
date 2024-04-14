@@ -16,6 +16,9 @@ public class ChessGame {
     private TeamColor team;
 
     public ChessGame() {
+        if (getTeamTurn() == null){
+            setTeamTurn(TeamColor.WHITE);
+        }
     }
 
     @Override
@@ -136,7 +139,7 @@ public class ChessGame {
 
             }
             if(invalid) {
-                throw new InvalidMoveException();
+                throw new InvalidMoveException("Not your turn");
             }else{
                 if(getTeamTurn() == TeamColor.BLACK){
                     setTeamTurn(TeamColor.WHITE);

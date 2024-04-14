@@ -95,7 +95,8 @@ public class ChessPiece {
         String value = "";
         switch(this.getPieceType()){
             case KING -> {
-                value += "K";
+                    value += "K";
+
             }
             case QUEEN -> {
                     value += "Q";

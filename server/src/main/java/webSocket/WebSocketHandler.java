@@ -1,23 +1,30 @@
 package webSocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
+import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
+import dataAccess.UnauthorizedAccessException;
 import model.AuthData;
 import model.GameData;
+import model.PlayerInfo;
 import model.UserData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.springframework.security.core.parameters.P;
 import service.AuthService;
 import service.GameService;
+import service.UserService;
 import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.MakeMove;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
@@ -41,6 +48,11 @@ public class WebSocketHandler {
       case JOIN_OBSERVER: {
         JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
         observe(joinObserver.getAuthString(), joinObserver.getGameID(), session);
+        break;
+      }
+      case MAKE_MOVE: {
+        MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
+        move(makeMove.getAuthString(),makeMove.getGameID(),makeMove.getMove(),session);
         break;
       }
     }
@@ -100,5 +112,59 @@ public class WebSocketHandler {
     String message = String.format("%s joined the game as observer",user.username());
     Notification notification = new Notification(message);
     connections.broadcast(authToken,notification);
+  }
+
+  private void move(String authToken, Integer gameID, ChessMove chessMove, Session session) throws Exception {
+    connections.add(authToken,session);
+    var game = GameService.gameAccess.getGame(gameID);
+    var user = UserService.authAccess.getUser(authToken);
+    if (game.blackUsername() != null && game.whiteUsername() != null){
+        if(user.username().equals(game.blackUsername())){
+          if (game.game().getTeamTurn().equals(ChessGame.TeamColor.WHITE)){
+            Error error = new Error("Error: it's not your turn");
+            connections.respondToSender(authToken,error);
+          }
+          else{
+            if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
+              var moves = game.game().validMoves(chessMove.getStartPosition());
+              if(moves.contains(chessMove)){
+                game.game().makeMove(chessMove);
+                LoadGame loadGame = new LoadGame(game.game());
+                GameService.gameAccess.updateGame(gameID,game.game());
+                connections.respondToSender(authToken,loadGame);
+                connections.broadcast(authToken,loadGame);
+                return;
+              }
+            }
+            Error error = new Error("Error: no piece at selected position");
+            connections.respondToSender(authToken,error);
+          }
+        }
+        else if (user.username().equals(game.whiteUsername())){
+          if (game.game().getTeamTurn().equals(ChessGame.TeamColor.BLACK)){
+            Error error = new Error("Error: it's not your turn");
+            connections.respondToSender(authToken,error);
+          }
+          else{
+            if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
+              var moves = game.game().validMoves(chessMove.getStartPosition());
+              if(moves.contains(chessMove)){
+                game.game().makeMove(chessMove);
+                LoadGame loadGame = new LoadGame(game.game());
+//                GameService.gameAccess.updateGame(gameID,game.game());
+                connections.respondToSender(authToken,loadGame);
+                connections.broadcast(authToken,loadGame);
+                return;
+              }
+            }
+            Error error = new Error("Error: no piece at selected position");
+            connections.respondToSender(authToken,error);
+          }
+        }
+        Error error = new Error("Error: you aren't even playing");
+        connections.respondToSender(authToken,error);
+    }
+    Error error = new Error("Error: other player must join");
+    connections.respondToSender(authToken,error);
   }
 }

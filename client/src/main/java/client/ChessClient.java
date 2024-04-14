@@ -1,5 +1,7 @@
 package client;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import model.AuthData;
 import model.GameData;
@@ -27,12 +29,14 @@ public class ChessClient {
   private UserData user;
   private WebSocketFacade ws;
   private ServerMessageHandler serverMessageHandler;
+  private final Map<Character, Integer> whiteDictionary = new HashMap<>();
+  private final Map<Character, Integer> blackDictionary = new HashMap<>();
   private HashMap<Character,Integer> dictionary = new HashMap<>();
   public ChessClient(String serverUrl,ServerMessageHandler serverMessageHandler){
     server = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
     this.serverMessageHandler = serverMessageHandler;
-
+    initializeDictionaries();
   }
 
   public String eval(String input){
@@ -51,6 +55,7 @@ public class ChessClient {
         case "leave" -> leaveGame();
         case "highlight" -> highlightMoves(params);
         case "resign" -> resign();
+        case "move" -> move(params);
         case "redraw" -> redrawChessboard();
         case "quit" -> "quit";
         default -> help();
@@ -89,6 +94,39 @@ public class ChessClient {
     }
   }
 
+  public String move(String ... params) throws Exception {
+    if (params.length == 2){
+      assertPlaying();
+      String values = params[0];
+      var startLetter = values.charAt(0);
+      var digiNumber = values.charAt(1);
+      var startNumber = digiNumber - '0';
+      String otherValues = params[1];
+      var endLetter = otherValues.charAt(0);
+      digiNumber = otherValues.charAt(1);
+      var endNumber = digiNumber - '0';
+      if ((whiteDictionary.containsKey(startLetter) && startNumber > 0 && startNumber < 9) && (whiteDictionary.containsKey(endLetter) && endNumber > 0 && endNumber < 9)){
+        if (user.username().equals(game.whiteUsername())){
+          var startPosition = new ChessPosition(startNumber,whiteDictionary.get(startLetter));
+          var endPosition = new ChessPosition(endNumber,whiteDictionary.get(endLetter));
+          var move = new ChessMove(startPosition,endPosition);
+          ws.move(authToken.authToken(), game.gameID(), move);
+          board.drawChessboard(false,game.game(),null);
+          return String.format("Made move");
+        }
+        else if (user.username().equals(game.blackUsername())){
+          var startPosition = new ChessPosition(startNumber,blackDictionary.get(startLetter));
+          var endPosition = new ChessPosition(endNumber,blackDictionary.get(endLetter));
+          var move = new ChessMove(startPosition,endPosition);
+          ws.move(authToken.authToken(), game.gameID(), move);
+          board.drawChessboard(true,game.game(),null);
+          return String.format("Made move");
+        }
+      }
+    }
+    throw new Exception("Not entered correctly");
+  }
+
   public String redrawChessboard() throws Exception {
     assertPlaying();
     if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
@@ -97,6 +135,28 @@ public class ChessClient {
       board.drawChessboard(false,game.game(),null);
     }
     throw new Exception("You must be playing to redraw the board");
+  }
+
+  private void initializeDictionaries() {
+    // Initialize whiteDictionary
+    whiteDictionary.put('a', 1);
+    whiteDictionary.put('b', 2);
+    whiteDictionary.put('c', 3);
+    whiteDictionary.put('d', 4);
+    whiteDictionary.put('e', 5);
+    whiteDictionary.put('f', 6);
+    whiteDictionary.put('g', 7);
+    whiteDictionary.put('h', 8);
+
+    // Initialize blackDictionary
+    blackDictionary.put('h', 1);
+    blackDictionary.put('g', 2);
+    blackDictionary.put('f', 3);
+    blackDictionary.put('e', 4);
+    blackDictionary.put('d', 5);
+    blackDictionary.put('c', 6);
+    blackDictionary.put('b', 7);
+    blackDictionary.put('a', 8);
   }
 
   public String leaveGame() throws Exception {
@@ -188,24 +248,6 @@ public class ChessClient {
 
   public String highlightMoves(String ... params) throws Exception{
     assertPlaying();
-    Map<Character, Integer> whiteDictionary = new HashMap<>();
-    whiteDictionary.put('a', 1);
-    whiteDictionary.put('b', 2);
-    whiteDictionary.put('c', 3);
-    whiteDictionary.put('d', 4);
-    whiteDictionary.put('e', 5);
-    whiteDictionary.put('f', 6);
-    whiteDictionary.put('g', 7);
-    whiteDictionary.put('h', 8);
-    Map<Character, Integer> blackDictionary = new HashMap<>();
-    blackDictionary.put('h', 1);
-    blackDictionary.put('g', 2);
-    blackDictionary.put('f', 3);
-    blackDictionary.put('e', 4);
-    blackDictionary.put('d', 5);
-    blackDictionary.put('c', 6);
-    blackDictionary.put('b', 7);
-    blackDictionary.put('a', 8);
     if (params.length == 1){
       String values = params[0];
       var letter = values.charAt(0);
@@ -256,7 +298,7 @@ public class ChessClient {
               - help
               - redraw board
               - leave
-              - make move
+              - make move <STARTPOSITION> <ENDPOSITION>
               - resign
               - highlight <CHESSPOSITION> ex. A5 or C2
               """;

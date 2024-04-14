@@ -45,7 +45,31 @@ public class ChessboardDrawing {
 
   }
 
-
+//  public ChessGame makeMove(Boolean black,ChessGame game, ChessPosition startPosition,ChessPosition endPosition) throws Exception {
+//    pos = startPosition;
+//    var move = new ChessMove(pos,endPosition);
+//    if (chessGame.getBoard().pieceAtPosition(pos)){
+//      var piece = chessGame.getBoard().getPiece(pos);
+//      if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE) && black == false){
+//        moves = chessGame.validMoves(pos);
+//        if (moves.contains(move)){
+//          chessGame.makeMove(move);
+//          return chessGame;
+//        }
+//        throw new Exception("not a valid move");
+//      }
+//      else if (piece.getTeamColor().equals(ChessGame.TeamColor.BLACK) && black == true){
+//        moves = chessGame.validMoves(pos);
+//        if (moves.contains(move)){
+//          chessGame.makeMove(move);
+//          return chessGame;
+//        }
+//        throw new Exception("Not a valid move");
+//      }
+//      throw new Exception("Not your team");
+//    }
+//    throw new Exception("no piece at specified position");
+//  }
 
   private static void drawHeaders(PrintStream out,Boolean black) {
     setGrey(out);

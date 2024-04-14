@@ -1,6 +1,7 @@
 package webSocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
 import webSocketMessages.serverMessages.Error;
@@ -9,6 +10,7 @@ import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.MakeMove;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
@@ -72,6 +74,16 @@ public class WebSocketFacade extends Endpoint {
       var joinObserver = new JoinObserver(authToken,gameID);
       joinObserver.setCommandType(UserGameCommand.CommandType.JOIN_OBSERVER);
       this.session.getBasicRemote().sendText(new Gson().toJson(joinObserver));
+    }catch(Exception e){
+      throw new Exception("Could not connect");
+    }
+  }
+
+  public void move(String authToken, int gameID, ChessMove chessMove) throws Exception{
+    try {
+      var makeMove = new MakeMove(authToken,gameID,chessMove);
+      makeMove.setCommandType(UserGameCommand.CommandType.MAKE_MOVE);
+      this.session.getBasicRemote().sendText(new Gson().toJson(makeMove));
     }catch(Exception e){
       throw new Exception("Could not connect");
     }
