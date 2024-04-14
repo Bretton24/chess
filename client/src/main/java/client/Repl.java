@@ -39,10 +39,4 @@ public class Repl implements ServerMessageHandler {
   private void printPrompt() {
     System.out.print("\n" + RESET_TEXT_COLOR +  ">>> " + SET_TEXT_COLOR_GREEN);
   }
-
-  @Override
-  public void notify(ServerMessage serverMessage) {
-    System.out.println(SET_TEXT_COLOR_BLUE + serverMessage.getServerMessageType());
-    printPrompt();
-  }
 }
