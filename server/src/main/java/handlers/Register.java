@@ -17,6 +17,11 @@ public class Register {
       res.status(200);
       return new Gson().toJson(authToken);
     }
+    catch(BadRequestException e){
+      res.status(400);
+      var mess = new Message(e.getMessage());
+      return new Gson().toJson(mess);
+    }
     catch(UnauthorizedAccessException e){
       res.status(401);
       var mess = new Message(e.getMessage());
@@ -27,22 +32,11 @@ public class Register {
       var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
-    catch(BadRequestException e){
-      res.status(400);
-      var mess = new Message(e.getMessage());
-      return new Gson().toJson(mess);
-    }
-    catch(DataAccessException e){
-      res.status(500);
-      var mess = new Message(e.getMessage());
-      return new Gson().toJson(mess);
-    }
     catch(Exception e){
       res.status(500);
       var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
-
   }
 
 

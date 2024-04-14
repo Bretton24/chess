@@ -45,10 +45,4 @@ public class Services {
       throw new RuntimeException(e);
     }
   }
-
-//  public static void specifySQL() {
-//      authAccess = new SQLAuthDAO();
-//      gameAccess = new SQLGameDAO();
-//      userAccess = new SQLUserDAO();
-//  }
 }

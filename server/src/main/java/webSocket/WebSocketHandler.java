@@ -118,17 +118,7 @@ public class WebSocketHandler {
       return;
     }
     UserData user = AuthService.authAccess.getUser(authToken);
-    if (game.blackUsername().equals(user.username())){
-      var updatedGame = new GameData(game.gameID(),null,null,null,null);
-      GameService.gameAccess.updateGame(gameID,updatedGame);
-      String message = String.format("%s resigned",user.username());
-      Notification notification = new Notification(message);
-      connections.broadcast(authToken,notification);
-      connections.respondToSender(authToken,notification);
-      connections.remove(authToken);
-      return;
-    }
-    else if (game.whiteUsername().equals(user.username())){
+    if (game.blackUsername().equals(user.username()) || game.whiteUsername().equals(user.username())){
       var updatedGame = new GameData(game.gameID(),null,null,null,null);
       GameService.gameAccess.updateGame(gameID,updatedGame);
       String message = String.format("%s resigned",user.username());

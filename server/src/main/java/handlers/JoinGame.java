@@ -33,12 +33,10 @@ public class JoinGame {
       var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
     }
-    catch(DataAccessException e){
+    catch(Exception e){
       res.status(500);
       var mess = new Message(e.getMessage());
       return new Gson().toJson(mess);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
     }
   }
 }
