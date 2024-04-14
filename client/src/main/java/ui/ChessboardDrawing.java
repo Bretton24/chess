@@ -21,9 +21,6 @@ public class ChessboardDrawing {
     chessGame = game;
     pos = position;
     if (pos != null){
-//      if (!black){
-//        pos = new ChessPosition(9 - position.getRow(), position.getColumn());
-//      }
       moves = chessGame.validMoves(pos);
     }
     else{
@@ -44,32 +41,6 @@ public class ChessboardDrawing {
     out.print(RESET_BG_COLOR);
 
   }
-
-//  public ChessGame makeMove(Boolean black,ChessGame game, ChessPosition startPosition,ChessPosition endPosition) throws Exception {
-//    pos = startPosition;
-//    var move = new ChessMove(pos,endPosition);
-//    if (chessGame.getBoard().pieceAtPosition(pos)){
-//      var piece = chessGame.getBoard().getPiece(pos);
-//      if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE) && black == false){
-//        moves = chessGame.validMoves(pos);
-//        if (moves.contains(move)){
-//          chessGame.makeMove(move);
-//          return chessGame;
-//        }
-//        throw new Exception("not a valid move");
-//      }
-//      else if (piece.getTeamColor().equals(ChessGame.TeamColor.BLACK) && black == true){
-//        moves = chessGame.validMoves(pos);
-//        if (moves.contains(move)){
-//          chessGame.makeMove(move);
-//          return chessGame;
-//        }
-//        throw new Exception("Not a valid move");
-//      }
-//      throw new Exception("Not your team");
-//    }
-//    throw new Exception("no piece at specified position");
-//  }
 
   private static void drawHeaders(PrintStream out,Boolean black) {
     setGrey(out);
@@ -125,7 +96,7 @@ public class ChessboardDrawing {
         setSquareColor(out,whiteSquare);
         ChessPosition currentPosition = new ChessPosition(row + 1, col);
         if (moves != null && moves.contains(new ChessMove(pos,currentPosition))) {
-          out.print(SET_BG_COLOR_GREEN); // Set background color to light green for valid moves
+          out.print(SET_BG_COLOR_GREEN);
         }else if (currentPosition.equals(pos)){
           out.print(SET_BG_COLOR_YELLOW);
         }

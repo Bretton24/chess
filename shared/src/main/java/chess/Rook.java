@@ -91,14 +91,4 @@ public class Rook {
     return rookMove;
   }
 
-  private boolean addMove(ChessBoard board,ChessPosition position) {
-    if (board.pieceAtPosition(position)) {
-      var piece=board.getPiece(position);
-      if (piece.getTeamColor() != pieceColor) {
-        return true;
-      }
-    }
-    return false;
-  }
-
 }

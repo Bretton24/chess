@@ -140,7 +140,6 @@ public class WebSocketHandler {
     }
     else{
       Error error = new Error("Error: you can't resign you're an observer");
-//      connections.broadcast(authToken,error);
       connections.respondToSender(authToken,error);
       return;
     }
@@ -228,13 +227,13 @@ public class WebSocketHandler {
                 connections.respondToSender(authToken,loadGame);
                 connections.broadcast(authToken,loadGame);
                 if (game.game().isInCheck(ChessGame.TeamColor.WHITE)){
-                  String message = String.format("White team is in check");
+                  String message = String.format("%s is in check",game.whiteUsername());
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
                 }
                 else if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
-                  String message = String.format("White team is in checkmate");
+                  String message = String.format("%s is in checkmate",game.whiteUsername());
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
@@ -269,20 +268,20 @@ public class WebSocketHandler {
                 connections.respondToSender(authToken,loadGame);
                 connections.broadcast(authToken,loadGame);
                 if (game.game().isInCheck(ChessGame.TeamColor.BLACK)){
-                  String message = String.format("Black team is in check");
+                  String message = String.format("%s is in check",game.blackUsername());
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
                 }
                 else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
-                  String message = String.format("Black team is in checkmate");
+                  String message = String.format("%s is in checkmate",game.blackUsername());
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
                   connections.remove(authToken);
                 }
                 else{
-                  String message = String.format("White team moved %s",chessMove.toString());
+                  String message = String.format("%s moved %s",game.whiteUsername(),chessMove.toString());
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                 }

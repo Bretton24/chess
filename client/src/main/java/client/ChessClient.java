@@ -319,10 +319,4 @@ public class ChessClient {
       throw new Exception("You must be playing or you have already resigned");
     }
   }
-
-  private void assertObserving() throws Exception {
-    if (playingState != State.OBSERVING) {
-      throw new Exception("You're not an observer");
-    }
-  }
 }
