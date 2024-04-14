@@ -14,7 +14,7 @@ import static java.sql.Types.NULL;
 public class SQLAuthDAO implements AuthDAO{
 
   public SQLAuthDAO() throws Exception {
-    configureDatabase();
+    buildDatabase();
   }
   @Override
   public AuthData createAuth(UserData user) throws Exception {
@@ -100,11 +100,12 @@ public class SQLAuthDAO implements AuthDAO{
 
   };
 
-  private void configureDatabase() throws Exception {
+
+  private void buildDatabase() throws Exception {
     DatabaseManager.createDatabase();
-    try (var conn = DatabaseManager.getConnection()) {
+    try (var connection = DatabaseManager.getConnection()) {
       for (var statement : createStatements) {
-        try (var preparedStatement = conn.prepareStatement(statement)) {
+        try (var preparedStatement = connection.prepareStatement(statement)) {
           preparedStatement.executeUpdate();
         }
       }

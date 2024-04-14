@@ -15,7 +15,7 @@ import static java.sql.Types.NULL;
 public class SQLGameDAO implements GameDAO{
 
   public SQLGameDAO() throws Exception {
-    configureDatabase();
+    startDatabase();
   }
   @Override
   public void deleteAllGames() throws Exception {
@@ -165,7 +165,7 @@ public final String[] createStatements = {
 
   };
 
-  private void configureDatabase() throws Exception {
+  private void startDatabase() throws Exception {
     DatabaseManager.createDatabase();
     try (var conn = DatabaseManager.getConnection()) {
       for (var statement : createStatements) {

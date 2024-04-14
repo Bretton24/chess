@@ -93,9 +93,9 @@ public class SQLUserDAO implements UserDAO{
 
   private void configureDatabase() throws Exception {
     DatabaseManager.createDatabase();
-    try (var conn = DatabaseManager.getConnection()) {
+    try (var connectivity = DatabaseManager.getConnection()) {
       for (var statement : createStatements) {
-        try (var preparedStatement = conn.prepareStatement(statement)) {
+        try (var preparedStatement = connectivity.prepareStatement(statement)) {
           preparedStatement.executeUpdate();
         }
       }
