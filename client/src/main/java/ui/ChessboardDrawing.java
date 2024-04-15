@@ -96,6 +96,9 @@ public class ChessboardDrawing {
         out.print(EMPTY.repeat(suffixLength));
       }
       else{
+        if (black){
+          col = 9 - col;
+        }
         Boolean whiteSquare = (col + row) % 2 == 0;
         setSquareColor(out,whiteSquare);
         ChessPosition currentPosition = new ChessPosition(row + 1, col);
@@ -131,7 +134,11 @@ public class ChessboardDrawing {
         else{
           out.print(EMPTY.repeat(LINE_WIDTH_IN_CHARS));
         }
+        if(black){
+          col = Math.abs(col - 9);
+        }
       }
+
     }
     out.println();
   }

@@ -206,14 +206,24 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if(!isInCheck(teamColor)){
-            var pos = board.getKingPosition(teamColor);
-            var valid = this.validMoves(pos);
-            if (valid.isEmpty()) {
-                return true;
+        if (!isInCheck(teamColor)) {
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    var position = new ChessPosition(i, j);
+                    if (board.pieceAtPosition(position)) {
+                        var piece = board.getPiece(position);
+                        if (piece.getTeamColor() == teamColor) {
+                            var validMoves = validMoves(position);
+                            if (!validMoves.isEmpty()) {
+                                return false; // At least one piece has a valid move
+                            }
+                        }
+                    }
+                }
             }
+            return true; // No piece of the team has a valid move
         }
-        return false;
+        return false; // Team is in check, not a stalemate
     }
 
     /**

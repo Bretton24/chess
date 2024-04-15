@@ -51,6 +51,7 @@ public class WebSocketFacade extends Endpoint {
             }
             case LOAD_GAME:{
               LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
+              System.out.println(loadGame.getServerMessageType());
               var game = loadGame.getGame();
               drawing.updateGame(game.game());
               if (game.blackUsername() != null && game.blackUsername().equals(user.username())){

@@ -26,12 +26,14 @@ import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @WebSocket
 public class WebSocketHandler {
 
-  private final ConnectionManager connections = new ConnectionManager();
+  private ConnectionManager connections = new ConnectionManager();
+  public final ConcurrentHashMap<Integer, ConnectionManager> connManager = new ConcurrentHashMap<>();
 
   @OnWebSocketMessage
   public void onMessage(Session session, String message) throws Exception {
@@ -66,7 +68,14 @@ public class WebSocketHandler {
   }
 
   private void join(String authToken, Integer gameID, ChessGame.TeamColor teamColor, Session session) throws Exception {
+    if(connManager.containsKey(gameID)){
+      connections = connManager.get(gameID);
+    }
+    else{
+      connections = new ConnectionManager();
+    }
     connections.add(authToken,session);
+    connManager.put(gameID,connections);
     GameData game = null;
     UserData user = null;
     try {
@@ -92,16 +101,14 @@ public class WebSocketHandler {
       connections.respondToSender(authToken,error);
       return;
     }
-    GameData updateGame = null;
+    GameData updatedGame = null;
     if (teamColor == ChessGame.TeamColor.WHITE){
-      updateGame = new GameData(gameID,user.username(),game.blackUsername(),game.gameName(),game.game());
+      updatedGame = new GameData(gameID,user.username(),game.blackUsername(),game.gameName(),game.game());
     }
     else if(teamColor == ChessGame.TeamColor.BLACK){
-      updateGame = new GameData(gameID,game.whiteUsername(),user.username(),game.gameName(),game.game());
+      updatedGame = new GameData(gameID,game.whiteUsername(),user.username(),game.gameName(),game.game());
     }
-
-      GameService.gameAccess.updateGame(gameID,updateGame);
-      LoadGame game1 = new LoadGame(updateGame);
+      LoadGame game1 = new LoadGame(updatedGame);
       String message = String.format("%s joined the game as team %s",user.username(),teamColor);
       Notification notification = new Notification(message);
       connections.respondToSender(authToken,game1);
@@ -109,6 +116,7 @@ public class WebSocketHandler {
   }
 
   private void resign(String authToken, Integer gameID, Session session) throws Exception {
+    connections = connManager.get(gameID);
     GameData game = null;
     game = GameService.gameAccess.getGame(gameID);
     if (game == null){
@@ -135,6 +143,7 @@ public class WebSocketHandler {
       connections.broadcast(authToken,notification);
       connections.respondToSender(authToken,notification);
       connections.remove(authToken);
+      connManager.put(gameID,connections);
       return;
     }
     else{
@@ -144,7 +153,14 @@ public class WebSocketHandler {
     }
   }
   private void observe(String authToken, Integer gameID, Session session) throws Exception {
+    if(connManager.containsKey(gameID)){
+      connections = connManager.get(gameID);
+    }
+    else{
+      connections = new ConnectionManager();
+    }
     connections.add(authToken,session);
+    connManager.put(gameID,connections);
     GameData game = null;
     game = GameService.gameAccess.getGame(gameID);
     if (game == null){
@@ -166,6 +182,7 @@ public class WebSocketHandler {
   }
 
   private void leave(String authToken, Integer gameID, Session session) throws Exception {
+    connections = connManager.get(gameID);
     GameData game = null;
     game = GameService.gameAccess.getGame(gameID);
     if (game == null){
@@ -186,6 +203,7 @@ public class WebSocketHandler {
        Notification notification = new Notification(message);
        connections.broadcast(authToken,notification);
        connections.remove(authToken);
+       connManager.put(gameID,connections);
        return;
     }
     else if (game.whiteUsername().equals(user.username())){
@@ -195,6 +213,7 @@ public class WebSocketHandler {
       Notification notification = new Notification(message);
       connections.broadcast(authToken,notification);
       connections.remove(authToken);
+      connManager.put(gameID,connections);
       return;
     }
     else{
@@ -202,11 +221,13 @@ public class WebSocketHandler {
       Notification notification = new Notification(message);
       connections.broadcast(authToken,notification);
       connections.remove(authToken);
+      connManager.put(gameID,connections);
       return;
     }
   }
 
   private void move(String authToken, Integer gameID, ChessMove chessMove, Session session) throws Exception {
+    connections = connManager.get(gameID);
     var game = GameService.gameAccess.getGame(gameID);
     var user = UserService.authAccess.getUser(authToken);
     if (game.blackUsername() != null && game.whiteUsername() != null){
@@ -239,6 +260,7 @@ public class WebSocketHandler {
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
                   connections.remove(authToken);
+                  connManager.put(gameID,connections);
                 }
                 else if (game.game().isInStalemate(ChessGame.TeamColor.WHITE)){
                   String message = String.format("%s is in stalemate",game.whiteUsername());
@@ -248,6 +270,7 @@ public class WebSocketHandler {
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
                   connections.remove(authToken);
+                  connManager.put(gameID,connections);
                 }
                 else{
                   String message = String.format("Black team moved %s",chessMove.toString());
@@ -291,6 +314,7 @@ public class WebSocketHandler {
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
                   connections.remove(authToken);
+                  connManager.put(gameID,connections);
                 }
                 else if (game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
                   String message = String.format("%s is in stalemate",game.blackUsername());
@@ -300,6 +324,7 @@ public class WebSocketHandler {
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
                   connections.remove(authToken);
+                  connManager.put(gameID,connections);
                 }
                 else{
                   String message = String.format("%s moved %s",game.whiteUsername(),chessMove.toString());

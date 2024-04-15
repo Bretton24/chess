@@ -30,7 +30,6 @@ public class ChessClient {
   private WebSocketFacade ws;
   private ServerMessageHandler serverMessageHandler;
   private final Map<Character, Integer> whiteDictionary = new HashMap<>();
-  private final Map<Character, Integer> blackDictionary = new HashMap<>();
   private HashMap<Character,Integer> dictionary = new HashMap<>();
   public ChessClient(String serverUrl,ServerMessageHandler serverMessageHandler){
     server = new ServerFacade(serverUrl);
@@ -116,8 +115,8 @@ public class ChessClient {
           return String.format("Made move");
         }
         else if (user.username().equals(game.blackUsername())){
-          var startPosition = new ChessPosition(startNumber,blackDictionary.get(startLetter));
-          var endPosition = new ChessPosition(endNumber,blackDictionary.get(endLetter));
+          var startPosition = new ChessPosition(startNumber,whiteDictionary.get(startLetter));
+          var endPosition = new ChessPosition(endNumber,whiteDictionary.get(endLetter));
           var move = new ChessMove(startPosition,endPosition);
           ws.move(authToken.authToken(), game.gameID(), move);
           return String.format("Made move");
@@ -148,15 +147,6 @@ public class ChessClient {
     whiteDictionary.put('g', 7);
     whiteDictionary.put('h', 8);
 
-    // Initialize blackDictionary
-    blackDictionary.put('h', 1);
-    blackDictionary.put('g', 2);
-    blackDictionary.put('f', 3);
-    blackDictionary.put('e', 4);
-    blackDictionary.put('d', 5);
-    blackDictionary.put('c', 6);
-    blackDictionary.put('b', 7);
-    blackDictionary.put('a', 8);
   }
 
   public String leaveGame() throws Exception {
@@ -220,9 +210,14 @@ public class ChessClient {
         ws = new WebSocketFacade(serverUrl,serverMessageHandler);
       }
       if (params[1].equals("white")){
+        var playerInfo=new PlayerInfo("WHITE", gameNum);
+        game = server.joinGame(authToken, playerInfo);
         ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.WHITE,user);
       } else if (params[1].equals("black")) {
+        var playerInfo = new PlayerInfo("BLACK",gameNum);
+        game = server.joinGame(authToken, playerInfo);
         ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.BLACK,user);
+
       }
     }
     else{
@@ -249,7 +244,7 @@ public class ChessClient {
       var number = digiNumber - '0';
       if (whiteDictionary.containsKey(letter) && number > 0 && number < 9){
         if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
-          var pos = new ChessPosition(number,blackDictionary.get(letter));
+          var pos = new ChessPosition(number,whiteDictionary.get(letter));
             board.drawChessboard(true, pos);
             return String.format("succesffuly highlighted");
         }
