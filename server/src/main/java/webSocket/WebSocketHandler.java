@@ -92,8 +92,17 @@ public class WebSocketHandler {
       connections.respondToSender(authToken,error);
       return;
     }
-      LoadGame game1 = new LoadGame(game);
-      String message = String.format("%s joined the game as %s",user.username(),teamColor);
+    GameData updateGame = null;
+    if (teamColor == ChessGame.TeamColor.WHITE){
+      updateGame = new GameData(gameID,user.username(),game.blackUsername(),game.gameName(),game.game());
+    }
+    else if(teamColor == ChessGame.TeamColor.BLACK){
+      updateGame = new GameData(gameID,game.whiteUsername(),user.username(),game.gameName(),game.game());
+    }
+
+      GameService.gameAccess.updateGame(gameID,updateGame);
+      LoadGame game1 = new LoadGame(updateGame);
+      String message = String.format("%s joined the game as team %s",user.username(),teamColor);
       Notification notification = new Notification(message);
       connections.respondToSender(authToken,game1);
       connections.broadcast(authToken,notification);
@@ -224,6 +233,17 @@ public class WebSocketHandler {
                 }
                 else if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
                   String message = String.format("%s is in checkmate",game.whiteUsername());
+                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
+                  GameService.gameAccess.updateGame(gameID,updatedGame);
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                  connections.respondToSender(authToken,notification);
+                  connections.remove(authToken);
+                }
+                else if (game.game().isInStalemate(ChessGame.TeamColor.WHITE)){
+                  String message = String.format("%s is in stalemate",game.whiteUsername());
+                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
+                  GameService.gameAccess.updateGame(gameID,updatedGame);
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);
@@ -265,6 +285,17 @@ public class WebSocketHandler {
                 }
                 else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
                   String message = String.format("%s is in checkmate",game.blackUsername());
+                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
+                  GameService.gameAccess.updateGame(gameID,updatedGame);
+                  Notification notification = new Notification(message);
+                  connections.broadcast(authToken,notification);
+                  connections.respondToSender(authToken,notification);
+                  connections.remove(authToken);
+                }
+                else if (game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
+                  String message = String.format("%s is in stalemate",game.blackUsername());
+                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
+                  GameService.gameAccess.updateGame(gameID,updatedGame);
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                   connections.respondToSender(authToken,notification);

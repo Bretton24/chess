@@ -17,8 +17,7 @@ public class ChessboardDrawing {
   private static ChessPosition pos;
   private static Collection<ChessMove> moves;
 
-  public void drawChessboard(Boolean black,ChessGame game,ChessPosition position) {
-    chessGame = game;
+  public void drawChessboard(Boolean black,ChessPosition position) {
     pos = position;
     if (pos != null){
       moves = chessGame.validMoves(pos);
@@ -40,6 +39,10 @@ public class ChessboardDrawing {
     }
     out.print(RESET_BG_COLOR);
 
+  }
+
+  public void updateGame(ChessGame game){
+    chessGame = game;
   }
 
   private static void drawHeaders(PrintStream out,Boolean black) {
@@ -74,7 +77,8 @@ public class ChessboardDrawing {
       numbers = new String[]{"1","2","3","4","5","6","7","8"};
     } else {
       numbers = new String[]{"8","7","6","5","4","3","2","1"};
-      row = 7 - row; // Adjust row numbering for white side
+      row = 7 - row;
+       // Adjust row numbering for white side
     }
     for (int col=0; col <= BOARD_SIZE_IN_SQUARES + 1; col++) {
       if (col == 0 || col == 9){

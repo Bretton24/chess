@@ -54,7 +54,7 @@ public class ChessMove {
     }
 
     public String toString(){
-        return startPosition.toString() + " " + endPosition.toString();
+        return "From" + startPosition.toString() + " to " + endPosition.toString();
     }
 
     /**

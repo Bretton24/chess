@@ -39,6 +39,7 @@ public class ChessClient {
     initializeDictionaries();
   }
 
+
   public String eval(String input){
     try {
       var tokens = input.toLowerCase().split(" ");
@@ -112,7 +113,6 @@ public class ChessClient {
           var endPosition = new ChessPosition(endNumber,whiteDictionary.get(endLetter));
           var move = new ChessMove(startPosition,endPosition);
           ws.move(authToken.authToken(), game.gameID(), move);
-          board.drawChessboard(false,game.game(),null);
           return String.format("Made move");
         }
         else if (user.username().equals(game.blackUsername())){
@@ -120,7 +120,6 @@ public class ChessClient {
           var endPosition = new ChessPosition(endNumber,blackDictionary.get(endLetter));
           var move = new ChessMove(startPosition,endPosition);
           ws.move(authToken.authToken(), game.gameID(), move);
-          board.drawChessboard(true,game.game(),null);
           return String.format("Made move");
         }
       }
@@ -131,9 +130,9 @@ public class ChessClient {
   public String redrawChessboard() throws Exception {
     assertPlaying();
     if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
-      board.drawChessboard(true,game.game(),null);
+      board.drawChessboard(true,null);
     }else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())){
-      board.drawChessboard(false,game.game(),null);
+      board.drawChessboard(false,null);
     }
     throw new Exception("You must be playing to redraw the board");
   }
@@ -207,7 +206,6 @@ public class ChessClient {
       PlayerInfo playerInfo = new PlayerInfo(null,gameNum);
       game = server.observeGame(authToken,playerInfo);
       ws.observeGame(authToken.authToken(),game.gameID(),user);
-      board.drawChessboard(false,game.game(),null);
     }
     return String.format("Successfully observing game.");
   }
@@ -222,15 +220,9 @@ public class ChessClient {
         ws = new WebSocketFacade(serverUrl,serverMessageHandler);
       }
       if (params[1].equals("white")){
-        var playerInfo=new PlayerInfo("WHITE", gameNum);
-        game = server.joinGame(authToken, playerInfo);
         ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.WHITE,user);
-        board.drawChessboard(false,game.game(),null);
       } else if (params[1].equals("black")) {
-        var playerInfo = new PlayerInfo("BLACK",gameNum);
-        game = server.joinGame(authToken, playerInfo);
         ws.joinGame(authToken.authToken(),game.gameID(), ChessGame.TeamColor.BLACK,user);
-        board.drawChessboard(true,game.game(),null);
       }
     }
     else{
@@ -258,17 +250,13 @@ public class ChessClient {
       if (whiteDictionary.containsKey(letter) && number > 0 && number < 9){
         if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
           var pos = new ChessPosition(number,blackDictionary.get(letter));
-          if (game.game().getBoard().pieceAtPosition(pos)) {
-            board.drawChessboard(true, game.game(), pos);
+            board.drawChessboard(true, pos);
             return String.format("succesffuly highlighted");
-          }
         }
         else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())) {
           var pos=new ChessPosition(number, whiteDictionary.get(letter));
-          if (game.game().getBoard().pieceAtPosition(pos)) {
-            board.drawChessboard(false, game.game(), pos);
-            return String.format("succesffuly highlighted");
-          }
+          board.drawChessboard(false, pos);
+          return String.format("succesffuly highlighted");
         }
         throw new Exception("theres no piece at this position");
       }

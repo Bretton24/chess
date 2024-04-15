@@ -2,6 +2,7 @@ package webSocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import client.ChessClient;
 import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
 import model.UserData;
@@ -22,6 +23,7 @@ public class WebSocketFacade extends Endpoint {
   Session session;
   ServerMessageHandler  serverMessageHandler;
   UserData user;
+  ChessClient client;
   ChessboardDrawing drawing = new ChessboardDrawing();
   public WebSocketFacade(String url,ServerMessageHandler serverMessageHandler) throws Exception {
     try {
@@ -44,17 +46,18 @@ public class WebSocketFacade extends Endpoint {
             }
             case ERROR: {
               Error error = new Gson().fromJson(message, Error.class);
-              System.out.println(error.getServerMessageType());
+              System.out.println(error.getErrorMessage());
               break;
             }
             case LOAD_GAME:{
               LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
               var game = loadGame.getGame();
-              if (game.blackUsername().equals(user.username())){
-                drawing.drawChessboard(true,game.game(),null);
+              drawing.updateGame(game.game());
+              if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
+                drawing.drawChessboard(true,null);
               }
-              else if (game.whiteUsername().equals(user.username())){
-                drawing.drawChessboard(false,game.game(),null);
+              else if (game.whiteUsername().equals(user.username()) || (game.whiteUsername() != null && game.blackUsername() != null)){
+                drawing.drawChessboard(false,null);
               }
               break;
             }
