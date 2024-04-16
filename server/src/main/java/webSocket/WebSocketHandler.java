@@ -196,7 +196,7 @@ public class WebSocketHandler {
       return;
     }
     UserData user = AuthService.authAccess.getUser(authToken);
-    if (game.blackUsername().equals(user.username())){
+    if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
        var updatedGame = new GameData(game.gameID(),game.whiteUsername(),null,game.gameName(),game.game());
        GameService.gameAccess.updateGame(gameID,updatedGame);
        String message = String.format("%s left the game",user.username());
@@ -206,7 +206,7 @@ public class WebSocketHandler {
        connManager.put(gameID,connections);
        return;
     }
-    else if (game.whiteUsername().equals(user.username())){
+    else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())){
       var updatedGame = new GameData(game.gameID(),null,game.blackUsername(),game.gameName(),game.game());
       GameService.gameAccess.updateGame(gameID,updatedGame);
       String message = String.format("%s left the game",user.username());
