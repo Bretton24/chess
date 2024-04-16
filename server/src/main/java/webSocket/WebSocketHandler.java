@@ -232,134 +232,12 @@ public class WebSocketHandler {
     var user = UserService.authAccess.getUser(authToken);
     if (game.blackUsername() != null && game.whiteUsername() != null){
         if(user.username().equals(game.blackUsername())){
-          if (game.game().getTeamTurn().equals(ChessGame.TeamColor.WHITE)){
-            Error error = new Error("Error: it's not your turn");
-            connections.respondToSender(authToken,error);
-            return;
-          }
-          else{
-            if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
-              var piece = game.game().getBoard().getPiece(chessMove.getStartPosition());
-              if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
-                Error error = new Error("Error: not your teams piece");
-                connections.respondToSender(authToken,error);
-                return;
-              }
-              var moves = game.game().validMoves(chessMove.getStartPosition());
-              if(moves.contains(chessMove)){
-                game.game().makeMove(chessMove);
-                LoadGame loadGame = new LoadGame(game);
-                GameService.gameAccess.updateGame(gameID,game);
-                connections.respondToSender(authToken,loadGame);
-                connections.broadcast(authToken,loadGame);
-                if (game.game().isInCheck(ChessGame.TeamColor.WHITE)){
-                  String message = String.format("%s is in check",game.whiteUsername());
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                  connections.respondToSender(authToken,notification);
-                }
-                else if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
-                  String message = String.format("%s is in checkmate",game.whiteUsername());
-                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
-                  GameService.gameAccess.updateGame(gameID,updatedGame);
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                  connections.respondToSender(authToken,notification);
-                  connections.remove(authToken);
-                  connManager.put(gameID,connections);
-                }
-                else if (game.game().isInStalemate(ChessGame.TeamColor.WHITE)){
-                  String message = String.format("%s is in stalemate",game.whiteUsername());
-                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
-                  GameService.gameAccess.updateGame(gameID,updatedGame);
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                  connections.respondToSender(authToken,notification);
-                  connections.remove(authToken);
-                  connManager.put(gameID,connections);
-                }
-                else{
-                  String message = String.format("%s moved %s",game.blackUsername(),chessMove.toString());
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                }
-                return;
-              }
-              else{
-                Error error = new Error("Error: not a valid move");
-                connections.respondToSender(authToken,error);
-                return;
-              }
-            }
-            Error error = new Error("Error: no piece at selected position");
-            connections.respondToSender(authToken,error);
-            return;
-          }
+          checkBlack(game,authToken,chessMove,gameID);
+          return;
         }
         else if (user.username().equals(game.whiteUsername())){
-          if (game.game().getTeamTurn().equals(ChessGame.TeamColor.BLACK)){
-            Error error = new Error("Error: it's not your turn");
-            connections.respondToSender(authToken,error);
-            return;
-          }
-          else{
-            if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
-              var piece = game.game().getBoard().getPiece(chessMove.getStartPosition());
-              if (piece.getTeamColor() == ChessGame.TeamColor.BLACK){
-                Error error = new Error("Error: not your teams piece");
-                connections.respondToSender(authToken,error);
-                return;
-              }
-              var moves = game.game().validMoves(chessMove.getStartPosition());
-              if(moves.contains(chessMove)){
-                game.game().makeMove(chessMove);
-                LoadGame loadGame = new LoadGame(game);
-                GameService.gameAccess.updateGame(gameID,game);
-                connections.respondToSender(authToken,loadGame);
-                connections.broadcast(authToken,loadGame);
-                if (game.game().isInCheck(ChessGame.TeamColor.BLACK)){
-                  String message = String.format("%s is in check",game.blackUsername());
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                  connections.respondToSender(authToken,notification);
-                }
-                else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
-                  String message = String.format("%s is in checkmate",game.blackUsername());
-                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
-                  GameService.gameAccess.updateGame(gameID,updatedGame);
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                  connections.respondToSender(authToken,notification);
-                  connections.remove(authToken);
-                  connManager.put(gameID,connections);
-                }
-                else if (game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
-                  String message = String.format("%s is in stalemate",game.blackUsername());
-                  var updatedGame = new GameData(game.gameID(),null,null,null,null);
-                  GameService.gameAccess.updateGame(gameID,updatedGame);
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                  connections.respondToSender(authToken,notification);
-                  connections.remove(authToken);
-                  connManager.put(gameID,connections);
-                }
-                else{
-                  String message = String.format("%s moved %s",game.whiteUsername(),chessMove.toString());
-                  Notification notification = new Notification(message);
-                  connections.broadcast(authToken,notification);
-                }
-                return;
-              }
-              else{
-                Error error = new Error("Error: not a valid move");
-                connections.respondToSender(authToken,error);
-                return;
-              }
-            }
-            Error error = new Error("Error: no piece at selected position");
-            connections.respondToSender(authToken,error);
-            return;
-          }
+          checkWhite(game,authToken,chessMove,gameID);
+          return;
         }
         Error error = new Error("Error: you aren't even playing");
         connections.respondToSender(authToken,error);
@@ -368,5 +246,138 @@ public class WebSocketHandler {
     Error error = new Error("Error: other player must join");
     connections.respondToSender(authToken,error);
     return;
+  }
+
+
+  private void checkWhite(GameData game,String authToken,ChessMove chessMove,Integer gameID) throws Exception{
+    if (game.game().getTeamTurn().equals(ChessGame.TeamColor.BLACK)){
+      Error error = new Error("Error: it's not your turn");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+    else{
+      if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
+        var piece = game.game().getBoard().getPiece(chessMove.getStartPosition());
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK){
+          Error error = new Error("Error: not your teams piece");
+          connections.respondToSender(authToken,error);
+          return;
+        }
+        var moves = game.game().validMoves(chessMove.getStartPosition());
+        if(moves.contains(chessMove)){
+          game.game().makeMove(chessMove);
+          LoadGame loadGame = new LoadGame(game);
+          GameService.gameAccess.updateGame(gameID,game);
+          connections.respondToSender(authToken,loadGame);
+          connections.broadcast(authToken,loadGame);
+          if (game.game().isInCheck(ChessGame.TeamColor.BLACK)){
+            String message = String.format("%s is in check",game.blackUsername());
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+            connections.respondToSender(authToken,notification);
+          }
+          else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+            String message = String.format("%s is in checkmate",game.blackUsername());
+            var updatedGame = new GameData(game.gameID(),null,null,null,null);
+            GameService.gameAccess.updateGame(gameID,updatedGame);
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+            connections.respondToSender(authToken,notification);
+            connections.remove(authToken);
+            connManager.put(gameID,connections);
+          }
+          else if (game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
+            String message = String.format("%s is in stalemate",game.blackUsername());
+            var updatedGame = new GameData(game.gameID(),null,null,null,null);
+            GameService.gameAccess.updateGame(gameID,updatedGame);
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+            connections.respondToSender(authToken,notification);
+            connections.remove(authToken);
+            connManager.put(gameID,connections);
+          }
+          else{
+            String message = String.format("%s moved %s",game.whiteUsername(),chessMove.toString());
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+          }
+          return;
+        }
+        else{
+          Error error = new Error("Error: not a valid move");
+          connections.respondToSender(authToken,error);
+          return;
+        }
+      }
+      Error error = new Error("Error: no piece at selected position");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+  }
+
+  private void checkBlack(GameData game,String authToken,ChessMove chessMove,Integer gameID) throws Exception{
+    if (game.game().getTeamTurn().equals(ChessGame.TeamColor.WHITE)){
+      Error error = new Error("Error: it's not your turn");
+      connections.respondToSender(authToken,error);
+      return;
+    }
+    else{
+      if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
+        var piece = game.game().getBoard().getPiece(chessMove.getStartPosition());
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+          Error error = new Error("Error: not your teams piece");
+          connections.respondToSender(authToken,error);
+          return;
+        }
+        var moves = game.game().validMoves(chessMove.getStartPosition());
+        if(moves.contains(chessMove)){
+          game.game().makeMove(chessMove);
+          LoadGame loadGame = new LoadGame(game);
+          GameService.gameAccess.updateGame(gameID,game);
+          connections.respondToSender(authToken,loadGame);
+          connections.broadcast(authToken,loadGame);
+          if (game.game().isInCheck(ChessGame.TeamColor.WHITE)){
+            String message = String.format("%s is in check",game.whiteUsername());
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+            connections.respondToSender(authToken,notification);
+          }
+          else if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+            String message = String.format("%s is in checkmate",game.whiteUsername());
+            var updatedGame = new GameData(game.gameID(),null,null,null,null);
+            GameService.gameAccess.updateGame(gameID,updatedGame);
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+            connections.respondToSender(authToken,notification);
+            connections.remove(authToken);
+            connManager.put(gameID,connections);
+          }
+          else if (game.game().isInStalemate(ChessGame.TeamColor.WHITE)){
+            String message = String.format("%s is in stalemate",game.whiteUsername());
+            var updatedGame = new GameData(game.gameID(),null,null,null,null);
+            GameService.gameAccess.updateGame(gameID,updatedGame);
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+            connections.respondToSender(authToken,notification);
+            connections.remove(authToken);
+            connManager.put(gameID,connections);
+          }
+          else{
+            String message = String.format("%s moved %s",game.blackUsername(),chessMove.toString());
+            Notification notification = new Notification(message);
+            connections.broadcast(authToken,notification);
+          }
+          return;
+        }
+        else{
+          Error error = new Error("Error: not a valid move");
+          connections.respondToSender(authToken,error);
+          return;
+        }
+      }
+      Error error = new Error("Error: no piece at selected position");
+      connections.respondToSender(authToken,error);
+      return;
+    }
   }
 }
