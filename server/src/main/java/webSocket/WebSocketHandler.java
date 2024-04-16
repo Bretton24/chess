@@ -286,8 +286,7 @@ public class WebSocketHandler {
           }
           else{
             String message = String.format("%s moved %s",game.whiteUsername(),chessMove.toString());
-            Notification notification = new Notification(message);
-            connections.broadcast(authToken,notification);
+            createNotification(authToken,message);
           }
           return;
         }
@@ -340,8 +339,7 @@ public class WebSocketHandler {
           }
           else{
             String message = String.format("%s moved %s",game.blackUsername(),chessMove.toString());
-            Notification notification = new Notification(message);
-            connections.broadcast(authToken,notification);
+            createNotification(authToken,message);
           }
           return;
         }
@@ -365,5 +363,10 @@ public class WebSocketHandler {
     connections.respondToSender(authToken,notification);
     connections.remove(authToken);
     connManager.put(gameID,connections);
+  }
+
+  private void createNotification(String authToken,String message) throws Exception{
+    Notification notification = new Notification(message);
+    connections.broadcast(authToken,notification);
   }
 }
