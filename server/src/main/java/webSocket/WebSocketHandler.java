@@ -198,7 +198,7 @@ public class WebSocketHandler {
     UserData user = AuthService.authAccess.getUser(authToken);
     if (game.blackUsername().equals(user.username())){
        var updatedGame = new GameData(game.gameID(),game.whiteUsername(),null,game.gameName(),game.game());
-       GameService.gameAccess.updateGame(gameID,game);
+       GameService.gameAccess.updateGame(gameID,updatedGame);
        String message = String.format("%s left the game",user.username());
        Notification notification = new Notification(message);
        connections.broadcast(authToken,notification);
@@ -208,7 +208,7 @@ public class WebSocketHandler {
     }
     else if (game.whiteUsername().equals(user.username())){
       var updatedGame = new GameData(game.gameID(),null,game.blackUsername(),game.gameName(),game.game());
-      GameService.gameAccess.updateGame(gameID,game);
+      GameService.gameAccess.updateGame(gameID,updatedGame);
       String message = String.format("%s left the game",user.username());
       Notification notification = new Notification(message);
       connections.broadcast(authToken,notification);
@@ -239,6 +239,12 @@ public class WebSocketHandler {
           }
           else{
             if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
+              var piece = game.game().getBoard().getPiece(chessMove.getStartPosition());
+              if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                Error error = new Error("Error: not your teams piece");
+                connections.respondToSender(authToken,error);
+                return;
+              }
               var moves = game.game().validMoves(chessMove.getStartPosition());
               if(moves.contains(chessMove)){
                 game.game().makeMove(chessMove);
@@ -273,10 +279,15 @@ public class WebSocketHandler {
                   connManager.put(gameID,connections);
                 }
                 else{
-                  String message = String.format("Black team moved %s",chessMove.toString());
+                  String message = String.format("%s moved %s",game.blackUsername(),chessMove.toString());
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                 }
+                return;
+              }
+              else{
+                Error error = new Error("Error: not a valid move");
+                connections.respondToSender(authToken,error);
                 return;
               }
             }
@@ -293,6 +304,12 @@ public class WebSocketHandler {
           }
           else{
             if (game.game().getBoard().pieceAtPosition(chessMove.getStartPosition())){
+              var piece = game.game().getBoard().getPiece(chessMove.getStartPosition());
+              if (piece.getTeamColor() == ChessGame.TeamColor.BLACK){
+                Error error = new Error("Error: not your teams piece");
+                connections.respondToSender(authToken,error);
+                return;
+              }
               var moves = game.game().validMoves(chessMove.getStartPosition());
               if(moves.contains(chessMove)){
                 game.game().makeMove(chessMove);
@@ -331,6 +348,11 @@ public class WebSocketHandler {
                   Notification notification = new Notification(message);
                   connections.broadcast(authToken,notification);
                 }
+                return;
+              }
+              else{
+                Error error = new Error("Error: not a valid move");
+                connections.respondToSender(authToken,error);
                 return;
               }
             }

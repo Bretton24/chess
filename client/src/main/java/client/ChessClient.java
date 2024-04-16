@@ -112,14 +112,14 @@ public class ChessClient {
           var endPosition = new ChessPosition(endNumber,whiteDictionary.get(endLetter));
           var move = new ChessMove(startPosition,endPosition);
           ws.move(authToken.authToken(), game.gameID(), move);
-          return String.format("Made move");
+          return String.format("");
         }
         else if (user.username().equals(game.blackUsername())){
           var startPosition = new ChessPosition(startNumber,whiteDictionary.get(startLetter));
           var endPosition = new ChessPosition(endNumber,whiteDictionary.get(endLetter));
           var move = new ChessMove(startPosition,endPosition);
           ws.move(authToken.authToken(), game.gameID(), move);
-          return String.format("Made move");
+          return String.format("");
         }
       }
     }
@@ -130,8 +130,10 @@ public class ChessClient {
     assertPlaying();
     if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
       board.drawChessboard(true,null);
+      return String.format("Redrew the board");
     }else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())){
       board.drawChessboard(false,null);
+      return String.format("Redrew the board");
     }
     throw new Exception("You must be playing to redraw the board");
   }

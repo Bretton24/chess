@@ -81,7 +81,7 @@ public class SQLGameDAO implements GameDAO{
     }
     if (playerInfo.playerColor() != null){
       if (playerInfo.playerColor().equals("WHITE")){
-        if (game.whiteUsername() == null){
+        if (game.whiteUsername() == null || game.whiteUsername().equals(user.username())){
           var statement = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
           executeUpdate(statement, user.username(), game.gameID());
         }
@@ -90,7 +90,7 @@ public class SQLGameDAO implements GameDAO{
         }
       }
       else if (playerInfo.playerColor().equals("BLACK")){
-        if (game.blackUsername() == null) {
+        if (game.blackUsername() == null || game.blackUsername().equals(user.username())) {
           var statement = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
           executeUpdate(statement, user.username(), game.gameID());
         }

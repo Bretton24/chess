@@ -104,8 +104,6 @@ public class ChessboardDrawing {
         ChessPosition currentPosition = new ChessPosition(row + 1, col);
         if (moves != null && moves.contains(new ChessMove(pos,currentPosition))) {
           out.print(SET_BG_COLOR_GREEN);
-        }else if (currentPosition.equals(pos)){
-          out.print(SET_BG_COLOR_YELLOW);
         }
         if (chessGame.getBoard().pieceAtPosition(new ChessPosition(row + 1,col))){
           int prefixLength = 1;
@@ -114,6 +112,9 @@ public class ChessboardDrawing {
             out.print(SET_BG_COLOR_WHITE);
           }else{
             out.print(SET_BG_COLOR_BLACK);
+          }
+          if (moves != null && moves.contains(new ChessMove(pos,currentPosition))) {
+            out.print(SET_BG_COLOR_GREEN);
           }
           out.print(EMPTY.repeat(prefixLength));
           var piece = chessGame.getBoard().getPiece(new ChessPosition(row + 1,col));
@@ -128,6 +129,9 @@ public class ChessboardDrawing {
             out.print(SET_BG_COLOR_WHITE);
           }else{
             out.print(SET_BG_COLOR_BLACK);
+          }
+          if (moves != null && moves.contains(new ChessMove(pos,currentPosition))) {
+            out.print(SET_BG_COLOR_GREEN);
           }
           out.print(EMPTY.repeat(suffixLength));
         }

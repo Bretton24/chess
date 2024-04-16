@@ -49,7 +49,32 @@ public class ChessPosition {
     }
 
     public String toString(){
-        String value = "[" + getRow() + "][" + getColumn() + "]";
+        String value = "";
+        if (getColumn() == 1){
+             value = "a" + getRow();
+        }
+        if (getColumn() == 2){
+             value = "b" + getRow();
+        }
+        if (getColumn() == 3){
+             value = "c" + getRow();
+        }
+        if (getColumn() == 4){
+             value = "d" + getRow();
+        }
+        if (getColumn() == 5){
+             value = "e" + getRow();
+        }
+        if (getColumn() == 6){
+             value = "f" + getRow();
+        }
+        if (getColumn() == 7){
+             value = "g" + getRow();
+        }
+        if (getColumn() == 8){
+             value = "h" + getRow();
+        }
+
         return value;
     }
 }

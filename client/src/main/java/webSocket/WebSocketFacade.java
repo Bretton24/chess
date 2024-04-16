@@ -15,8 +15,12 @@ import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+
+import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
 public class WebSocketFacade extends Endpoint {
 
@@ -41,10 +45,14 @@ public class WebSocketFacade extends Endpoint {
           switch (serverMessage.getServerMessageType()){
             case NOTIFICATION: {
               Notification notification = new Gson().fromJson(message, Notification.class);
+              var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+              out.print(SET_TEXT_COLOR_WHITE);
               System.out.println(notification.getMessage());
               break;
             }
             case ERROR: {
+              var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+              out.print(SET_TEXT_COLOR_WHITE);
               Error error = new Gson().fromJson(message, Error.class);
               System.out.println(error.getErrorMessage());
               break;
