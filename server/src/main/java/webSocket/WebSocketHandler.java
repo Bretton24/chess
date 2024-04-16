@@ -278,23 +278,11 @@ public class WebSocketHandler {
           }
           else if (game.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
             String message = String.format("%s is in checkmate",game.blackUsername());
-            var updatedGame = new GameData(game.gameID(),null,null,null,null);
-            GameService.gameAccess.updateGame(gameID,updatedGame);
-            Notification notification = new Notification(message);
-            connections.broadcast(authToken,notification);
-            connections.respondToSender(authToken,notification);
-            connections.remove(authToken);
-            connManager.put(gameID,connections);
+            isGameOver(game,authToken,gameID,message);
           }
           else if (game.game().isInStalemate(ChessGame.TeamColor.BLACK)){
             String message = String.format("%s is in stalemate",game.blackUsername());
-            var updatedGame = new GameData(game.gameID(),null,null,null,null);
-            GameService.gameAccess.updateGame(gameID,updatedGame);
-            Notification notification = new Notification(message);
-            connections.broadcast(authToken,notification);
-            connections.respondToSender(authToken,notification);
-            connections.remove(authToken);
-            connManager.put(gameID,connections);
+            isGameOver(game,authToken,gameID,message);
           }
           else{
             String message = String.format("%s moved %s",game.whiteUsername(),chessMove.toString());
@@ -344,23 +332,11 @@ public class WebSocketHandler {
           }
           else if (game.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
             String message = String.format("%s is in checkmate",game.whiteUsername());
-            var updatedGame = new GameData(game.gameID(),null,null,null,null);
-            GameService.gameAccess.updateGame(gameID,updatedGame);
-            Notification notification = new Notification(message);
-            connections.broadcast(authToken,notification);
-            connections.respondToSender(authToken,notification);
-            connections.remove(authToken);
-            connManager.put(gameID,connections);
+            isGameOver(game,authToken,gameID,message);
           }
           else if (game.game().isInStalemate(ChessGame.TeamColor.WHITE)){
             String message = String.format("%s is in stalemate",game.whiteUsername());
-            var updatedGame = new GameData(game.gameID(),null,null,null,null);
-            GameService.gameAccess.updateGame(gameID,updatedGame);
-            Notification notification = new Notification(message);
-            connections.broadcast(authToken,notification);
-            connections.respondToSender(authToken,notification);
-            connections.remove(authToken);
-            connManager.put(gameID,connections);
+            isGameOver(game,authToken,gameID,message);
           }
           else{
             String message = String.format("%s moved %s",game.blackUsername(),chessMove.toString());
@@ -379,5 +355,15 @@ public class WebSocketHandler {
       connections.respondToSender(authToken,error);
       return;
     }
+  }
+
+  private void isGameOver(GameData game,String authToken, Integer gameID,String message) throws Exception{
+    var updatedGame = new GameData(game.gameID(),null,null,null,null);
+    GameService.gameAccess.updateGame(gameID,updatedGame);
+    Notification notification = new Notification(message);
+    connections.broadcast(authToken,notification);
+    connections.respondToSender(authToken,notification);
+    connections.remove(authToken);
+    connManager.put(gameID,connections);
   }
 }
