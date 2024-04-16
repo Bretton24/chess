@@ -40,34 +40,33 @@ public class WebSocketHandler {
     UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
     switch (userGameCommand.getCommandType()) {
       case JOIN_PLAYER: {
-        JoinPlayer joinPlayer = new Gson().fromJson(message,JoinPlayer.class);
-        join(joinPlayer.getAuthString(), joinPlayer.getGameID(), joinPlayer.getPlayerColor(),session);
+        join(message,session);
         break;
       }
       case JOIN_OBSERVER: {
-        JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
-        observe(joinObserver.getAuthString(), joinObserver.getGameID(), session);
+        observe(message, session);
         break;
       }
       case MAKE_MOVE: {
-        MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
-        move(makeMove.getAuthString(),makeMove.getGameID(),makeMove.getMove(),session);
+        move(message,session);
         break;
       }
       case LEAVE: {
-        Leave leaveGame = new Gson().fromJson(message, Leave.class);
-        leave(leaveGame.getAuthString(),leaveGame.getGameID(),session);
+        leave(message,session);
         break;
       }
       case RESIGN: {
-        Resign resign = new Gson().fromJson(message, Resign.class);
-        resign(resign.getAuthString(),resign.getGameID(),session);
+        resign(message,session);
         break;
       }
     }
   }
 
-  private void join(String authToken, Integer gameID, ChessGame.TeamColor teamColor, Session session) throws Exception {
+  private void join(String message, Session session) throws Exception {
+    JoinPlayer joinPlayer = new Gson().fromJson(message,JoinPlayer.class);
+    var gameID = joinPlayer.getGameID();
+    var authToken = joinPlayer.getAuthString();
+    var teamColor = joinPlayer.getPlayerColor();
     if(connManager.containsKey(gameID)){
       connections = connManager.get(gameID);
     }
@@ -109,13 +108,17 @@ public class WebSocketHandler {
       updatedGame = new GameData(gameID,game.whiteUsername(),user.username(),game.gameName(),game.game());
     }
       LoadGame game1 = new LoadGame(updatedGame);
-      String message = String.format("%s joined the game as team %s",user.username(),teamColor);
-      Notification notification = new Notification(message);
+      String mess = String.format("%s joined the game as team %s",user.username(),teamColor);
+      Notification notification = new Notification(mess);
       connections.respondToSender(authToken,game1);
       connections.broadcast(authToken,notification);
   }
 
-  private void resign(String authToken, Integer gameID, Session session) throws Exception {
+  private void resign(String message, Session session) throws Exception {
+    Resign resign = new Gson().fromJson(message, Resign.class);
+    var gameID = resign.getGameID();
+    var authToken = resign.getAuthString();
+
     connections = connManager.get(gameID);
     GameData game = null;
     game = GameService.gameAccess.getGame(gameID);
@@ -138,8 +141,8 @@ public class WebSocketHandler {
     if (game.blackUsername().equals(user.username()) || game.whiteUsername().equals(user.username())){
       var updatedGame = new GameData(game.gameID(),null,null,null,null);
       GameService.gameAccess.updateGame(gameID,updatedGame);
-      String message = String.format("%s resigned",user.username());
-      Notification notification = new Notification(message);
+      String mess = String.format("%s resigned",user.username());
+      Notification notification = new Notification(mess);
       connections.broadcast(authToken,notification);
       connections.respondToSender(authToken,notification);
       connections.remove(authToken);
@@ -152,7 +155,11 @@ public class WebSocketHandler {
       return;
     }
   }
-  private void observe(String authToken, Integer gameID, Session session) throws Exception {
+  private void observe(String message, Session session) throws Exception {
+    JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
+    var gameID = joinObserver.getGameID();
+    var authToken = joinObserver.getAuthString();
+
     if(connManager.containsKey(gameID)){
       connections = connManager.get(gameID);
     }
@@ -176,12 +183,16 @@ public class WebSocketHandler {
     UserData user = AuthService.authAccess.getUser(authToken);
     LoadGame loadGame = new LoadGame(game);
     connections.respondToSender(authToken,loadGame);
-    String message = String.format("%s joined the game as observer",user.username());
-    Notification notification = new Notification(message);
+    String mess = String.format("%s joined the game as observer",user.username());
+    Notification notification = new Notification(mess);
     connections.broadcast(authToken,notification);
   }
 
-  private void leave(String authToken, Integer gameID, Session session) throws Exception {
+  private void leave(String message, Session session) throws Exception {
+    Leave leaveGame = new Gson().fromJson(message, Leave.class);
+    var gameID = leaveGame.getGameID();
+    var authToken = leaveGame.getAuthString();
+
     connections = connManager.get(gameID);
     GameData game = null;
     game = GameService.gameAccess.getGame(gameID);
@@ -199,8 +210,8 @@ public class WebSocketHandler {
     if (game.blackUsername() != null && game.blackUsername().equals(user.username())){
        var updatedGame = new GameData(game.gameID(),game.whiteUsername(),null,game.gameName(),game.game());
        GameService.gameAccess.updateGame(gameID,updatedGame);
-       String message = String.format("%s left the game",user.username());
-       Notification notification = new Notification(message);
+       String mess = String.format("%s left the game",user.username());
+       Notification notification = new Notification(mess);
        connections.broadcast(authToken,notification);
        connections.remove(authToken);
        connManager.put(gameID,connections);
@@ -209,16 +220,16 @@ public class WebSocketHandler {
     else if (game.whiteUsername() != null && game.whiteUsername().equals(user.username())){
       var updatedGame = new GameData(game.gameID(),null,game.blackUsername(),game.gameName(),game.game());
       GameService.gameAccess.updateGame(gameID,updatedGame);
-      String message = String.format("%s left the game",user.username());
-      Notification notification = new Notification(message);
+      String mess = String.format("%s left the game",user.username());
+      Notification notification = new Notification(mess);
       connections.broadcast(authToken,notification);
       connections.remove(authToken);
       connManager.put(gameID,connections);
       return;
     }
     else{
-      String message = String.format("%s left the game",user.username());
-      Notification notification = new Notification(message);
+      String mess = String.format("%s left the game",user.username());
+      Notification notification = new Notification(mess);
       connections.broadcast(authToken,notification);
       connections.remove(authToken);
       connManager.put(gameID,connections);
@@ -226,7 +237,11 @@ public class WebSocketHandler {
     }
   }
 
-  private void move(String authToken, Integer gameID, ChessMove chessMove, Session session) throws Exception {
+  private void move(String message, Session session) throws Exception {
+    MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
+    var gameID = makeMove.getGameID();
+    var authToken = makeMove.getAuthString();
+    var chessMove = makeMove.getMove();
     connections = connManager.get(gameID);
     var game = GameService.gameAccess.getGame(gameID);
     var user = UserService.authAccess.getUser(authToken);
