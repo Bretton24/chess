@@ -172,9 +172,7 @@ public class Pawn {
       if (i == 2){
         ChessPosition closerPosition = new ChessPosition(i+1,j);
         ChessPosition position = new ChessPosition(i+2,j);
-        if (!board.pieceAtPosition(position) && position.getRow() > 0 && !board.pieceAtPosition(closerPosition)){
-          pawnMove.add(new ChessMove(myPosition,position));
-        }
+        checkBoard(board,position,closerPosition,myPosition);
       }
       HashSet<ChessMove> attackRight = attackRight(board,myPosition);
       Iterator<ChessMove> attackrightiterator =attackRight.iterator();
@@ -196,9 +194,7 @@ public class Pawn {
       if (i == 7){
         ChessPosition closerPosition = new ChessPosition(i-1,j);
         ChessPosition position = new ChessPosition(i-2,j);
-        if (!board.pieceAtPosition(position) && position.getRow() > 0 && !board.pieceAtPosition(closerPosition)){
-          pawnMove.add(new ChessMove(myPosition,position));
-        }
+        checkBoard(board,position,closerPosition,myPosition);
       }
       HashSet<ChessMove> attackRight = attackRight(board,myPosition);
       Iterator<ChessMove> attackrightiterator =attackRight.iterator();
@@ -212,5 +208,11 @@ public class Pawn {
       }
     }
     return pawnMove;
+  }
+
+  private void checkBoard(ChessBoard board,ChessPosition position,ChessPosition closerPosition, ChessPosition myPosition){
+    if (!board.pieceAtPosition(position) && position.getRow() > 0 && !board.pieceAtPosition(closerPosition)){
+      pawnMove.add(new ChessMove(myPosition,position));
+    }
   }
 }
