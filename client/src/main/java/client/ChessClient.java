@@ -107,14 +107,7 @@ public class ChessClient {
       digiNumber = otherValues.charAt(1);
       var endNumber = digiNumber - '0';
       if ((whiteDictionary.containsKey(startLetter) && startNumber > 0 && startNumber < 9) && (whiteDictionary.containsKey(endLetter) && endNumber > 0 && endNumber < 9)){
-        if (user.username().equals(game.whiteUsername())){
-          var startPosition = new ChessPosition(startNumber,whiteDictionary.get(startLetter));
-          var endPosition = new ChessPosition(endNumber,whiteDictionary.get(endLetter));
-          var move = new ChessMove(startPosition,endPosition);
-          ws.move(authToken.authToken(), game.gameID(), move);
-          return String.format("");
-        }
-        else if (user.username().equals(game.blackUsername())){
+        if (user.username().equals(game.whiteUsername()) || user.username().equals(game.blackUsername())){
           var startPosition = new ChessPosition(startNumber,whiteDictionary.get(startLetter));
           var endPosition = new ChessPosition(endNumber,whiteDictionary.get(endLetter));
           var move = new ChessMove(startPosition,endPosition);
